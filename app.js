@@ -29,9 +29,5 @@ io.sockets.on("connection", function(socket){ //general handler for all socket c
 
 });
 
-
-
-
-
-server.listen(8000);
-console.log("Express is listening on port 8000");
+server.listen(4000);
+console.log("Express is listening on port 4000");
