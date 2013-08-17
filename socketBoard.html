@@ -1,0 +1,37 @@
+<html>
+<head>
+	<title>Express Message Board</title>
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			var socket = io.connect("/"); //like a persistent tube between client and server on directory '/'
+
+			$.get("/messages", function (data) {
+				var i = 0;
+				for (i = 0; i < data.length; i++)
+					$("#messageBoard").append("<p>" + data[i] + "</p>");
+
+				socket.on("message", function (data) { //event listener, when server sends message, do the below operation
+					$("#messageBoard").append("<p>" + data + "</p>");
+				});
+			});
+
+			$("#sendBtn").click(function () {
+				var msgText = $("#msgText").val();
+				socket.send(msgText); //we're no longer sending a POST, we do socket.send
+				$("#msgText").focus().val("");
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="container">
+		<div id="messageBoard"></div>
+		<div>
+			<input id="msgText" type="text" autofocus placeholder="Your message here"/>
+			<button id="sendBtn">Send</button>
+		</div>
+	</div>
+</body>
+</html>
