@@ -1,10 +1,16 @@
 var express = require("express");
-var app = express(); //built on top of normal HTTP server
-var server = require("http").createServer(app); //convert from express server to normal HTTP server
-var io = require("socket.io").listen(server); //socket expects to listen to a normal HTTP server not an express server
+var app = express();
+
+// Static file directories
+app.use("/stylesheets", express.static(__dirname + '/stylesheets'));
+app.use("/images", express.static(__dirname + '/images'));
+
+
+var server = require("http").createServer(app);
+var io = require("socket.io").listen(server);
+
 
 var config = require("./config/config.js");
-//app.use(express.bodyParser()); //middleware for attaching body to HTTP request when not using socket
 
 app.get("/", function(req, res) {
     res.sendfile('socketBoard.html');
