@@ -2,9 +2,7 @@ var express = require("express");
 var app = express();
 
 // Static file directories
-app.use("/stylesheets", express.static(__dirname + '/stylesheets'));
-app.use("/images", express.static(__dirname + '/images'));
-
+app.use("/public", express.static(__dirname + '/public'));
 
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
