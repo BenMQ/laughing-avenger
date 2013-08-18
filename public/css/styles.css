@@ -130,3 +130,8 @@ header ul li a.login:hover, footer a.login:hover {
 #messageInput {
 
 }
+
+.like-button {
+  margin: 0 auto 0 auto;
+  width: 90px;
+}

@@ -49,6 +49,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 				throw err;
 
 			msgEntry = {ID: result.insertId, content: data, vote: 0};
+			messages.push(msgEntry);
 			console.log("In msgEntry handler");
 			console.log(msgEntry);
 			io.sockets.emit("msgEntry", msgEntry); // send message to all clients
