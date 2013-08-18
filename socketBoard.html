@@ -32,13 +32,6 @@
 						$(".voteBtn").click(function() {
 							
 						});
-			// Loads FB JS SDK
-			(function() {
-				var e = document.createElement('script'); e.async = true;
-				e.src = document.location.protocol 
-				+ '//connect.facebook.net/en_US/all.js';
-				document.getElementById('fb-root').appendChild(e);
-			}());
 
 			// Initiates FB object
 			window.fbAsyncInit = function() {
@@ -89,6 +82,14 @@
 	</script>
 </head>
 <body>
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=492242497533605";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
 
 		<header>
 			<div class ="container">
@@ -120,6 +121,5 @@
 			</div>
 		</div>
 
-<div id="fb-root"></div>
 </body>
 </html>
