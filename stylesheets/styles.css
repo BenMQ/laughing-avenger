@@ -1,7 +1,7 @@
 /* Ask Yos for questions */
 
 html {
-    background: url("http://xamarin.com/images/noise-bg.png");
+    background: url("/images/bg.png");
 }
 
 h1 {
@@ -83,7 +83,7 @@ header ul li a.login:hover, footer a.login:hover {
     float: left;
     font-family: 'Merriweather', serif;
     font-weight:700;
-    background: #45474D url('http://farm4.staticflickr.com/3758/9435515203_861cc96e1d_h.jpg') bottom center no-repeat;
+    background: #45474D url('http://farm4.staticflickr.com/3758/9435515203_861cc96e1d_h.jpg') center center no-repeat;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
 
