@@ -22,7 +22,7 @@
 					}
 					upVoteBtn.click(upVote);
 					downVoteBtn.click(downVote);
-					$("#messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+					$(".messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
 				}
 
 			});
@@ -35,17 +35,17 @@
 				var votesDisplay = $('<span class="votes" data-msgID="' + data.ID + '">0</span>');
 				upVoteBtn.click(upVote);
 				downVoteBtn.click(downVote);
-				$("#messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+				$(".messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
 			});
 			socket.on('vote', function(voteData) {
 				$('span.votes[data-msgID="'+ voteData.ID +'"]').text(voteData.value);
 			});
-			
-			
-			$("#sendBtn").click(function() {
-				var msgText = $("#msgText").val();
+
+
+			$(".sendBtn").click(function() {
+				var msgText = $(".msgText").val();
 				socket.emit("msgEntry", msgText); //we're no longer sending a POST, we do socket.emit
-				$("#msgText").focus().val("");
+				$(".msgText").focus().val("");
 			});
 
 			//----- Minimal voting. It's not stored into db yet as I'm not sure how the structure will be like yet------
@@ -56,11 +56,11 @@
 			function downVote() {
 				socket.emit('vote', {ID: $(this).attr("data-msgID"), value: -1});
 			}
-			
+
 			// Initiates FB object
 			window.fbAsyncInit = function() {
-			FB.init({ appId: '492242497533605', 
-				status: true, 
+			FB.init({ appId: '492242497533605',
+				status: true,
 				cookie: true,
 				xfbml: true,
 				oauth: true
@@ -98,7 +98,7 @@
 			}
 			// run once with current status and whenever the status changes
 			FB.getLoginStatus(updateLogin);
-			FB.Event.subscribe('auth.statusChange', updateLogin);    
+			FB.Event.subscribe('auth.statusChange', updateLogin);
 		  };
 
 		// End of document.ready
@@ -137,10 +137,13 @@
 
 		<div class='msgwrap'>
 			<div class ="container">
-				<div id="messageBoard"></div>
-				<div id="messageInput">
-					<input id="msgText" type="text" autofocus placeholder="Your message here"/>
-					<button id="sendBtn">Send</button>
+				<h2 class='question'>Q: Proof of the Pigeonhole Principle?</h2>
+				<div class="messageBoard">
+
+				</div>
+				<div class="messageInput">
+					<input class="msgText" type="text" autofocus placeholder="Your message here"/>
+					<button class="sendBtn">Send</button>
 				</div>
 			</div>
 		</div>

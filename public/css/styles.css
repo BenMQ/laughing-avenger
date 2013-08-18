@@ -112,11 +112,15 @@ header ul li a.login:hover, footer a.login:hover {
     float: left;
 }
 
-#messageBoard {
+h2.question {
+    font-family: 'Merriweather', serif;
+}
+
+.messageBoard {
     margin: 40px;
 }
 
-#messageBoard p {
+.messageBoard p {
     width: 300px;
     background: #fff;
     margin: 10px;
@@ -127,7 +131,7 @@ header ul li a.login:hover, footer a.login:hover {
     line-height: 21px;
 }
 
-#messageInput {
+.messageInput {
 
 }
 
