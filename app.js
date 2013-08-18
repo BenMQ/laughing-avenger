@@ -24,9 +24,9 @@ connection.query('SELECT * from msg', function(err, rows, fields) {
         throw err;
     for (var i=0; i< rows.length; i++) {
         messages.push(rows[i].content);
-        console.log(rows[i].content);
+        console.log("//---- printing table cols ---");
+        console.log(rows[i]);
     }
-    console.log("You should see 'init' since it's the first row.");
 });
 
 connection.end();
