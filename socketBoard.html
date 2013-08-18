@@ -10,28 +10,48 @@
 		$(function () {
 			var socket = io.connect("/"); //like a persistent tube between client and server on directory '/'
 
-			$.get("/messages", function (data) {
+			$.get("/messages", function(data) {
 				var i = 0;
-				for (i = 0; i < data.length; i++)
-					$("#messageBoard").append("<p>" + data[i] + "</p>").append($('<button class="upVoteBtn">'));
-									
+				for (i = 0; i < data.length; i++) {
+					var txt = $("<p data-msgID='" + data.ID + "'>" + data[i].content + "</p>");
+					var upVoteBtn = $('<button class="upVoteBtn" data-msgID="' + data[i].ID + '">&#8743;</button>');
+					var downVoteBtn = $('<button class="downVoteBtn" data-msgID="' + data[i].ID + '">&#8744;</button>');
+					var votesDisplay = $('<span class="votes" data-msgID="' + data[i].ID + '">0</span>');
+					if (data[i].vote) {
+						votesDisplay.text(data[i].vote);
+					}
+					upVoteBtn.click(upVote);
+					downVoteBtn.click(downVote);
+					$("#messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+				}
+
 			});
 
-						//------------- It's a good idea to avoid default "message" channel --------------
-						socket.on("msgEntry", function (data) { //event listener, when server sends message, do the below operation
-					$("#messageBoard").append("<p>" + data + "</p>");
+			//------------- It's a good idea to avoid default "message" channel --------------
+			socket.on("msgEntry", function(data) { //event listener, when server sends message, do the below operation
+				var txt = $("<p data-msgID='" + data.ID + "'>" + data.content + "</p>");
+				var upVoteBtn = $('<button class="upVoteBtn" data-msgID="' + data.ID + '">&#8743;</button>');
+				var downVoteBtn = $('<button class="downVoteBtn" data-msgID="' + data.ID + '">&#8744;</button>');
+				var votesDisplay = $('<span class="votes" data-msgID="' + data.ID + '">0</span>');
+				upVoteBtn.click(upVote);
+				downVoteBtn.click(downVote);
+				$("#messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
 			});
 
-			$("#sendBtn").click(function () {
+			$("#sendBtn").click(function() {
 				var msgText = $("#msgText").val();
-				socket.emit("msgEntry", msgText); //we're no longer sending a POST, we do socket.send
+				socket.emit("msgEntry", msgText); //we're no longer sending a POST, we do socket.emit
 				$("#msgText").focus().val("");
-			});		
-						//----- Minimal voting. It's not stored into db yet as I'm not sure how the structure will be like ------
-						// @boyang
-						$(".voteBtn").click(function() {
-							
-						});
+			});
+
+			//----- Minimal voting. It's not stored into db yet as I'm not sure how the structure will be like yet------
+			//----- @boyang
+			function upVote() {
+				socket.emit('vote', {ID: $(this).attr("data-msgID"), value: 1});
+			}
+			function downVote() {
+				socket.emit('vote', {ID: $(this).attr("data-msgID"), value: -1});
+			}
 
 			// Initiates FB object
 			window.fbAsyncInit = function() {
