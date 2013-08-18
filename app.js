@@ -3,6 +3,7 @@ var app = express(); //built on top of normal HTTP server
 var server = require("http").createServer(app); //convert from express server to normal HTTP server
 var io = require("socket.io").listen(server); //socket expects to listen to a normal HTTP server not an express server
 
+var config = require("./config/config.js");
 //app.use(express.bodyParser()); //middleware for attaching body to HTTP request when not using socket
 
 app.get("/", function(req, res) {
@@ -12,12 +13,7 @@ app.get("/", function(req, res) {
 var messages = [];
 // Retrieve msg from mysql db
 var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'laughing_avenger',
-});
+var connection = mysql.createConnection(config.db);
 connection.connect();
 connection.query('SELECT * from msg', function(err, rows, fields) {
     if (err)
@@ -43,12 +39,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
         console.log("Received: " + data);
 
         messages.push(data);
-        connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: 'root',
-            database: 'laughing_avenger',
-        });
+        connection = mysql.createConnection(config.db);
         connection.connect();
         connection.query('INSERT INTO msg (content) VALUES ("'+data+'");', function(err, rows, fields) {
             if (err)
@@ -62,5 +53,5 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 
 });
 
-server.listen(4321);
-console.log("Express is listening on port 4321");
+server.listen(config.port);
+console.log("Express is listening on port " + config.port);

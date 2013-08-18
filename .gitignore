@@ -21,3 +21,6 @@ Thumbs.db
 nbproject
 *.sublime-project
 *.sublime-workspace
+
+# Development configuration file
+config/config.development.js
