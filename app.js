@@ -11,7 +11,7 @@ var io = require("socket.io").listen(server);
 var config = require("./config/config.js");
 
 app.get("/", function(req, res) {
-    res.sendfile('socketBoard.html');
+	res.sendfile('socketBoard.html');
 });
 
 var messages = [];
@@ -20,40 +20,40 @@ var mysql = require('mysql');
 var connection = mysql.createConnection(config.db);
 connection.connect();
 connection.query('SELECT * from msg', function(err, rows, fields) {
-    if (err)
-        throw err;
-    for (var i=0; i< rows.length; i++) {
-        messages.push(rows[i].content);
-        console.log("//---- printing table cols ---");
-        console.log(rows[i]);
-    }
+	if (err)
+		throw err;
+	for (var i=0; i< rows.length; i++) {
+		messages.push(rows[i].content);
+		console.log("//---- printing table cols ---");
+		console.log(rows[i]);
+	}
 });
 
 connection.end();
 
 app.get('/messages', function(req, res) {
-    res.json(messages);
+	res.json(messages);
 });
 
 // Create a new event listener that response to a socket connection
 // here io refers to the socket server
 io.sockets.on("connection", function(socket) { //general handler for all socket connection events
-    //event handler for events happening on that socket connection, in this case, 'on message'
-    socket.on("msgEntry", function(data) {
-        console.log("Received: " + data);
+	//event handler for events happening on that socket connection, in this case, 'on message'
+	socket.on("msgEntry", function(data) {
+		console.log("Received: " + data);
 
-        messages.push(data);
-        connection = mysql.createConnection(config.db);
-        connection.connect();
-        connection.query('INSERT INTO msg (content) VALUES ("'+data+'");', function(err, rows, fields) {
-            if (err)
-                throw err;
-            console.log(data);
-        });
-        connection.end();
-        //socket.send(data) //this will send data to only current socket
-        io.sockets.emit("msgEntry", data); // send message to all clients
-    });
+		messages.push(data);
+		connection = mysql.createConnection(config.db);
+		connection.connect();
+		connection.query('INSERT INTO msg (content) VALUES ("'+data+'");', function(err, rows, fields) {
+			if (err)
+				throw err;
+			console.log(data);
+		});
+		connection.end();
+		//socket.send(data) //this will send data to only current socket
+		io.sockets.emit("msgEntry", data); // send message to all clients
+	});
 
 });
 
