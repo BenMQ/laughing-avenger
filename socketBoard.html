@@ -1,42 +1,66 @@
 <html>
-<head>
-	<title>Express Message Board</title>
-	<!-- <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/1.1.2/normalize.css"> -->
-	<link rel="stylesheet" type="text/css" href="public/css/styles.css">
-	<link href='http://fonts.googleapis.com/css?family=Merriweather:300,700' rel='stylesheet' type='text/css'>
-	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-	<script type="text/javascript">
-		$(function () {
-			var socket = io.connect("/"); //like a persistent tube between client and server on directory '/'
+	<head>
+		<title>Express Message Board</title>
+		<!-- <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/1.1.2/normalize.css"> -->
+		<link rel="stylesheet" type="text/css" href="public/css/styles.css">
+		<link href='http://fonts.googleapis.com/css?family=Merriweather:300,700' rel='stylesheet' type='text/css'>
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				var socket = io.connect("/"); //like a persistent tube between client and server on directory '/'
 
-			$.get("/messages", function (data) {
-				var i = 0;
-				for (i = 0; i < data.length; i++)
-					$("#messageBoard").append("<p>" + data[i] + "</p>").append($('<button class="upVoteBtn">'));
-									
-			});
+				$.get("/messages", function(data) {
+					var i = 0;
+					for (i = 0; i < data.length; i++) {
+						var txt = $("<p data-msgID='" + data.ID + "'>" + data[i].content + "</p>");
+						var upVoteBtn = $('<button class="upVoteBtn" data-msgID="' + data[i].ID + '">&#8743;</button>');
+						var downVoteBtn = $('<button class="downVoteBtn" data-msgID="' + data[i].ID + '">&#8744;</button>');
+						var votesDisplay = $('<span class="votes" data-msgID="' + data[i].ID + '">0</span>');
+						if (data[i].vote) {
+							votesDisplay.text(data[i].vote);
+						}
+						upVoteBtn.click(upVote);
+						downVoteBtn.click(downVote);
+						$("#messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+					}
 
-						//------------- It's a good idea to avoid default "message" channel --------------
-						socket.on("msgEntry", function (data) { //event listener, when server sends message, do the below operation
-					$("#messageBoard").append("<p>" + data + "</p>");
-			});
+				});
 
-			$("#sendBtn").click(function () {
-				var msgText = $("#msgText").val();
-				socket.emit("msgEntry", msgText); //we're no longer sending a POST, we do socket.send
-				$("#msgText").focus().val("");
+				//------------- It's a good idea to avoid default "message" channel --------------
+				socket.on("msgEntry", function(data) { //event listener, when server sends message, do the below operation
+					var txt = $("<p data-msgID='" + data.ID + "'>" + data.content + "</p>");
+					var upVoteBtn = $('<button class="upVoteBtn" data-msgID="' + data.ID + '">&#8743;</button>');
+					var downVoteBtn = $('<button class="downVoteBtn" data-msgID="' + data.ID + '">&#8744;</button>');
+					var votesDisplay = $('<span class="votes" data-msgID="' + data.ID + '">0</span>');
+					upVoteBtn.click(upVote);
+					downVoteBtn.click(downVote);
+					$("#messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+				});
+
+				$("#sendBtn").click(function() {
+					var msgText = $("#msgText").val();
+					socket.emit("msgEntry", msgText); //we're no longer sending a POST, we do socket.emit
+					$("#msgText").focus().val("");
+				});
+
+				//----- Minimal voting. It's not stored into db yet as I'm not sure how the structure will be like yet------
+				//----- @boyang
+				function upVote() {
+					socket.emit('vote', {ID: $(this).attr("data-msgID"), value: 1});
+				}
+				function downVote() {
+					socket.emit('vote', {ID: $(this).attr("data-msgID"), value: -1});
+				}
+
+				socket.on('vote', function(vote) {
+					console.log('received vote');
+					$('span.votes[data-msgID="' + vote.ID + '"]').text(vote.value);
+				});
 			});
-						
-						//----- Minimal voting. It's not stored into db yet as I'm not sure how the structure will be like ------
-						// @boyang
-						$(".voteBtn").click(function() {
-							
-						});
-		});
-	</script>
-</head>
-<body>
+		</script>
+	</head>
+	<body>
 
 		<header>
 			<div class ="container">
@@ -69,5 +93,5 @@
 		</div>
 
 
-</body>
+	</body>
 </html>
