@@ -48,7 +48,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			if (err)
 				throw err;
 
-			msgEntry = {ID: result.insertId, content: data, vote: 0};
+			msgEntry = {ID: result.insertId, content: data,};
 			messages.push(msgEntry);
 			console.log("In msgEntry handler");
 			console.log(msgEntry);

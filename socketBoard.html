@@ -13,7 +13,7 @@
 			$.get("/messages", function(data) {
 				var i = 0;
 				for (i = 0; i < data.length; i++) {
-					var txt = $("<p data-msgID='" + data.ID + "'>" + data[i].content + "</p>");
+					var txt = $("<p data-msgID='" + data[i].ID + "'>" + data[i].content + "</p>");
 					var upVoteBtn = $('<button class="upVoteBtn" data-msgID="' + data[i].ID + '">&#8743;</button>');
 					var downVoteBtn = $('<button class="downVoteBtn" data-msgID="' + data[i].ID + '">&#8744;</button>');
 					var votesDisplay = $('<span class="votes" data-msgID="' + data[i].ID + '">0</span>');
@@ -37,7 +37,11 @@
 				downVoteBtn.click(downVote);
 				$("#messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
 			});
-
+			socket.on('vote', function(voteData) {
+				$('span.votes[data-msgID="'+ voteData.ID +'"]').text(voteData.value);
+			});
+			
+			
 			$("#sendBtn").click(function() {
 				var msgText = $("#msgText").val();
 				socket.emit("msgEntry", msgText); //we're no longer sending a POST, we do socket.emit
@@ -52,7 +56,7 @@
 			function downVote() {
 				socket.emit('vote', {ID: $(this).attr("data-msgID"), value: -1});
 			}
-
+			
 			// Initiates FB object
 			window.fbAsyncInit = function() {
 			FB.init({ appId: '492242497533605', 
