@@ -26,13 +26,65 @@
 				var msgText = $("#msgText").val();
 				socket.emit("msgEntry", msgText); //we're no longer sending a POST, we do socket.send
 				$("#msgText").focus().val("");
-			});
-						
+			});		
 						//----- Minimal voting. It's not stored into db yet as I'm not sure how the structure will be like ------
 						// @boyang
 						$(".voteBtn").click(function() {
 							
 						});
+			// Loads FB JS SDK
+			(function() {
+				var e = document.createElement('script'); e.async = true;
+				e.src = document.location.protocol 
+				+ '//connect.facebook.net/en_US/all.js';
+				document.getElementById('fb-root').appendChild(e);
+			}());
+
+			// Initiates FB object
+			window.fbAsyncInit = function() {
+			FB.init({ appId: '492242497533605', 
+				status: true, 
+				cookie: true,
+				xfbml: true,
+				oauth: true
+			});
+
+			function updateLogin(response) {
+				var $loginButton = $('#login-button');
+				if (response.authResponse) {
+					// logged in and connected
+					// Query user profile
+					FB.api('/me', function(response) {
+						$loginButton.text(response.first_name);
+					});
+					$loginButton.off('click.login');
+					$loginButton.on('click.logout', function(){
+						FB.logout(function(response) {
+							$loginButton.text('Login');
+						})
+					})
+				} else {
+					// logged out
+					$loginButton.off('click.logout');
+					$loginButton.on('click.login', function(){
+						FB.login(function(response){
+							if (response.authResponse) {
+								FB.api('/me', function(response) {
+									$loginButton.text(response.first_name);
+								});
+							} else {
+
+							}
+						}, {scope: 'email'});
+					})
+				}
+			}
+			// run once with current status and whenever the status changes
+			FB.getLoginStatus(updateLogin);
+			FB.Event.subscribe('auth.statusChange', updateLogin);    
+		  };
+
+		// End of document.ready
 		});
 	</script>
 </head>
@@ -42,7 +94,7 @@
 			<div class ="container">
 				<h1><a href="/">ProjectName</a></h1>
 				<ul>
-					<li><a class='login' href="">Login</a></li>
+					<li><a class='login' href="#" id="login-button">Login</a></li>
 					<li><a href="">Dashboard</a></li>
 					<li><a href="">My Classes</a></li>
 				</ul>
@@ -68,6 +120,6 @@
 			</div>
 		</div>
 
-
+<div id="fb-root"></div>
 </body>
 </html>
