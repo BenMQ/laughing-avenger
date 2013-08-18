@@ -44,25 +44,30 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 		var msgEntry;
 		connection = mysql.createConnection(config.db);
 		connection.connect();
-		connection.query('INSERT INTO msg (content) VALUES ("' + data + '");', function(err, rows, fields) {
+		connection.query('INSERT INTO msg (content) VALUES ("' + data + '");', function(err, result) {
 			if (err)
 				throw err;
-			console.log(data);
+
+			msgEntry = {ID: result.insertId, content: data, vote: 0};
+			console.log("In msgEntry handler");
+			console.log(msgEntry);
+			io.sockets.emit("msgEntry", msgEntry); // send message to all clients
 		});
-		connection.query('SELECT * FROM msg WHERE content = "' + data + '";', function(err, rows, fields) {
-			if (err)
-				throw err;
-			if (rows[0]) {
-				messages.push(rows[0]);
-			}
-			msgEntry = rows[0];
-		});
+		//--------- This part was used to retrieve msg, but it was too slow ------
+//		connection.query('SELECT * FROM msg WHERE content = "' + data + '";', function(err, rows, fields) {
+//			if (err)
+//				throw err;
+//			if (rows[0]) {
+//				messages.push(rows[0]);
+//				msgEntry = rows[0];
+//			}
+//		});
 		connection.end();
 		//socket.send(data) //this will send data to only current socket
-		io.sockets.emit("msgEntry", msgEntry); // send message to all clients
+
 	});
-	
-	
+
+
 	//--------- Server handles incoming votes ------------
 	//--- @boyang
 	socket.on('vote', function(clientVote) {
@@ -71,15 +76,15 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 		console.log(messages);
 		var len = messages.length;
 		var msgToVote;
-		for (var i=0; i< len; i++) {
-			
+		for (var i = 0; i < len; i++) {
+
 			if (parseInt(messages[i].ID) === parseInt(clientVote.ID)) {
 				console.log("found msgToVote");
 				msgToVote = messages[i];
 				break;
 			}
 		}
-		
+
 		if (msgToVote) {
 			if (msgToVote.vote) {
 				msgToVote.vote += clientVote.value;
@@ -90,8 +95,8 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			}
 			io.sockets.emit('vote', {ID: clientVote.ID, value: msgToVote.vote});
 		}
-		
-		
+
+
 	});
 });
 
