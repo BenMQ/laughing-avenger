@@ -19,7 +19,7 @@ var messages = [];
 var mysql = require('mysql');
 var connection = mysql.createConnection(config.db);
 connection.connect();
-connection.query('SELECT * from msg', function(err, rows, fields) {
+connection.query('SELECT * from post', function(err, rows, fields) {
 	if (err)
 		throw err;
 	for (var i = 0; i < rows.length; i++) {
@@ -44,7 +44,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 		var msgEntry;
 		connection = mysql.createConnection(config.db);
 		connection.connect();
-		connection.query('INSERT INTO msg (content) VALUES ("' + data + '");', function(err, result) {
+		connection.query('INSERT INTO post (content) VALUES ("' + data + '");', function(err, result) {
 			if (err)
 				throw err;
 
