@@ -33,13 +33,14 @@ body {
 header {
     background: #fff;
     max-width: 100%;
+    min-width: 600px;
     height:80px;
     border-bottom: 1px solid #d0d5cb;
 }
 
 header ul {
     margin-top:22px;
-    width:400px;
+    width:360px;
     float:right;
     list-style-type: none;
 }
