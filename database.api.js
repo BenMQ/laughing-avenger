@@ -12,62 +12,62 @@ self.init = function(config) {
 	connection = mysql.createConnection(config);
 }
 
-self.getQuestions = function(limit, offset) {
+self.getQuestions = function(limit, offset, next) {
 	console.log("got a question");
 }
 
-self.getQuestion = function(questionId) {
+self.getQuestion = function(questionId, next) {
 
 }
 
-self.getAnswers = function(questionId, limit, offset) {
+self.getAnswers = function(questionId, limit, offset, next) {
 
 }
 
-self.getAnswer = function(answerId) {
+self.getAnswer = function(answerId, next) {
 
 }
 
-self.getComments = function(postId, limit, offset) {
+self.getComments = function(postId, limit, offset, next) {
 
 }
 
-self.getComment = function(id) {
+self.getComment = function(id, next) {
 
 }
 
-self.addQuestion = function(user, title, content) {
+self.addQuestion = function(user, title, content, next) {
 
 }
 
-self.addAnswer = function(user, questionId, content) {
+self.addAnswer = function(user, questionId, content, next) {
 
 }
 
-self.addComment = function(user, postId, content) {
+self.addComment = function(user, postId, content, next) {
 
 }
 
-self.voteUp = function(user, postId) {
+self.voteUp = function(user, postId, next) {
 
 }
 
-self.voteDown = function(user, postId) {
+self.voteDown = function(user, postId, next) {
 
 }
 
-self.voteCancel = function(user, postId) {
+self.voteCancel = function(user, postId, next) {
 
 }
 
-self.acceptAnswer = function(answerId) {
+self.acceptAnswer = function(answerId, next) {
 
 }
 
-self.close = function(postId) {
+self.close = function(postId, next) {
 
 }
 
-self.reopen = function(postId) {
+self.reopen = function(postId, next) {
 
 }
