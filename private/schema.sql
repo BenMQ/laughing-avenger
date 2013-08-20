@@ -17,7 +17,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
   `owner_id` INT NOT NULL COMMENT 'ID of the user that posted this' ,
   `type` INT NOT NULL COMMENT '0 for question, 1 for answer' ,
   `parentid` INT UNSIGNED NULL DEFAULT NULL COMMENT 'NULL for question, id of parent question for answers' ,
-  `timestamp` DATETIME NOT NULL COMMENT 'time created' ,
+  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time created' ,
   `votecount` INT NOT NULL DEFAULT 0 COMMENT 'upvote minus downvote' ,
   `close_time` DATETIME NULL DEFAULT NULL COMMENT 'NULL for open questions\n' ,
   `accepted_answer` INT UNSIGNED NULL DEFAULT NULL COMMENT 'id for the answer accepted' ,
@@ -66,7 +66,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`comment` (
   `user_id` INT UNSIGNED NOT NULL ,
   `post_id` INT UNSIGNED NOT NULL ,
   `content` TEXT NOT NULL ,
-  `timestamp` DATETIME NOT NULL ,
+  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
   PRIMARY KEY (`id`) ,
   INDEX `comment_post_id_id_idx` (`post_id` ASC) ,
   CONSTRAINT `comment_post_id_id`
