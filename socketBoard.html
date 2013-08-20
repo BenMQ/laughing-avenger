@@ -1,120 +1,74 @@
 <html xmlns:fb="http://ogp.me/ns/fb#">
-<head>
-	<title>Express Message Board</title>
-	<!-- <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/1.1.2/normalize.css"> -->
-	<link rel="stylesheet" type="text/css" href="public/css/styles.css">
-	<link href='http://fonts.googleapis.com/css?family=Merriweather:300,700' rel='stylesheet' type='text/css'>
-	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-	<script type="text/javascript">
-		$(function () {
-			var socket = io.connect("/"); //like a persistent tube between client and server on directory '/'
-
-			$.get("/messages", function(data) {
-				var i = 0;
-				for (i = 0; i < data.length; i++) {
-					var txt = $("<p data-msgID='" + data[i].ID + "'>" + data[i].content + "</p>");
-					var upVoteBtn = $('<button class="upVoteBtn" data-msgID="' + data[i].ID + '">&#8743;</button>');
-					var downVoteBtn = $('<button class="downVoteBtn" data-msgID="' + data[i].ID + '">&#8744;</button>');
-					var votesDisplay = $('<span class="votes" data-msgID="' + data[i].ID + '">0</span>');
-					if (data[i].vote) {
-						votesDisplay.text(data[i].vote);
-					}
-					upVoteBtn.click(upVote);
-					downVoteBtn.click(downVote);
-					$(".messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
-				}
-
-			});
-
-			//------------- It's a good idea to avoid default "message" channel --------------
-			socket.on("msgEntry", function(data) { //event listener, when server sends message, do the below operation
-				var txt = $("<p data-msgID='" + data.ID + "'>" + data.content + "</p>");
-				var upVoteBtn = $('<button class="upVoteBtn" data-msgID="' + data.ID + '">&#8743;</button>');
-				var downVoteBtn = $('<button class="downVoteBtn" data-msgID="' + data.ID + '">&#8744;</button>');
-				var votesDisplay = $('<span class="votes" data-msgID="' + data.ID + '">0</span>');
-				upVoteBtn.click(upVote);
-				downVoteBtn.click(downVote);
-				$(".messageBoard").append(txt).append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
-			});
-			socket.on('vote', function(voteData) {
-				$('span.votes[data-msgID="'+ voteData.ID +'"]').text(voteData.value);
-			});
-
-
-			$(".sendBtn").click(function() {
-				var msgText = $(".msgText").val();
-				socket.emit("msgEntry", msgText); //we're no longer sending a POST, we do socket.emit
-				$(".msgText").focus().val("");
-			});
-
-			//----- Minimal voting. It's not stored into db yet as I'm not sure how the structure will be like yet------
-			//----- @boyang
-			function upVote() {
-				socket.emit('vote', {ID: $(this).attr("data-msgID"), value: 1});
-			}
-			function downVote() {
-				socket.emit('vote', {ID: $(this).attr("data-msgID"), value: -1});
-			}
-
-			// Initiates FB object
-			window.fbAsyncInit = function() {
-			FB.init({ appId: '492242497533605',
-				status: true,
-				cookie: true,
-				xfbml: true,
-				oauth: true
-			});
-
-			function updateLogin(response) {
-				var $loginButton = $('#login-button');
-				if (response.authResponse) {
-					// logged in and connected
-					// Query user profile
-					FB.api('/me', function(response) {
-						$loginButton.text(response.first_name);
+	<head>
+		<title>Express Message Board</title>
+		<!-- <link rel="stylesheet" type="text/css" href="http://necolas.github.io/normalize.css/1.1.2/normalize.css"> -->
+		<link rel="stylesheet" type="text/css" href="public/css/styles.css">
+		<link href='http://fonts.googleapis.com/css?family=Merriweather:300,700' rel='stylesheet' type='text/css'>
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/public/js/main.js"></script>
+		<script type="text/javascript" >
+			$(function() {
+				// Initiates FB object
+				// This script runs when appended to html document
+				window.fbAsyncInit = function() {
+					FB.init({appId: '492242497533605',
+						status: true,
+						cookie: true,
+						xfbml: true,
+						oauth: true
 					});
-					$loginButton.off('click.login');
-					$loginButton.on('click.logout', function(){
-						FB.logout(function(response) {
-							$loginButton.text('Login');
-						})
-					})
-				} else {
-					// logged out
-					$loginButton.off('click.logout');
-					$loginButton.on('click.login', function(){
-						FB.login(function(response){
-							if (response.authResponse) {
-								FB.api('/me', function(response) {
-									$loginButton.text(response.first_name);
-								});
-							} else {
 
-							}
-						}, {scope: 'email'});
-					})
-				}
-			}
-			// run once with current status and whenever the status changes
-			FB.getLoginStatus(updateLogin);
-			FB.Event.subscribe('auth.statusChange', updateLogin);
-		  };
+					function updateLogin(response) {
+						var $loginButton = $('#login-button');
+						if (response.authResponse) {
+							// logged in and connected
+							// Query user profile
+							FB.api('/me', function(response) {
+								$loginButton.text(response.first_name);
+								window.user = response;
+								console.log(response);
+							});
+							$loginButton.off('click.login');
+							$loginButton.on('click.logout', function() {
+								FB.logout(function(response) {
+									$loginButton.text('Login');
+								})
+							})
+						} else {
+							// logged out
+							$loginButton.off('click.logout');
+							$loginButton.on('click.login', function() {
+								FB.login(function(response) {
+									if (response.authResponse) {
+										FB.api('/me', function(response) {
+											$loginButton.text(response.first_name);
+										});
+									} else {
 
-		// End of document.ready
-		});
-	</script>
-</head>
-<body>
-	<div id="fb-root"></div>
-	<script>(function(d, s, id) {
-		var js, fjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) return;
-		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=492242497533605";
-		fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'facebook-jssdk'));</script>
-
+									}
+								}, {scope: 'email'});
+							})
+						}
+					}
+					// run once with current status and whenever the status changes
+					FB.getLoginStatus(updateLogin);
+					FB.Event.subscribe('auth.statusChange', updateLogin);
+				};
+			});
+		</script>
+	</head>
+	<body>
+		<div id="fb-root"></div>
+		<script>(function(d, s, id) {
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id))
+					return;
+				js = d.createElement(s);
+				js.id = id;
+				js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=492242497533605";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));</script>
 		<header>
 			<div class ="container">
 				<h1><a href="/">ProjectName</a></h1>
@@ -138,18 +92,20 @@
 		<div class='msgwrap'>
 			<div class ="container">
 				<h2 class='question'>Q: Proof of the Pigeonhole Principle?</h2>
-				<div class="messageBoard">
-
+				
+				<div class="postDiv">
+					<input class="postTitle" type="text" autofocus placeholder="Your Question title" /><br>
+					<textarea class="postText" rows="5" cols="40" placeholder="Your Question Here"></textarea><br>
+					<button class="sendNewPostBtn">Send</button>
+					<hr>
 				</div>
-				<div class="messageInput">
-					<input class="msgText" type="text" autofocus placeholder="Your message here"/>
-					<button class="sendBtn">Send</button>
-				</div>
+				
+				<div class="messageBoard">	</div>
 			</div>
 		</div>
 
 		<div class="like-button">
 			<fb:like href="http://la.cmq.me" width="90px" layout="button_count" show_faces="true" send="false"></fb:like>
 		</div>
-</body>
+	</body>
 </html>

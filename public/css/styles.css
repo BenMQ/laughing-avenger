@@ -1,3 +1,30 @@
+/* @Boyang added some ad hoc stuff just to make things clearer to see
+Dear Yos pls delete these when the time comes */
+
+.masterPostDiv {
+	/*border: 1px solid black;*/
+	margin: 15px;
+}
+.masterPostDiv .textDiv p {
+	width: 80%;
+	margin: 20px;
+}
+.postText, .postTitle {
+	width: 70%;
+	margin: 10px;
+}
+
+.postDiv {
+	margin-left: 40px;
+	padding: 10px;
+}
+
+.messageBoard .textDiv {
+	margin-left: 0px;
+}
+.messageBoard div {
+	margin-left: 20px;
+}
 /* Ask Yos for questions */
 
 html {
