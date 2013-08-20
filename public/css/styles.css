@@ -25,6 +25,10 @@ Dear Yos pls delete these when the time comes */
 .messageBoard div {
 	margin-left: 20px;
 }
+
+.answersDiv p.answer {
+	background-color: #66FF33;
+}
 /* Ask Yos for questions */
 
 html {

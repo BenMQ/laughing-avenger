@@ -27,7 +27,7 @@
 							FB.api('/me', function(response) {
 								$loginButton.text(response.first_name);
 								window.user = response;
-								console.log(response);
+//								console.log(response);
 							});
 							$loginButton.off('click.login');
 							$loginButton.on('click.logout', function() {

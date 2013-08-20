@@ -12,123 +12,97 @@ var config = require("./config/config.js");
 app.get("/", function(req, res) {
 	res.sendfile('socketBoard.html');
 });
-
-// Introducing master arr, where we store all data
-var masterArr = [];
-
-// Since I dont have insert id for a_i primary key now
-// Have to do this stupid counter
-var post_id_ai = 1;
-
-// define post obj class
-function Post(initObj) {
-	if (!initObj.id || !initObj.owner_id) {
-		return;
-	}
-	
-	this.id = initObj.id;
-	this.owner_id = initObj.owner_id;
-	this.title = initObj.title || '';
-	this.content = initObj.content || '';
-	this.answers = [];
-	this.comments = [];
-	// Can't continue. I need the db to be working
-}
-var sample_post = new Post({
-	id: 1,
-	owner_id: 100001375167765,
-	title: "Sleepy",
-	content: "CS1231 Too Easy\\nAnd this is new line?",
-});
-
-masterArr.push(sample_post);
-
-sample_post = new Post({
-	id: 2,
-	owner_id: 100001375167765,
-	title: "Sleepy still",
-	content: "new line not shown considered good thing. Just to make this longer"+
-			"blablabla see what happens Friday need to submit 3230 homework i believe I have discovered a truly marvelous proof of this, which this margin is too narrow to contain.blablabla",
-});
-masterArr.push(sample_post);
-
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
 
-// Retrieve msg from mysql db
-// Don't know how to do yet, comment out first
+// Introducing master arr, where we store all data
+var masterArr = [];
 
-//var mysql = require('mysql');
-//var connection = mysql.createConnection(config.db);
-//connection.connect();
-//connection.query('SELECT * from post', function(err, rows, fields) {
-//	if (err)
-//		throw err;
-//	for (var i = 0; i < rows.length; i++) {
-//		messages.push(rows[i]);
-//		console.log("//---- printing table cols ---");
-//		console.log(rows[i]);
-//	}
-//});
-//connection.end();
+// Init db
+// Retrieve posts from mysql db and push to masterArr
+var db = require('./database.api.js');
+db.init(config.db);
+console.log('db module init!');
 
+var db_limit = 10; // How many qns do you want in one page?
+var db_offset = 0; // TODO: multipage thingy
+db.getQuestions(10, 0, function(results) {
+	for (var i = 0; i < results.length; i++) {
+		masterArr.push(results[i]);
+		masterArr[i].answers = [];
+		// A closure just for the callback
+		(function(i, cur_result) {
+			db.getAnswers(cur_result.id, db_limit, db_offset, function(answers) {
+				for (var j = 0; j < answers.length; j++) {
+					masterArr[i].answers.push(answers[j]);
+				}
+			});
+		})(i, results[i]);
+		masterArr[masterArr.length - 1].comments = [];
+	}
+});
 
 // For server side, emit sender and handler almost always together
 // The flow is: 1. Received emit from client 2. Push to masterArr
 //				3. Store to db 4. emit a signal to all client
-// Create a new event listener that response to a socket connection
-// here io refers to the socket server
+
 io.sockets.on("connection", function(socket) { //general handler for all socket connection events
 	socket.on("comment", function(data) {
-		
+
 	});
 	socket.on("ans", function(data) {
-		
+		db.addAnswer(data.owner_id, data.parent_id, data.content, function(id) {
+			db.getAnswer(id, function(results) {
+				if (results[0]) {
+					for (var i = 0; i < masterArr.length; i++) {
+						// Find the question which this answer belongs to
+						if (masterArr[i].id == results[0].parent_id) {
+							masterArr[i].answers.push(results[0]);
+							io.sockets.emit('ans', results[0]);
+							break;
+						}
+					}
+				}
+			});
+		});
 	});
 	socket.on("post", function(data) {
-		console.log("Received: " + data);
-
-		// db part, comment out
-//		connection = mysql.createConnection(config.db);
-//		connection.connect();
-//		connection.query('INSERT INTO post (content) VALUES ("' + data + '");', function(err, result) {
-//			if (err)
-//				throw err;
-//
-//			msgEntry = {ID: result.insertId, content: data, };
-//			messages.push(msgEntry);
-//			console.log("In msgEntry handler");
-//			console.log(msgEntry);
-//			io.sockets.emit("msgEntry", msgEntry); // send message to all clients
-//		});
-//		connection.end();
+		db.addQuestion(data.owner_id, data.title, data.content, function(id) {
+			db.getQuestion(id, function(results) {
+				if (results[0]) {
+					masterArr.push(results[0]);
+					masterArr[masterArr.length-1].answers = [];
+					io.sockets.emit('post', results[0]);
+				}
+			});
+		});
 	});
 	socket.on('vote', function(clientVote) {
 		console.log("server received vote");
 		console.log(clientVote);
-		console.log(messages);
-		var len = messages.length;
-		var msgToVote;
-		for (var i = 0; i < len; i++) {
-
-			if (parseInt(messages[i].ID) === parseInt(clientVote.ID)) {
-				console.log("found msgToVote");
-				msgToVote = messages[i];
-				break;
-			}
-		}
-
-		if (msgToVote) {
-			if (msgToVote.vote) {
-				msgToVote.vote += clientVote.value;
-			}
-			//---- If vote is not set, set it now -----
-			else {
-				msgToVote.vote = clientVote.value;
-			}
-			io.sockets.emit('vote', {ID: clientVote.ID, value: msgToVote.vote});
-		}
+		// Because voting db queries not there yet
+//		var len = messages.length;
+//		var msgToVote;
+//		for (var i = 0; i < len; i++) {
+//
+//			if (parseInt(messages[i].ID) === parseInt(clientVote.ID)) {
+//				console.log("found msgToVote");
+//				msgToVote = messages[i];
+//				break;
+//			}
+//		}
+//
+//		if (msgToVote) {
+//			if (msgToVote.vote) {
+//				msgToVote.vote += clientVote.value;
+//			}
+//			//---- If vote is not set, set it now -----
+//			else {
+//				msgToVote.vote = clientVote.value;
+//			}
+//			io.sockets.emit('vote', {ID: clientVote.ID, value: msgToVote.vote});
+//		}
 	});
 });
 
