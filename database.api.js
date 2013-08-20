@@ -1,15 +1,21 @@
 var mysql = require('mysql');
 
-var connection = false;
+var pool = false;
 
 var self = this;
+
+var __QUESTION = 0;
+var __ANSWER = 1;
+var __UP = 1;
+var __DOWN = 0;
 
 /**
  * Initialise the db connection with a config object
  * @param  {Object} config configuration object that contains at least host, user and pass
  */
 self.init = function(config) {
-	connection = mysql.createConnection(config);
+	console.log('init');
+	pool = mysql.createPool(config);
 }
 
 /**
@@ -17,13 +23,26 @@ self.init = function(config) {
  * @param  {string}   query query string
  * @param  {Function} next  callback that will be applied to result
  */
-_query = function(query, next) {
-	connection.query(query, function(err, result) {
-		if (err) throw err;
-		next(result);
+__query = function(query, next) {
+	pool.getConnection(function(err, connection) {
+		connection.query(query, function(err, result) {
+			connection.end();
+			if (err) throw err;
+			next(result);
+		});
 	})
 }
 
+__insertQuery = function(query, values, next) {
+	pool.getConnection(function(err, connection){
+		connection.query(query, values, function(err, result) {
+			connection.end();
+			if (err) throw err;
+			next(result.insertId);
+		});
+		
+	})
+}
 /**
  * Get a list of questions, sorted in reverse chronological order
  * @param  {integer}   limit  Number of results to return
@@ -33,8 +52,8 @@ _query = function(query, next) {
  *                            as an object with column name as field name
  */
 self.getQuestions = function(limit, offset, next) {
-	var query = "SELECT * from post ORDER BY timestamp DESC LIMIT " + mysql.escape(offset + ', ' + limit);
-	_query(query, next);
+	var query = "SELECT * from post WHERE type = " + __QUESTION + " ORDER BY timestamp DESC LIMIT " + mysql.escape(offset) + ', ' + mysql.escape(limit);
+	__query(query, next);
 }
 
 /**
@@ -45,15 +64,18 @@ self.getQuestions = function(limit, offset, next) {
  *                                exist.
  */
 self.getQuestion = function(questionId, next) {
-
+	var query = "SELECT * from post WHERE type = " + __QUESTION + " AND id = " + mysql.escape(questionId);
+	__query(query, next);
 }
 
 self.getAnswers = function(questionId, limit, offset, next) {
-
+	var query = "SELECT * from post WHERE type = " + __ANSWER + " AND parent_id = " + mysql.escape(questionId);
+	__query(query, next);
 }
 
 self.getAnswer = function(answerId, next) {
-
+	var query = "SELECT * from post WHERE type = "  + __ANSWER + " AND id = " + mysql.escape(answerId);
+	__query(query, next);
 }
 
 self.getComments = function(postId, limit, offset, next) {
@@ -72,11 +94,15 @@ self.getComment = function(id, next) {
  * @param {Function} next    Callback. ID of the created question is provided.
  */
 self.addQuestion = function(user, title, content, next) {
-
+	var query = 'INSERT INTO post SET ?';
+	var question = {owner_id: user, title: title, content: content, type: __QUESTION};
+	__insertQuery(query, question, next);
 }
 
 self.addAnswer = function(user, questionId, content, next) {
-
+	var query = 'INSERT INTO post SET ?';
+	var answer = {owner_id: user, content: content, type: __ANSWER, parent_id: questionId};
+	__insertQuery(query, answer, next);
 }
 
 self.addComment = function(user, postId, content, next) {
