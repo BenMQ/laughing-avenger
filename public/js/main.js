@@ -13,7 +13,7 @@ $(document).ready(function() {
 		var container = $('.messageBoard').eq(0);
 		for (var i = 0; i < data.length; i++) {
 			// TODO: differentiate post, answer, comment. Display accordingly
-			displayPost(data[i], container);
+			displayPost(data[data.length - 1 - i], container);
 		}
 		console.log(data);
 	});
