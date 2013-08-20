@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS `laughing_avenger`.`vote` ;
 CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`vote` (
   `user_id` INT UNSIGNED NOT NULL ,
   `post_id` INT UNSIGNED NOT NULL ,
-  `type` TINYINT NULL COMMENT '1 for upvote, 0 for downvote' ,
+  `type` TINYINT NULL COMMENT '1 for upvote, -1 for downvote' ,
   PRIMARY KEY (`user_id`, `post_id`) ,
   INDEX `vote_post_id_id_idx` (`post_id` ASC) ,
   CONSTRAINT `vote_post_id_id`
