@@ -1,6 +1,13 @@
 /* @Boyang added some ad hoc stuff just to make things clearer to see
 Dear Yos pls delete these when the time comes */
 
+.masterPostDiv .title {
+	display: block;
+	/*text-align: center;*/
+	font-weight: bold;
+	font-size: 18px;
+}
+
 .masterPostDiv {
 	/*border: 1px solid black;*/
 	margin: 15px;
@@ -9,12 +16,12 @@ Dear Yos pls delete these when the time comes */
 	width: 80%;
 	margin: 20px;
 }
-.postText, .postTitle {
+.newPostText, .newPostTitle {
 	width: 70%;
 	margin: 10px;
 }
 
-.postDiv {
+.newPostDiv {
 	margin-left: 40px;
 	padding: 10px;
 }

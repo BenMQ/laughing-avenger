@@ -11,14 +11,14 @@ $(document).ready(function() {
 		// The problem with class is, there are some stuff that should be singleton
 		// Here .eq(0) is just a failsafe. We should be careful
 		var container = $('.messageBoard').eq(0);
-		for (var i = data.length -1; i >= 0; i--) {
+		for (var i = 0; i < data.length; i++) {
 			// TODO: differentiate post, answer, comment. Display accordingly
 			displayPost(data[i], container);
 		}
 		console.log(data);
 	});
 
-	$(".sendNewPostBtn").click(newPost);
+	$(".newPostBtn").click(newPost);
 }); // End of document.ready
 
 // init socket
@@ -36,9 +36,8 @@ function displayPost(data, container) {
 	var masterPostDiv = $('<div class="masterPostDiv" data-msgid="' + data.id + '">');
 
 	var textDiv = $('<div class="textDiv" data-msgid="' + data.id + '">');
-	var title = $("<p>" + data.title + "</p>");
-	var txt = $("<p>" + data.content + "</p>");
-	textDiv.append(title).append(txt);
+	var txt = $("<p>"+"<span class='title'>" + data.title + "</span>" + data.content + "</p>");
+	textDiv.append(txt);
 
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
 	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
@@ -69,7 +68,7 @@ function displayPost(data, container) {
 		for (var i = 0; i < data.answers.length; i++) {
 			var answer = $('<p class="answer" data-msgid="' + data.answers[i].id + '">' +
 					data.answers[i].content + '</p>');
-			answersDiv.append(answer);
+			answersDiv.prepend(answer);
 		}
 	}
 	
@@ -123,8 +122,8 @@ function downVote() {
 function newPost() {
 	// The problem with class is, there are some stuff that should be singleton
 	// Here .eq(0) is just a failsafe. We should be careful
-	var msgTitle = $(".postDiv .postTitle").eq(0);
-	var msgText = $(".postDiv .postText").eq(0);
+	var msgTitle = $(".newPostDiv .newPostTitle").eq(0);
+	var msgText = $(".newPostDiv .newPostText").eq(0);
 	var owner_id = window.user.id;
 
 	socket.emit("post", {
