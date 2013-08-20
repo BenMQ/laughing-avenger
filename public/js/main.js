@@ -23,7 +23,7 @@ $(document).ready(function() {
 
 // init socket
 //like a persistent tube between client and server on directory '/'
-window.socket = io.connect("/");
+window.socket = io.connect(":4321/");
 
 // Displaying a post item on page using a post obj
 // Container is a jquery obj
