@@ -126,58 +126,27 @@ self.addComment = function(user, postId, content, next) {
  * @param  {Function} next   Callback. Boolean value will be provided
  */
 self.voteUp = function(user, postId, next) {
-	self.getVote(user, postId, function(result) {
-		if (result === __UP) {
-			__updateVoteCount(postId, result);
-		} else if (result === __DOWN) {
-			
-		} else {
-
-		}
-	}
-
 	var query = 'INSERT INTO vote (user_id, post_id, type) VALUES('+mysql.escape([user, postId, __UP])+')'
 				+ ' ON DUPLICATE KEY UPDATE type=VALUES(type)';
 	__query(query, next);
 }
 
 self.voteDown = function(user, postId, next) {
-	self.getVote(user, postId, function(result) {
-		if (result === __UP) {
-			__updateVoteCount(postId, result);
-		} else if (result === __DOWN) {
-			
-		} else {
-
-		}
-	}
-
 	var query = 'INSERT INTO vote (user_id, post_id, type) VALUES('+mysql.escape([user, postId, __DOWN])+')'
 				+ ' ON DUPLICATE KEY UPDATE type=VALUES(type)';
 	__query(query, next);
 }
 
-self.voteCancel = function(user, postId, next) {
-	self.getVote(user, postId, function(result) {
-		if (result) {
-			__updateVoteCount(postId, result, 0, __voteCancel, user, next));
-		} else {
-			next(true);
-		}
-	}
-
+self.voteCancel = function(user, postId, next) {=
 	var query = 'DELETE FROM vote WHERE user_id = ' + mysql.escape(user) + ' AND post_id = ' + mysql.escape(postId);
 	__query(query, next);
 }
 
-__updateVoteCount = function(postId, old, new, internal, user, next) {
-
-}
 /**
  * Gets the vote status of a user
  * @param  {integer}  user   The user to query
  * @param  {integer}  postId The post to query
- * @param  {Function} next   Callback. 1, 0 will be provided for up/down vote.
+ * @param  {Function} next   Callback. 1, -1 will be provided for up/down vote.
  *                           null if not voted
  */
 self.getVote = function(user, postId, next) {
