@@ -43,6 +43,10 @@ __insertQuery = function(query, values, next) {
 
 	})
 }
+
+__getTime = function() {
+	return new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+}
 /**
  * Get a list of questions, sorted in reverse chronological order
  * @param  {integer}   limit  Number of results to return
@@ -82,6 +86,12 @@ self.getAnswer = function(answerId, next) {
 				+ " AND id = " + mysql.escape(answerId);
 	__query(query, next);
 }
+
+self.getPost = function(postId, next) {
+	var query = "SELECT * FROM post WHERE id = " + mysql.escape(postId);
+	__query(query, next);
+}
+
 
 self.getComments = function(postId, limit, offset, next) {
 	var query = "SELECT * FROM comment WHERE post_id = " + mysql.escape(postId)
@@ -166,13 +176,23 @@ self.getVote = function(user, postId, next) {
  * @param  {Function} next     Callback, boolean to flag success/failure
  */
 self.acceptAnswer = function(answerId, next) {
+	var query = 'UPDATE post SET accepted_answer=' + mysql.escape(answerId)
+				+ ' WHERE id=(SELECT parent_id FROM (SELECT * FROM post) p WHERE id=' + mysql.escape('answerId') + ')';
+	__query(query, next);
+}
 
+self.cancelAnswer = function(answerId, next) {
+	var query = 'UPDATE post SET accepted_answer=NULL'
+				+ ' WHERE id=(SELECT parent_id FROM (SELECT * FROM post) p WHERE id=' + mysql.escape('answerId') + ')';
+	__query(query, next);
 }
 
 self.close = function(postId, next) {
-
+	var query = 'UPDATE post SET close_time=' + __getTime + ' WHERE id=' + mysql.escape(postId);
+	__query(query, next);
 }
 
 self.reopen = function(postId, next) {
-
+	var query = 'UPDATE post SET close_time=NULL WHERE id=' + mysql.escape(postId);
+	__query(query, next);
 }
