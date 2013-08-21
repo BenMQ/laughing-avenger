@@ -3,7 +3,7 @@ var app = express();
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
 app.use(express.cookieParser());
-app.use(express.session({ secret: 'fragen' }));
+app.use(express.session({secret: 'fragen'}));
 
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
@@ -13,7 +13,7 @@ var config = require("./config/config.js");
 // Routes, refactored to routes/index.js
 app.get("/", routes.main);
 app.get('/masterArr', function(req, res) {
-    res.json(masterArr);
+	res.json(masterArr);
 });
 // app.get('/classes/:moduleCode', routes.modulePage);
 // app.get('/dashboard', routes.dashBoard);
@@ -21,11 +21,11 @@ app.get('/masterArr', function(req, res) {
 // Introducing master arr, where we store all data
 var masterArr = [];
 masterArr.findPost = function(id) {
-	for (var i=0; i<masterArr.length; i++) {
+	for (var i = 0; i < masterArr.length; i++) {
 		if (masterArr[i].id == id) {
 			return masterArr[i];
 		}
-		for (var j=0; j<masterArr[i].answers.length; j++) {
+		for (var j = 0; j < masterArr[i].answers.length; j++) {
 			if (masterArr[i].answers[j].id == id) {
 				return masterArr[i].answers[j];
 			}
@@ -83,16 +83,23 @@ db.getQuestions(10, 0, function(results) {
 io.sockets.on("connection", function(socket) { //general handler for all socket connection events
 	socket.on("comment", function(data) {
 		db.addComment(data.user_id, data.post_id, data.content, function(id) {
+			console.log('enter 1');
 			db.getComment(id, function(results) {
+				console.log('enter 2');
 				if (results[0]) {
-					for (var i = 0; i < masterArr.length; i++) {
-
-						// Find the post which this comment belongs to
-						if (masterArr[i].id == results[0].post_id) {
-							masterArr[i].answers.push(results[0]);
-							io.sockets.emit('ans', results[0]);
-							break;
+					console.log('enter 3');
+					console.log(results);
+					var cur_post = masterArr.findPost(results[0].post_id);
+					if (cur_post) {
+						console.log('enter 4');
+						if (cur_post.comments) {
+							cur_post.comments.push(results[0]);
 						}
+						else {
+							cur_post.comments = [];
+							cur_post.comments.push(results[0]);
+						}
+						io.sockets.emit('comment', results[0]);
 					}
 				}
 			});
@@ -106,6 +113,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 						// Find the question which this answer belongs to
 						if (masterArr[i].id == results[0].parent_id) {
 							masterArr[i].answers.push(results[0]);
+							masterArr[i].answers[masterArr[i].answers.length-1].comments=[];
 							io.sockets.emit('ans', results[0]);
 							break;
 						}
@@ -120,6 +128,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 				if (results[0]) {
 					masterArr.push(results[0]);
 					masterArr[masterArr.length - 1].answers = [];
+					masterArr[masterArr.length - 1].comments = [];
 					io.sockets.emit('post', results[0]);
 				}
 			});
@@ -148,7 +157,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {
 							var curPost = masterArr.findPost(results[0].id);
-							
+
 							if (curPost) {
 								console.log('enter votecount update');
 								curPost.votecount = results[0].votecount;
