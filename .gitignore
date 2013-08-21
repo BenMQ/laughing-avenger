@@ -26,3 +26,5 @@ nbproject
 config/config.development.js
 
 # Back up from MySQLWorkbench
+*.bak
+*.mwb
