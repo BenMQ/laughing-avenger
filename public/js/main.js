@@ -107,8 +107,9 @@ socket.on("comment", function(data) {
 
 });
 socket.on('vote', function(postData) {
+	console.log(postData);
 	// Individual vote is useless. Just send a standard post obj from server
-	$('.masterPostDiv .voteDiv span.votes[data-msgid="' + postData.id + '"]').text(postData.votecount);
+	$('.masterPostDiv .voteDiv'+'[data-msgid="' + postData.id + '"]'+' span.votes').text(postData.votecount);
 });
 
 // Here are the emit senders. Through some trigger, the page will send signals

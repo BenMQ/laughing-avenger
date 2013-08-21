@@ -29,6 +29,7 @@ var db_limit = 10; // How many qns do you want in one page?
 var db_offset = 0; // TODO: multipage thingy
 db.getQuestions(10, 0, function(results) {
 	for (var i = 0; i < results.length; i++) {
+		console.log(results[i]);
 		masterArr.push(results[i]);
 		masterArr[i].answers = [];
 		// A closure just for the callback
@@ -81,28 +82,28 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	socket.on('vote', function(clientVote) {
 		console.log("server received vote");
 		console.log(clientVote);
-		// Because voting db queries not there yet
-//		var len = messages.length;
-//		var msgToVote;
-//		for (var i = 0; i < len; i++) {
-//
-//			if (parseInt(messages[i].ID) === parseInt(clientVote.ID)) {
-//				console.log("found msgToVote");
-//				msgToVote = messages[i];
-//				break;
-//			}
-//		}
-//
-//		if (msgToVote) {
-//			if (msgToVote.vote) {
-//				msgToVote.vote += clientVote.value;
-//			}
-//			//---- If vote is not set, set it now -----
-//			else {
-//				msgToVote.vote = clientVote.value;
-//			}
-//			io.sockets.emit('vote', {ID: clientVote.ID, value: msgToVote.vote});
-//		}
+		if (clientVote.type == 1) {
+			db.voteUp(clientVote.user_id, clientVote.post_id, function(result) {
+				if (result) {
+					db.getQuestion(clientVote.post_id, function(results) {
+						if (results[0]) {
+							io.sockets.emit('vote', results[0]);
+						}
+					});
+				}
+			});
+		}
+		else if (clientVote.type == -1) {
+			db.voteDown(clientVote.user_id, clientVote.post_id, function(result) {
+				if (result) {
+					db.getQuestion(clientVote.post_id, function(results) {
+						if (results[0]) {
+							io.sockets.emit('vote', results[0]);
+						}
+					});
+				}
+			});
+		}
 	});
 });
 

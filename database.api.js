@@ -137,7 +137,7 @@ self.voteDown = function(user, postId, next) {
 	__query(query, next);
 }
 
-self.voteCancel = function(user, postId, next) {=
+self.voteCancel = function(user, postId, next) {
 	var query = 'DELETE FROM vote WHERE user_id = ' + mysql.escape(user) + ' AND post_id = ' + mysql.escape(postId);
 	__query(query, next);
 }
