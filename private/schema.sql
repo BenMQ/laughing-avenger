@@ -19,7 +19,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
   `parent_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'NULL for question, id of parent question for answers' ,
   `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time created' ,
   `votecount` INT NOT NULL DEFAULT 0 COMMENT 'upvote minus downvote' ,
-  `close_time` DATETIME NULL DEFAULT NULL COMMENT 'NULL for open questions\n' ,
+  `close_time` TIMESTAMP NULL DEFAULT NULL COMMENT 'NULL for open questions\n' ,
   `accepted_answer` INT UNSIGNED NULL DEFAULT NULL COMMENT 'id for the answer accepted' ,
   PRIMARY KEY (`id`) ,
   INDEX `question_answer_postid_idx` (`parent_id` ASC) ,
@@ -66,7 +66,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`comment` (
   `user_id` INT UNSIGNED NOT NULL ,
   `post_id` INT UNSIGNED NOT NULL ,
   `content` TEXT NOT NULL ,
-  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `timestamp` TIMESTAMP NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `comment_post_id_id_idx` (`post_id` ASC) ,
   CONSTRAINT `comment_post_id_id`
@@ -89,32 +89,7 @@ USE `laughing_avenger`$$
 CREATE TRIGGER `vote_BDEL` BEFORE DELETE ON vote FOR EACH ROW
 -- Edit trigger body code below this line. Do not edit lines above this one
 	UPDATE post p SET p.votecount=p.votecount - OLD.type
-	WHERE p.id = OLD.post_id; 
-$$
-
-
-USE `laughing_avenger`$$
-DROP TRIGGER IF EXISTS `laughing_avenger`.`vote_BUPD` $$
-USE `laughing_avenger`$$
-
-
-CREATE TRIGGER `vote_BUPD` BEFORE UPDATE ON vote FOR EACH ROW
--- Edit trigger body code below this line. Do not edit lines above this one
-	UPDATE post p SET p.votecount=p.votecount - OLD.type
-	WHERE p.id = OLD.post_id; 
-
-$$
-
-
-USE `laughing_avenger`$$
-DROP TRIGGER IF EXISTS `laughing_avenger`.`vote_AINS` $$
-USE `laughing_avenger`$$
-
-
-CREATE TRIGGER `vote_AINS` AFTER INSERT ON vote FOR EACH ROW
--- Edit trigger body code below this line. Do not edit lines above this one
-	UPDATE post p SET p.votecount=p.votecount + NEW.type
-	WHERE p.id = NEW.post_id; 
+	WHERE p.id = OLD.post_id;
 
 $$
 
@@ -127,7 +102,31 @@ USE `laughing_avenger`$$
 CREATE TRIGGER `vote_AUPD` AFTER UPDATE ON vote FOR EACH ROW
 -- Edit trigger body code below this line. Do not edit lines above this one
 	UPDATE post p SET p.votecount=p.votecount + NEW.type
+	WHERE p.id = NEW.post_id;
+$$
+
+
+USE `laughing_avenger`$$
+DROP TRIGGER IF EXISTS `laughing_avenger`.`vote_AINS` $$
+USE `laughing_avenger`$$
+
+
+CREATE TRIGGER `vote_AINS` AFTER INSERT ON vote FOR EACH ROW
+-- Edit trigger body code below this line. Do not edit lines above this one
+	UPDATE post p SET p.votecount=p.votecount + NEW.type
 	WHERE p.id = NEW.post_id; 
+$$
+
+
+USE `laughing_avenger`$$
+DROP TRIGGER IF EXISTS `laughing_avenger`.`vote_BUPD` $$
+USE `laughing_avenger`$$
+
+
+CREATE TRIGGER `vote_BUPD` BEFORE UPDATE ON vote FOR EACH ROW
+-- Edit trigger body code below this line. Do not edit lines above this one
+	UPDATE post p SET p.votecount=p.votecount - OLD.type
+	WHERE p.id = OLD.post_id;
 
 $$
 
