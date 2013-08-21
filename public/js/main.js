@@ -6,6 +6,7 @@
 //----- brings unexpected behaviour. ----------------
 // And things that don't need the document to be ready, should not be inside document.ready
 $(document).ready(function() {
+	
 	// get master arr from server, and display
 	$.get("/masterArr", function(data) {
 		// The problem with class is, there are some stuff that should be singleton
@@ -26,7 +27,7 @@ $(document).ready(function() {
 window.socket = io.connect(":4321/");
 
 function displayComment(data, container) {
-	
+	container.append($('<p class="comment">'+data.content+'</p>'));
 }
 
 // Displaying a post item on page using a post obj

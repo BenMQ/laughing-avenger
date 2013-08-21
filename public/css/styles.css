@@ -1,5 +1,10 @@
 /* @Boyang added some ad hoc stuff just to make things clearer to see
 Dear Yos pls delete these when the time comes */
+.commentsDiv p.comment {
+	background-color: #FFFF99;
+	
+}
+
 .answersDiv .answerDiv .ansVoteDiv, .answersDiv .answerDiv p {
 	display: inline-block;
 }

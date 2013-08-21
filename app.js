@@ -29,7 +29,7 @@ passport.use(new FacebookStrategy({
 
   function(accessToken, refreshToken, profile, done) {
     process.nextTick(function () {
-    	// console.log(profile);
+//    	 console.log(profile);
     	var user = {id:profile.id, username:profile.username, displayName:profile.displayName}
     	// console.log(user);
     	return done(null, user);
@@ -83,7 +83,6 @@ masterArr.findPost = function(id) {
 		}
 	}
 }
-
 
 // Init db
 // Retrieve posts from mysql db and push to masterArr
