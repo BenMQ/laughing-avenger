@@ -12,7 +12,8 @@ app.use("/public", express.static(__dirname + '/public'));
 // Routes, need to refactor to routes/index.js
 // Example: app.get("/dashboard", routes.dashboardFunc);
 app.get("/", function(req, res) {
-	res.sendfile('socketBoard.html');
+	res.header('Content-Type', 'text/html');
+	res.sendfile('socketBoard.ejs');
 });
 
 app.get('/masterArr', function(req, res) {
