@@ -40,7 +40,7 @@ __insertQuery = function(query, values, next) {
 			if (err) throw err;
 			next(result.insertId);
 		});
-		
+
 	})
 }
 /**

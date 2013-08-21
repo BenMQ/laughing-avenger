@@ -1,20 +1,73 @@
 var express = require("express");
 var app = express();
-
-// Static file directories
+app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
+app.use(express.cookieParser());
+app.use(express.session({ secret: 'fragen' }));
+
+var FACEBOOK_APP_ID = "492242497533605";
+var FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
+var passport = require('passport')
+  , FacebookStrategy = require('passport-facebook').Strategy;
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+passport.use(new FacebookStrategy({
+    clientID: FACEBOOK_APP_ID,
+    clientSecret: FACEBOOK_APP_SECRET,
+    callbackURL: "http://dev.fragen.cmq.me:4321/auth/facebook/callback"
+  },
+
+  function(accessToken, refreshToken, profile, done) {
+    process.nextTick(function () {
+    	// console.log(profile);
+    	var user = {id:profile.id, username:profile.username, displayName:profile.displayName}
+    	// console.log(user);
+    	return done(null, user);
+    });
+  }
+));
 
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
-
+var routes = require('./routes');
 var config = require("./config/config.js");
 
-app.get("/", function(req, res) {
-	res.sendfile('socketBoard.html');
-});
+// Routes, refactored to routes/index.js
+app.get("/", routes.main);
 app.get('/masterArr', function(req, res) {
-	res.json(masterArr);
+    res.json(masterArr);
 });
+// app.get('/classes/:moduleCode', routes.modulePage);
+// app.get('/dashboard', routes.dashBoard);
+
+
+// Auth routes
+app.get('/auth/facebook',
+  passport.authenticate('facebook'),
+  function(req, res){
+    // The request will be redirected to Facebook for authentication, so this
+    // function will not be called.
+  });
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    console.log("Auth success!");
+    res.redirect('/');
+  });
+app.get('/login', routes.login);
+app.get('/logout', routes.logout);
+// End of auth routes
 
 // Introducing master arr, where we store all data
 var masterArr = [];

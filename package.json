@@ -7,7 +7,9 @@
     "express": "~3.3.1",
     "mysql": "~2.0.0-alpha8",
     "socket.io": "~0.9.16",
-    "ejs":"0.8.4",
+    "ejs":"0.8.x",
+    "passport":"0.1.x",
+    "passport-facebook":"1.0.0"
   },
   "devDependencies": {},
   "scripts": {
