@@ -16,3 +16,9 @@ exports.modulePage = function(req,res){
 exports.dashBoard = function(req,res){
     res.send('Welcome to your dashboard!');
 }
+
+exports.loginError = function(req,res){
+    res.send("Sorry, we couldn't log you in.");
+}
+
+

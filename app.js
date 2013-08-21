@@ -1,6 +1,23 @@
 var express = require("express");
 var app = express();
 
+var passport = require('passport')
+  , FacebookStrategy = require('passport-facebook').Strategy;
+
+passport.use(new FacebookStrategy({
+    clientID: '492242497533605',
+    clientSecret: 'c7fdfdb90ef722119f78eb0476e64de2',
+    callbackURL: "http://dev.fragen.cmq.me:4321/"
+  },
+
+  function(accessToken, refreshToken, profile, done) {
+    User.findOrCreate({ facebookId: profile.id }, function(err, user) {
+      if (err) { return done(err); }
+      done(null, user);
+    });
+  }
+));
+
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
 var routes = require('./routes');
@@ -14,6 +31,13 @@ app.get("/", routes.main);
 app.get('/masterArr', routes.masterArr);
 app.get('/classes/:moduleCode', routes.modulePage);
 app.get('/dashboard', routes.dashBoard);
+
+
+// Auth routes
+app.get('/auth/facebook', passport.authenticate('facebook'));
+app.get('/auth/facebook/callback',
+	passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
+app.get('/login', routes.loginError)
 
 // Introducing master arr, where we store all data
 var masterArr = [];
