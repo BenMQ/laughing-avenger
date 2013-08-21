@@ -71,6 +71,11 @@ self.getQuestion = function(questionId, next) {
 	__query(query, next);
 }
 
+self.getPost = function(questionId, next) {
+	var query = "SELECT * FROM post WHERE id = " + mysql.escape(questionId);
+	__query(query, next);
+}
+
 self.getAnswers = function(questionId, limit, offset, next) {
 	var query = "SELECT * FROM post WHERE type = " + __ANSWER
 				+ " AND parent_id = " + mysql.escape(questionId);

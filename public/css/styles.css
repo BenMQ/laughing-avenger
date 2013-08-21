@@ -1,6 +1,8 @@
 /* @Boyang added some ad hoc stuff just to make things clearer to see
 Dear Yos pls delete these when the time comes */
-
+.answersDiv .answerDiv .ansVoteDiv, .answersDiv .answerDiv p {
+	display: inline-block;
+}
 .masterPostDiv .title {
 	display: block;
 	/*text-align: center;*/

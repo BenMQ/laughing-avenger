@@ -83,9 +83,10 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 		console.log("server received vote");
 		console.log(clientVote);
 		if (clientVote.type == 1) {
+			console.log("enter up/down if");
 			db.voteUp(clientVote.user_id, clientVote.post_id, function(result) {
 				if (result) {
-					db.getQuestion(clientVote.post_id, function(results) {
+					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {
 							io.sockets.emit('vote', results[0]);
 						}
@@ -96,7 +97,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 		else if (clientVote.type == -1) {
 			db.voteDown(clientVote.user_id, clientVote.post_id, function(result) {
 				if (result) {
-					db.getQuestion(clientVote.post_id, function(results) {
+					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {
 							io.sockets.emit('vote', results[0]);
 						}

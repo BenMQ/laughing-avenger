@@ -36,7 +36,7 @@ function displayPost(data, container) {
 	var masterPostDiv = $('<div class="masterPostDiv" data-msgid="' + data.id + '">');
 
 	var textDiv = $('<div class="textDiv" data-msgid="' + data.id + '">');
-	var txt = $("<p>"+"<span class='title'>" + data.title + "</span>" + data.content + "</p>");
+	var txt = $("<p>" + "<span class='title'>" + data.title + "</span>" + data.content + "</p>");
 	textDiv.append(txt);
 
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
@@ -61,17 +61,36 @@ function displayPost(data, container) {
 	var ansBtn = $('<button class="ansBtn">Add Answer</button>');
 	ansBtn.click(newAns);
 	ansDiv.append(ansInput).append(ansBtn);
-	
-	var answersDiv = $('<div class="answersDiv" data-msgid="' + data.id + '">');;
+
+	var answersDiv = $('<div class="answersDiv" data-msgid="' + data.id + '">');
 	if (data.answers && data.answers.length > 0) {
 		console.log('In displayAns');
 		for (var i = 0; i < data.answers.length; i++) {
+			console.log('forloop');
+			var answerDiv = $('<div class="answerDiv" data-msgid="' + data.answers[i].id + '">');
 			var answer = $('<p class="answer" data-msgid="' + data.answers[i].id + '">' +
 					data.answers[i].content + '</p>');
-			answersDiv.prepend(answer);
+
+			var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.answers[i].id + '">');
+			var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
+			var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
+			var votesDisplay = $('<span class="votes">0</span>');
+			if (data.answers[i].votecount) {
+				votesDisplay.text(data.answers[i].votecount);
+			}
+			upVoteBtn.click(upVote);
+			downVoteBtn.click(downVote);
+			ansVoteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+
+			answerDiv
+					.append(answer);
+			answerDiv.append(ansVoteDiv);
+			answersDiv.prepend(answerDiv);
+			console.log(answerDiv);
+			console.log(ansVoteDiv);
 		}
 	}
-	
+
 	if (data.comments && data.comments.length > 0) {
 		console.log('In displayPost');
 		console.log('TODO display the comments');
@@ -83,7 +102,7 @@ function displayPost(data, container) {
 			.append(commentDiv)
 			.append(ansDiv)
 			.append(answersDiv);
-		
+
 	container.prepend(masterPostDiv);
 }
 
@@ -98,10 +117,27 @@ socket.on("post", function(data) { //event listener, when server sends message, 
 });
 socket.on("ans", function(data) {
 	// Find the parent qn and prepend to it
-	var parentQn = $('.masterPostDiv[data-msgid="'+data.parent_id+'"]');
-	var newAnswer = $('<p class="answer" data-msgid="' + data.id + '">' +
-					data.content + '</p>');
-	$('.answersDiv',parentQn).prepend(newAnswer);
+	var parentQn = $('.masterPostDiv[data-msgid="' + data.parent_id + '"]');
+	var answerDiv = $('<div class="answerDiv" data-msgid="' + data.id + '">');
+	var answer = $('<p class="answer" data-msgid="' + data.id + '">' +
+			data.content + '</p>');
+
+	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
+	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
+	var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
+	var votesDisplay = $('<span class="votes">0</span>');
+	if (data.votecount) {
+		votesDisplay.text(data.votecount);
+	}
+	upVoteBtn.click(upVote);
+	downVoteBtn.click(downVote);
+	voteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+
+	answerDiv
+			.append(answer)
+			.append(voteDiv);
+
+	$('.answersDiv', parentQn).prepend(answerDiv);
 });
 socket.on("comment", function(data) {
 
@@ -109,12 +145,19 @@ socket.on("comment", function(data) {
 socket.on('vote', function(postData) {
 	console.log(postData);
 	// Individual vote is useless. Just send a standard post obj from server
-	$('.masterPostDiv .voteDiv'+'[data-msgid="' + postData.id + '"]'+' span.votes').text(postData.votecount);
+	if (postData.type == 0) {
+		$('.masterPostDiv .voteDiv' + '[data-msgid="' + postData.id + '"]' + ' span.votes').text(postData.votecount);
+	}
+	else if (postData.type == 1) {
+		console.log('received ans vote');
+		$('.masterPostDiv[data-msgid="'+postData.parent_id+'"] .answersDiv .answerDiv[data-msgid="'+postData.id+'"] .ansVoteDiv span.votes').text(postData.votecount);
+	}
 });
 
 // Here are the emit senders. Through some trigger, the page will send signals
 // To the server
 function upVote() {
+	console.log('send out up vote');
 	socket.emit('vote', {user_id: window.user.id, post_id: $(this).parent().attr("data-msgid"), type: 1});
 }
 function downVote() {
