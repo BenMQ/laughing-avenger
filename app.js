@@ -66,19 +66,20 @@ var pizza;
 app.get('/invite', function(req, res) {
 	console.log("logged in!");
 	console.log(req);
-	res.render("invite");
-
 
 	//Make graph queries!
 	// graph.get("yosriady", function(err, res) {
 	// 	console.log(res); // { id: '4', name: 'Mark Zuckerberg'... }
 	// });
 
-
 	//return all friends of me()
-	var query = "SELECT uid,name FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me())"
-	graph.fql(query, function(err, res) {
-		console.log(res); // { data: [ { uid: 513485082, name: 'Jeremy Tan' }, ] }
+	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me())"
+	graph.fql(query, function(err, fdata) {
+		console.log(fdata.data); // { data: [ { uid: 513485082, name: 'Jeremy Tan' }, ] }
+
+		//here need to pass data and render using EJS
+		res.render("invite", {friends: fdata.data});
+
 	});
 });
 

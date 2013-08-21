@@ -1,2 +1,50 @@
-<h1>Invite your friends!</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fragen | Ask and Learn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset='utf-8' />
+    <link href="../img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,300" rel="stylesheet" type="text/css" />
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet" />
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        ul li {
+            list-style-type: none;
+            display: inline;
+            float: left;
+            width: 300px;
+            padding: 10px;
+        }
 
+        ul li h4 {
+            font-size: 16px;
+            display:inline;
+
+        }
+    </style>
+
+
+</head>
+<body>
+
+
+
+<h1>Invite your friends to fragen!</h1>
+
+<ul>
+<% for(var i=0; i<friends.length; i++) {%>
+    <li>
+
+    <div id ='friend'>
+        <img src='<%= friends[i].pic_square %>' />
+        <a href='http://facebook.com/<%= friends[i].username %>'><h4><%=friends[i].name%></h4></a>
+        <a href='#' class='invite'>Invite</a>
+    </div>
+
+    </li>
+<% } %>
+</ul>
+
+</body>
+</html>
