@@ -18,6 +18,19 @@ app.get('/masterArr', function(req, res) {
 
 // Introducing master arr, where we store all data
 var masterArr = [];
+masterArr.findPost = function(id) {
+	for (var i=0; i<masterArr.length; i++) {
+		if (masterArr[i].id == id) {
+			return masterArr[i];
+		}
+		for (var j=0; j<masterArr[i].answers.length; j++) {
+			if (masterArr[i].answers[j].id == id) {
+				return masterArr[i].answers[j];
+			}
+		}
+	}
+}
+
 
 // Init db
 // Retrieve posts from mysql db and push to masterArr
@@ -34,13 +47,31 @@ db.getQuestions(10, 0, function(results) {
 		masterArr[i].answers = [];
 		// A closure just for the callback
 		(function(i, cur_result) {
+			// load answers of cur qn
 			db.getAnswers(cur_result.id, db_limit, db_offset, function(answers) {
 				for (var j = 0; j < answers.length; j++) {
 					masterArr[i].answers.push(answers[j]);
+					// load comments of cur ans
+					masterArr[i].answers[j].comments = [];
+					(function(i, j, cur_ans) {
+						db.getComments(cur_ans.id, db_limit, db_offset, function(comments) {
+							for (var k = 0; k < comments.length; k++) {
+								masterArr[i].answers[j].comments.push(comments[k]);
+							}
+						});
+					})(i, j, answers[j]);
 				}
 			});
 		})(i, results[i]);
-		masterArr[masterArr.length - 1].comments = [];
+		// load comments of cur qn
+		masterArr[i].comments = [];
+		(function(i, cur_result) {
+			db.getComments(cur_result.id, db_limit, db_offset, function(comments) {
+				for (var j = 0; j < comments.length; j++) {
+					masterArr[i].comments.push(comments[j]);
+				}
+			});
+		})(i, results[i]);
 	}
 });
 
@@ -50,7 +81,21 @@ db.getQuestions(10, 0, function(results) {
 
 io.sockets.on("connection", function(socket) { //general handler for all socket connection events
 	socket.on("comment", function(data) {
+		db.addComment(data.user_id, data.post_id, data.content, function(id) {
+			db.getComment(id, function(results) {
+				if (results[0]) {
+					for (var i = 0; i < masterArr.length; i++) {
 
+						// Find the post which this comment belongs to
+						if (masterArr[i].id == results[0].post_id) {
+							masterArr[i].answers.push(results[0]);
+							io.sockets.emit('ans', results[0]);
+							break;
+						}
+					}
+				}
+			});
+		});
 	});
 	socket.on("ans", function(data) {
 		db.addAnswer(data.owner_id, data.parent_id, data.content, function(id) {
@@ -73,21 +118,23 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
 					masterArr.push(results[0]);
-					masterArr[masterArr.length-1].answers = [];
+					masterArr[masterArr.length - 1].answers = [];
 					io.sockets.emit('post', results[0]);
 				}
 			});
 		});
 	});
 	socket.on('vote', function(clientVote) {
-		console.log("server received vote");
 		console.log(clientVote);
 		if (clientVote.type == 1) {
-			console.log("enter up/down if");
 			db.voteUp(clientVote.user_id, clientVote.post_id, function(result) {
 				if (result) {
 					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {
+							var curPost = masterArr.findPost(results[0].id);
+							if (curPost) {
+								curPost.votecount = results[0].votecount;
+							}
 							io.sockets.emit('vote', results[0]);
 						}
 					});
@@ -99,6 +146,12 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 				if (result) {
 					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {
+							var curPost = masterArr.findPost(results[0].id);
+							
+							if (curPost) {
+								console.log('enter votecount update');
+								curPost.votecount = results[0].votecount;
+							}
 							io.sockets.emit('vote', results[0]);
 						}
 					});

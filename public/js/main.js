@@ -25,6 +25,10 @@ $(document).ready(function() {
 //like a persistent tube between client and server on directory '/'
 window.socket = io.connect(":4321/");
 
+function displayComment(data, container) {
+	
+}
+
 // Displaying a post item on page using a post obj
 // Container is a jquery obj
 // Not sorted yet (but the db query result is sorted)!
@@ -38,7 +42,16 @@ function displayPost(data, container) {
 	var textDiv = $('<div class="textDiv" data-msgid="' + data.id + '">');
 	var txt = $("<p>" + "<span class='title'>" + data.title + "</span>" + data.content + "</p>");
 	textDiv.append(txt);
-
+	
+	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
+	if (data.comments && data.comments.length > 0) {
+		console.log('In displayPost');
+		console.log('TODO display the comments');
+		for (var i = 0; i < data.comments.length; i++) {
+			displayComment(data.comments[i], commentsDiv);
+		}
+	}
+	
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
 	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
 	var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
@@ -71,6 +84,12 @@ function displayPost(data, container) {
 			var answer = $('<p class="answer" data-msgid="' + data.answers[i].id + '">' +
 					data.answers[i].content + '</p>');
 
+			var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.id + '">');
+			var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
+			var commentBtn = $('<button class="commentBtn">Add Comment</button>');
+			commentBtn.click(newComment);
+			ansCommentDiv.append(commentInput).append(commentBtn);
+
 			var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.answers[i].id + '">');
 			var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
 			var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
@@ -83,26 +102,22 @@ function displayPost(data, container) {
 			ansVoteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
 
 			answerDiv
-					.append(answer);
-			answerDiv.append(ansVoteDiv);
+					.append(answer)
+					.append(ansVoteDiv)
+					.append(ansCommentDiv);
 			answersDiv.prepend(answerDiv);
 			console.log(answerDiv);
 			console.log(ansVoteDiv);
 		}
 	}
 
-	if (data.comments && data.comments.length > 0) {
-		console.log('In displayPost');
-		console.log('TODO display the comments');
-	}
-
 	masterPostDiv
 			.append(textDiv)
+			.append(commentsDiv)
 			.append(voteDiv)
 			.append(commentDiv)
 			.append(ansDiv)
 			.append(answersDiv);
-
 	container.prepend(masterPostDiv);
 }
 
@@ -122,7 +137,13 @@ socket.on("ans", function(data) {
 	var answer = $('<p class="answer" data-msgid="' + data.id + '">' +
 			data.content + '</p>');
 
-	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
+	var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.id + '">');
+	var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
+	var commentBtn = $('<button class="commentBtn">Add Comment</button>');
+	commentBtn.click(newComment);
+	ansCommentDiv.append(commentInput).append(commentBtn);
+
+	var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.id + '">');
 	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
 	var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
 	var votesDisplay = $('<span class="votes">0</span>');
@@ -131,16 +152,19 @@ socket.on("ans", function(data) {
 	}
 	upVoteBtn.click(upVote);
 	downVoteBtn.click(downVote);
-	voteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+	ansVoteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
 
 	answerDiv
 			.append(answer)
-			.append(voteDiv);
-
+			.append(ansVoteDiv)
+			.append(ansCommentDiv);
 	$('.answersDiv', parentQn).prepend(answerDiv);
 });
 socket.on("comment", function(data) {
-
+	console.log(data);
+	var parent = $('.answerDiv[data-msgid="' + data.post_id + '"]' + ', .textDiv[data-msgid="' + data.post_id + '"]').eq(0);
+	console.log(parent);
+	parent.append();
 });
 socket.on('vote', function(postData) {
 	console.log(postData);
@@ -150,7 +174,7 @@ socket.on('vote', function(postData) {
 	}
 	else if (postData.type == 1) {
 		console.log('received ans vote');
-		$('.masterPostDiv[data-msgid="'+postData.parent_id+'"] .answersDiv .answerDiv[data-msgid="'+postData.id+'"] .ansVoteDiv span.votes').text(postData.votecount);
+		$('.masterPostDiv[data-msgid="' + postData.parent_id + '"] .answersDiv .answerDiv[data-msgid="' + postData.id + '"] .ansVoteDiv span.votes').text(postData.votecount);
 	}
 });
 
@@ -181,7 +205,13 @@ function newPost() {
 	msgText.val("");
 }
 function newComment() {
-
+	var input = $(this).siblings('.commentInput').eq(0);
+	socket.emit('comment', {
+		user_id: window.user.id,
+		post_id: $(this).parent().attr('data-msgid'),
+		content: input.val(),
+	});
+	input.val("");
 }
 function newAns() {
 	var ansInput = $(this).siblings('.ansInput');

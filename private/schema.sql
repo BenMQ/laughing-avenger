@@ -101,8 +101,8 @@ USE `laughing_avenger`$$
 
 CREATE TRIGGER `vote_AUPD` AFTER UPDATE ON vote FOR EACH ROW
 -- Edit trigger body code below this line. Do not edit lines above this one
-	UPDATE post p SET p.votecount=p.votecount + NEW.type
-	WHERE p.id = NEW.post_id;
+	UPDATE post p SET p.votecount=p.votecount + NEW.type - OLD.type
+	WHERE p.id = NEW.post_id
 $$
 
 
@@ -115,19 +115,6 @@ CREATE TRIGGER `vote_AINS` AFTER INSERT ON vote FOR EACH ROW
 -- Edit trigger body code below this line. Do not edit lines above this one
 	UPDATE post p SET p.votecount=p.votecount + NEW.type
 	WHERE p.id = NEW.post_id; 
-$$
-
-
-USE `laughing_avenger`$$
-DROP TRIGGER IF EXISTS `laughing_avenger`.`vote_BUPD` $$
-USE `laughing_avenger`$$
-
-
-CREATE TRIGGER `vote_BUPD` BEFORE UPDATE ON vote FOR EACH ROW
--- Edit trigger body code below this line. Do not edit lines above this one
-	UPDATE post p SET p.votecount=p.votecount - OLD.type
-	WHERE p.id = OLD.post_id;
-
 $$
 
 
