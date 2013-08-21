@@ -9,16 +9,11 @@ var config = require("./config/config.js");
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
 
-// Routes, need to refactor to routes/index.js
-// Example: app.get("/dashboard", routes.dashboardFunc);
-app.get("/", function(req, res) {
-	res.header('Content-Type', 'text/html');
-	res.sendfile('socketBoard.ejs');
-});
-
-app.get('/masterArr', function(req, res) {
-	res.json(masterArr);
-});
+// Routes, refactored to routes/index.js
+app.get("/", routes.main);
+app.get('/masterArr', routes.masterArr);
+app.get('/classes/:moduleCode', routes.modulePage);
+app.get('/dashboard', routes.dashBoard);
 
 // Introducing master arr, where we store all data
 var masterArr = [];
