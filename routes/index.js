@@ -2,6 +2,7 @@
  * Defines routes for application
 */
 exports.main = function(req, res) {
+    console.log(req.user);
     res.render('socketBoard', { user: req.user });
 }
 

@@ -24,17 +24,24 @@
             <div class ="container">
                 <h1><a href="/">ProjectName</a></h1>
                 <ul>
-                    <li>
 
+
+                    <% if (user) { %>
+                        <li class='username'><a>Hi, <%= user.displayName %>!</a></li>
+                    <% } %>
+
+                    <li>
                     <% if (!user) { %>
                         <a href="/auth/facebook">Login</a>
                     <% } else { %>
-                        <p>Hello, <%= user.username %>.</p> <a href="/logout">Log Out</a>
+                        <a href="/logout">Log Out</a>
                     <% } %>
-
                     </li>
                     <li><a href="">Dashboard</a></li>
                     <li><a href="">My Classes</a></li>
+                    <li><a>
+
+
                 </ul>
             </div>
         </header>
