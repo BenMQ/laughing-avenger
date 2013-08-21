@@ -7,7 +7,7 @@ var self = this;
 var __QUESTION = 0;
 var __ANSWER = 1;
 var __UP = 1;
-var __DOWN = 0;
+var __DOWN = -1;
 
 /**
  * Initialise the db connection with a config object
@@ -52,7 +52,9 @@ __insertQuery = function(query, values, next) {
  *                            as an object with column name as field name
  */
 self.getQuestions = function(limit, offset, next) {
-	var query = "SELECT * from post WHERE type = " + __QUESTION + " ORDER BY timestamp DESC LIMIT " + mysql.escape(offset) + ', ' + mysql.escape(limit);
+	var query = "SELECT * FROM post WHERE type = " + __QUESTION
+				+ " ORDER BY timestamp DESC"
+				+ " LIMIT " + mysql.escape(offset) + ', ' + mysql.escape(limit);
 	__query(query, next);
 }
 
@@ -64,26 +66,32 @@ self.getQuestions = function(limit, offset, next) {
  *                                exist.
  */
 self.getQuestion = function(questionId, next) {
-	var query = "SELECT * from post WHERE type = " + __QUESTION + " AND id = " + mysql.escape(questionId);
+	var query = "SELECT * FROM post WHERE type = " + __QUESTION
+				+ " AND id = " + mysql.escape(questionId);
 	__query(query, next);
 }
 
 self.getAnswers = function(questionId, limit, offset, next) {
-	var query = "SELECT * from post WHERE type = " + __ANSWER + " AND parent_id = " + mysql.escape(questionId);
+	var query = "SELECT * FROM post WHERE type = " + __ANSWER
+				+ " AND parent_id = " + mysql.escape(questionId);
 	__query(query, next);
 }
 
 self.getAnswer = function(answerId, next) {
-	var query = "SELECT * from post WHERE type = "  + __ANSWER + " AND id = " + mysql.escape(answerId);
+	var query = "SELECT * FROM post WHERE type = "  + __ANSWER
+				+ " AND id = " + mysql.escape(answerId);
 	__query(query, next);
 }
 
 self.getComments = function(postId, limit, offset, next) {
-
+	var query = "SELECT * FROM comment WHERE post_id = " + mysql.escape(postId)
+				+ " LIMIT " + mysql.escape(offset) + ", " + mysql.escape(limit);
+	__query(query, next);
 }
 
 self.getComment = function(id, next) {
-
+	var query = "SELECT * FROM comment WHERE id = " + mysql.escape(id);
+	__query(query, next);
 }
 
 /**
@@ -106,7 +114,9 @@ self.addAnswer = function(user, questionId, content, next) {
 }
 
 self.addComment = function(user, postId, content, next) {
-
+	var query = 'INSERT INTO comment SET ?';
+	var answer = {user_id: user, post_id: postId, content: content};
+	__insertQuery(query, answer, next);
 }
 
 /**
@@ -116,26 +126,38 @@ self.addComment = function(user, postId, content, next) {
  * @param  {Function} next   Callback. Boolean value will be provided
  */
 self.voteUp = function(user, postId, next) {
-
+	var query = 'INSERT INTO vote (user_id, post_id, type) VALUES('+mysql.escape([user, postId, __UP])+')'
+				+ ' ON DUPLICATE KEY UPDATE type=VALUES(type)';
+	__query(query, next);
 }
 
 self.voteDown = function(user, postId, next) {
-
+	var query = 'INSERT INTO vote (user_id, post_id, type) VALUES('+mysql.escape([user, postId, __DOWN])+')'
+				+ ' ON DUPLICATE KEY UPDATE type=VALUES(type)';
+	__query(query, next);
 }
 
-self.voteCancel = function(user, postId, next) {
-
+self.voteCancel = function(user, postId, next) {=
+	var query = 'DELETE FROM vote WHERE user_id = ' + mysql.escape(user) + ' AND post_id = ' + mysql.escape(postId);
+	__query(query, next);
 }
 
 /**
  * Gets the vote status of a user
  * @param  {integer}  user   The user to query
  * @param  {integer}  postId The post to query
- * @param  {Function} next   Callback. 1, 0 will be provided for up/down vote.
+ * @param  {Function} next   Callback. 1, -1 will be provided for up/down vote.
  *                           null if not voted
  */
 self.getVote = function(user, postId, next) {
-
+	var query = 'SELECT type FROM vote WHERE user_id = ' + mysql.escape(user) + ' AND post_id = ' + mysql.escape(postId);
+	__query(query, function(result) {
+		if (result) {
+			next(result.type);
+		} else {
+			next(null);
+		}
+	})
 }
 
 /**
