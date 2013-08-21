@@ -61,7 +61,7 @@ function displayPost(data, container) {
 	var ansBtn = $('<button class="ansBtn">Add Answer</button>');
 	ansBtn.click(newAns);
 	ansDiv.append(ansInput).append(ansBtn);
-	
+
 	var answersDiv = $('<div class="answersDiv" data-msgid="' + data.id + '">');;
 	if (data.answers && data.answers.length > 0) {
 		console.log('In displayAns');
@@ -71,7 +71,7 @@ function displayPost(data, container) {
 			answersDiv.prepend(answer);
 		}
 	}
-	
+
 	if (data.comments && data.comments.length > 0) {
 		console.log('In displayPost');
 		console.log('TODO display the comments');
@@ -83,11 +83,11 @@ function displayPost(data, container) {
 			.append(commentDiv)
 			.append(ansDiv)
 			.append(answersDiv);
-		
+
 	container.prepend(masterPostDiv);
 }
 
-// These are emit handlers. When a signal sent received, 
+// These are emit handlers. When a signal sent received,
 // it will be piped into one of the handlers
 //------ It's a good idea to avoid default "message" channel --------------
 socket.on("post", function(data) { //event listener, when server sends message, do the below operation
