@@ -2,11 +2,7 @@
  * Defines routes for application
 */
 exports.main = function(req, res) {
-    res.render('socketBoard');
-}
-
-exports.masterArr = function(req, res) {
-    res.json(masterArr);
+    res.render('socketBoard', { user: req.user });
 }
 
 exports.modulePage = function(req,res){
@@ -17,8 +13,11 @@ exports.dashBoard = function(req,res){
     res.send('Welcome to your dashboard!');
 }
 
-exports.loginError = function(req,res){
-    res.send("Sorry, we couldn't log you in.");
+exports.login = function(req, res){
+  res.render('login', { user: req.user });
 }
 
-
+exports.logout = function(req, res){
+  req.logout();
+  res.redirect('/');
+}

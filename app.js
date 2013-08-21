@@ -1,22 +1,36 @@
 var express = require("express");
 var app = express();
 
+var FACEBOOK_APP_ID = "492242497533605";
+var FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
+
 var passport = require('passport')
   , FacebookStrategy = require('passport-facebook').Strategy;
 
 passport.use(new FacebookStrategy({
-    clientID: '492242497533605',
-    clientSecret: 'c7fdfdb90ef722119f78eb0476e64de2',
-    callbackURL: "http://dev.fragen.cmq.me:4321/"
+    clientID: FACEBOOK_APP_ID,
+    clientSecret: FACEBOOK_APP_SECRET,
+    callbackURL: "http://fragen.cmq.me/auth/facebook/callback"
   },
 
   function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate({ facebookId: profile.id }, function(err, user) {
-      if (err) { return done(err); }
-      done(null, user);
+    process.nextTick(function () {
+      return done(null, profile);
     });
   }
 ));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
 
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
@@ -28,7 +42,9 @@ app.use("/public", express.static(__dirname + '/public'));
 
 // Routes, refactored to routes/index.js
 app.get("/", routes.main);
-app.get('/masterArr', routes.masterArr);
+app.get('/masterArr', function(req, res) {
+    res.json(masterArr);
+});
 app.get('/classes/:moduleCode', routes.modulePage);
 app.get('/dashboard', routes.dashBoard);
 
@@ -36,8 +52,9 @@ app.get('/dashboard', routes.dashBoard);
 // Auth routes
 app.get('/auth/facebook', passport.authenticate('facebook'));
 app.get('/auth/facebook/callback',
-	passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
-app.get('/login', routes.loginError)
+	passport.authenticate('facebook', { failureRedirect: '/login' }));
+app.get('/login', routes.login)
+app.get('/logout', routes.logout);
 
 // Introducing master arr, where we store all data
 var masterArr = [];
