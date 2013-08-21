@@ -1,4 +1,5 @@
 var express = require("express");
+var graph = require('fbgraph');
 var app = express();
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
@@ -9,6 +10,83 @@ var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
 var routes = require('./routes');
 var config = require("./config/config.js");
+
+
+var FACEBOOK_APP_ID = "492242497533605";
+var FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
+
+// http://developers.facebook.com/docs/reference/login/extended-permissions/
+var conf = {
+    client_id: FACEBOOK_APP_ID,
+    client_secret:FACEBOOK_APP_SECRET,
+    scope:'user_about_me, publish_stream, read_friendlists',
+    redirect_uri:'http://dev.fragen.cmq.me:4321/auth/facebook'
+};
+
+
+app.get('/login', function(req, res){
+  res.render("index");
+});
+
+app.get('/auth/facebook', function(req, res) {
+
+  // we don't have a code yet
+  // so we'll redirect to the oauth dialog
+  if (!req.query.code) {
+    var authUrl = graph.getOauthUrl({
+        "client_id":     conf.client_id
+      , "redirect_uri":  conf.redirect_uri
+    });
+
+    if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
+      res.redirect(authUrl);
+    } else {  //req.query.error == 'access_denied'
+      res.send('access denied');
+    }
+    return;
+  }
+
+  // code is set
+  // we'll send that and get the access token
+  graph.authorize({
+      "client_id":      conf.client_id
+    , "redirect_uri":   conf.redirect_uri
+    , "client_secret":  conf.client_secret
+    , "code":           req.query.code
+  }, function (err, facebookRes) {
+    res.redirect('/invite');
+  });
+
+
+});
+
+var pizza;
+
+// user gets sent here after being authorized
+app.get('/invite', function(req, res) {
+	console.log("logged in!");
+	console.log(req);
+	res.render("invite");
+
+
+	//Make graph queries!
+	// graph.get("yosriady", function(err, res) {
+	// 	console.log(res); // { id: '4', name: 'Mark Zuckerberg'... }
+	// });
+
+
+	//return all friends of me()
+	var query = "SELECT uid,name FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me())"
+	graph.fql(query, function(err, res) {
+		console.log(res); // { data: [ { uid: 513485082, name: 'Jeremy Tan' }, ] }
+	});
+});
+
+
+
+
+
+
 
 // Routes, refactored to routes/index.js
 app.get("/", routes.main);
@@ -43,7 +121,7 @@ var db_limit = 10; // How many qns do you want in one page?
 var db_offset = 0; // TODO: multipage thingy
 db.getQuestions(10, 0, function(results) {
 	for (var i = 0; i < results.length; i++) {
-		console.log(results[i]);
+		// console.log(results[i]);
 		masterArr.push(results[i]);
 		masterArr[i].answers = [];
 		// A closure just for the callback
@@ -148,7 +226,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {
 							var curPost = masterArr.findPost(results[0].id);
-							
+
 							if (curPost) {
 								console.log('enter votecount update');
 								curPost.votecount = results[0].votecount;
