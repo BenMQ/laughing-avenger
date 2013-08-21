@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS `laughing_avenger`.`vote` ;
 CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`vote` (
   `user_id` INT UNSIGNED NOT NULL ,
   `post_id` INT UNSIGNED NOT NULL ,
-  `type` TINYINT NULL COMMENT '1 for upvote, 0 for downvote' ,
+  `type` TINYINT NULL COMMENT '1 for upvote, -1 for downvote' ,
   PRIMARY KEY (`user_id`, `post_id`) ,
   INDEX `vote_post_id_id_idx` (`post_id` ASC) ,
   CONSTRAINT `vote_post_id_id`
@@ -77,6 +77,62 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`comment` (
 ENGINE = InnoDB;
 
 USE `laughing_avenger` ;
+USE `laughing_avenger`;
+
+DELIMITER $$
+
+USE `laughing_avenger`$$
+DROP TRIGGER IF EXISTS `laughing_avenger`.`vote_BDEL` $$
+USE `laughing_avenger`$$
+
+
+CREATE TRIGGER `vote_BDEL` BEFORE DELETE ON vote FOR EACH ROW
+-- Edit trigger body code below this line. Do not edit lines above this one
+	UPDATE post p SET p.votecount=p.votecount - OLD.type
+	WHERE p.id = OLD.post_id; 
+$$
+
+
+USE `laughing_avenger`$$
+DROP TRIGGER IF EXISTS `laughing_avenger`.`vote_BUPD` $$
+USE `laughing_avenger`$$
+
+
+CREATE TRIGGER `vote_BUPD` BEFORE UPDATE ON vote FOR EACH ROW
+-- Edit trigger body code below this line. Do not edit lines above this one
+	UPDATE post p SET p.votecount=p.votecount - OLD.type
+	WHERE p.id = OLD.post_id; 
+
+$$
+
+
+USE `laughing_avenger`$$
+DROP TRIGGER IF EXISTS `laughing_avenger`.`vote_AINS` $$
+USE `laughing_avenger`$$
+
+
+CREATE TRIGGER `vote_AINS` AFTER INSERT ON vote FOR EACH ROW
+-- Edit trigger body code below this line. Do not edit lines above this one
+	UPDATE post p SET p.votecount=p.votecount + NEW.type
+	WHERE p.id = NEW.post_id; 
+
+$$
+
+
+USE `laughing_avenger`$$
+DROP TRIGGER IF EXISTS `laughing_avenger`.`vote_AUPD` $$
+USE `laughing_avenger`$$
+
+
+CREATE TRIGGER `vote_AUPD` AFTER UPDATE ON vote FOR EACH ROW
+-- Edit trigger body code below this line. Do not edit lines above this one
+	UPDATE post p SET p.votecount=p.votecount + NEW.type
+	WHERE p.id = NEW.post_id; 
+
+$$
+
+
+DELIMITER ;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
