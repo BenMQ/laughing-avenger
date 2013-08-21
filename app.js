@@ -1,17 +1,20 @@
 var express = require("express");
 var app = express();
 
-// Static file directories
-app.use("/public", express.static(__dirname + '/public'));
-
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
-
+var routes = require('./routes');
 var config = require("./config/config.js");
 
+app.set('view engine', 'ejs');
+app.use("/public", express.static(__dirname + '/public'));
+
+// Routes, need to refactor to routes/index.js
+// Example: app.get("/dashboard", routes.dashboardFunc);
 app.get("/", function(req, res) {
 	res.sendfile('socketBoard.html');
 });
+
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
