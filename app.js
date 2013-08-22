@@ -2,13 +2,87 @@ var express = require("express");
 var app = express();
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
-app.use(express.cookieParser());
-app.use(express.session({secret: 'fragen'}));
 
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
 var routes = require('./routes');
 var config = require("./config/config.js");
+
+
+var store  = new express.session.MemoryStore();
+var cookie = require('cookie');
+app.use(parseCookie = express.cookieParser('secret'));
+app.use(express.session({
+	secret: 'secret',
+    key: 'express.sid',
+    store:store,
+	// cookie: {
+ //            path: '/',
+ //            httpOnly: true,
+ //            maxAge: null
+ //        }
+}));
+
+var FACEBOOK_APP_ID = "492242497533605";
+var FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
+var passport = require('passport')
+  , FacebookStrategy = require('passport-facebook').Strategy;
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+passport.use(new FacebookStrategy({
+    clientID: FACEBOOK_APP_ID,
+    clientSecret: FACEBOOK_APP_SECRET,
+    callbackURL: "http://dev.fragen.cmq.me:4321/auth/facebook/callback"
+  },
+
+  function(accessToken, refreshToken, profile, done) {
+    process.nextTick(function () {
+    	// console.log(profile);
+    	var user = {id:profile.id, username:profile.username, displayName:profile.displayName}
+    	// console.log(user);
+    	return done(null, user);
+    });
+  }
+));
+
+// Auth routes
+app.get('/auth/facebook',
+  passport.authenticate('facebook'),
+  function(req, res){
+    // The request will be redirected to Facebook for authentication, so this
+    // function will not be called.
+  });
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/loginError'}),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    console.log("Auth success!");
+    //access sessionID and user after login success
+    // console.log(req);
+    // console.log(req.sessionID);
+    // console.log(req.session.passport); //retrieve passport's user ID
+
+    res.redirect('/');
+  });
+app.get('/loginError', routes.loginError);
+app.get('/loginSuccess', routes.loginSuccess);
+app.get('/logout', routes.logout);
+// End of auth routes
+
+
+
+
+
 
 // Routes, refactored to routes/index.js
 app.get("/", routes.main);
@@ -43,7 +117,7 @@ var db_limit = 10; // How many qns do you want in one page?
 var db_offset = 0; // TODO: multipage thingy
 db.getQuestions(10, 0, function(results) {
 	for (var i = 0; i < results.length; i++) {
-		console.log(results[i]);
+		// console.log(results[i]);
 		masterArr.push(results[i]);
 		masterArr[i].answers = [];
 		// A closure just for the callback
@@ -76,11 +150,41 @@ db.getQuestions(10, 0, function(results) {
 	}
 });
 
+
+
 // For server side, emit sender and handler almost always together
 // The flow is: 1. Received emit from client 2. Push to masterArr
 //				3. Store to db 4. emit a signal to all client
 
 io.sockets.on("connection", function(socket) { //general handler for all socket connection events
+	console.log('socket connected!')
+
+	//TODO:
+		// 1. Install cookie npm module -OK
+		// 2.	parse.cookie sessionID -OK
+		// 3.	use sessionId to get user facebookID from store -OK
+		// 4.  set as data.user_id for socket handlers below
+
+	var cookies = cookie.parse(socket.handshake.headers.cookie);
+	console.log(cookies);
+
+	// console.log(cookies['express.sid']);
+	var session_id = cookies['express.sid'].substring(cookies['express.sid'].indexOf(':')+1,cookies['express.sid'].indexOf('.'));
+
+	console.log("parsed session_id:" + session_id);
+
+	store.get(session_id, function(err, session) {
+        console.log('Retrieving auth cookie from session store');
+
+        if(session){
+        	var user_cookie = session.passport.user;
+        	console.log(user_cookie);
+        }
+
+    });
+
+
+
 	socket.on("comment", function(data) {
 		db.addComment(data.user_id, data.post_id, data.content, function(id) {
 			console.log('enter 1');
@@ -123,6 +227,16 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 		});
 	});
 	socket.on("post", function(data) {
+
+
+
+
+
+		//Need to get user ID from cookie/sessions
+
+
+
+
 		db.addQuestion(data.owner_id, data.title, data.content, function(id) {
 			db.getQuestion(id, function(results) {
 				if (results[0]) {

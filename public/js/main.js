@@ -212,7 +212,19 @@ function newPost() {
 	// Here .eq(0) is just a failsafe. We should be careful
 	var msgTitle = $(".newPostDiv .newPostTitle").eq(0);
 	var msgText = $(".newPostDiv .newPostText").eq(0);
-	var owner_id = window.user.id;
+	// var owner_id = window.user.id;
+
+
+	console.log()
+
+
+
+	// need to get req.session.passport
+	// by retrieving sessionID from cookie
+	// and using it in app.js to store.get the session user info
+
+	var owner_id = 'haha'
+
 
 	socket.emit("post", {
 		owner_id: owner_id,

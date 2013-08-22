@@ -9,7 +9,9 @@
     "socket.io": "~0.9.16",
     "ejs":"0.8.x",
     "passport":"0.1.x",
-    "passport-facebook":"1.0.0"
+    "passport-facebook":"1.0.0",
+    "connect":"2.8.5",
+    "cookie":"0.1.0"
   },
   "devDependencies": {},
   "scripts": {
