@@ -21,6 +21,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
   `votecount` INT NOT NULL DEFAULT 0 COMMENT 'upvote minus downvote' ,
   `close_time` TIMESTAMP NULL DEFAULT NULL COMMENT 'NULL for open questions\n' ,
   `accepted_answer` INT UNSIGNED NULL DEFAULT NULL COMMENT 'id for the answer accepted' ,
+  `anonymous` TINYINT NOT NULL DEFAULT 0 COMMENT '1 for anonymous, 0 for public' ,
   PRIMARY KEY (`id`) ,
   INDEX `question_answer_postid_idx` (`parent_id` ASC) ,
   INDEX `post_accepted_answer_id_idx` (`accepted_answer` ASC) ,
@@ -67,6 +68,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`comment` (
   `post_id` INT UNSIGNED NOT NULL ,
   `content` TEXT NOT NULL ,
   `timestamp` TIMESTAMP NOT NULL ,
+  `anonymous` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '1 for anonymous, 0 for public' ,
   PRIMARY KEY (`id`) ,
   INDEX `comment_post_id_id_idx` (`post_id` ASC) ,
   CONSTRAINT `comment_post_id_id`
