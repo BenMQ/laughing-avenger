@@ -1,28 +1,29 @@
+var AUTH_COOKIE_NAME = 'express.sid';
+var SECRET_KEY = 'secret';
+var FACEBOOK_APP_ID = "492242497533605";
+var FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
+var FBAUTH_CALLBACK_URL = "http://dev.fragen.cmq.me:4321/auth/facebook/callback";
+
 var express = require("express");
 var app = express();
-app.set('view engine', 'ejs');
-app.use("/public", express.static(__dirname + '/public'));
-
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
 var routes = require('./routes');
+var db = require('./database.api.js');
 var config = require("./config/config.js");
-
-
-var store  = new express.session.MemoryStore();
 var cookie = require('cookie');
-app.use(parseCookie = express.cookieParser('secret'));
-app.use(express.session({
-	secret: 'secret',
-    key: 'express.sid', //session key for user auth cookie
-    store:store,
-}));
-
-var FACEBOOK_APP_ID = "492242497533605";
-var FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
+var store  = new express.session.MemoryStore();
 var passport = require('passport')
   , FacebookStrategy = require('passport-facebook').Strategy;
 
+app.set('view engine', 'ejs');
+app.use("/public", express.static(__dirname + '/public'));
+app.use(parseCookie = express.cookieParser(SECRET_KEY));
+app.use(express.session({
+	secret: SECRET_KEY,
+    key: AUTH_COOKIE_NAME, //session key for user auth cookie
+    store:store,
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -37,7 +38,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://dev.fragen.cmq.me:4321/auth/facebook/callback"
+    callbackURL: FBAUTH_CALLBACK_URL
   },
 
   function(accessToken, refreshToken, profile, done) {
@@ -51,12 +52,13 @@ passport.use(new FacebookStrategy({
 ));
 
 // Auth routes
+app.get("/", routes.main);
+app.get('/masterArr', function(req, res) {
+	res.json(masterArr);
+});
 app.get('/auth/facebook',
   passport.authenticate('facebook'),
-  function(req, res){
-    // The request will be redirected to Facebook for authentication, so this
-    // function will not be called.
-  });
+  routes.postAuthenticate);
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/loginError'}),
   function(req, res) {
@@ -70,20 +72,7 @@ app.get('/auth/facebook/callback',
     res.redirect('/');
   });
 app.get('/loginError', routes.loginError);
-app.get('/loginSuccess', routes.loginSuccess);
 app.get('/logout', routes.logout);
-// End of auth routes
-
-
-
-
-
-
-// Routes, refactored to routes/index.js
-app.get("/", routes.main);
-app.get('/masterArr', function(req, res) {
-	res.json(masterArr);
-});
 // app.get('/classes/:moduleCode', routes.modulePage);
 // app.get('/dashboard', routes.dashBoard);
 
@@ -104,7 +93,6 @@ masterArr.findPost = function(id) {
 
 // Init db
 // Retrieve posts from mysql db and push to masterArr
-var db = require('./database.api.js');
 db.init(config.db);
 console.log('db module init!');
 
@@ -158,7 +146,8 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	// console.log(cookies);
 
 	// console.log(cookies['express.sid']);
-	var session_id = cookies['express.sid'].substring(cookies['express.sid'].indexOf(':')+1,cookies['express.sid'].indexOf('.'));
+	var c = cookies[AUTH_COOKIE_NAME];
+	var session_id = c.substring(c.indexOf(':')+1,c.indexOf('.'));
 
 	console.log("parsed session_id:" + session_id);
 
@@ -179,14 +168,6 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
         }
 
     });
-
-
-	//TODO:
-	// 1. Install cookie npm module -OK
-	// 2.	parse.cookie sessionID -OK
-	// 3.	use sessionId to get user facebookID from store -OK
-	// 4.  user_cookie.id to replace data.user_id for socket handlers below -OK
-	// 5. Why is the owner_id not the same in the database?
 
 	socket.on("comment", function(data) {
 		db.addComment(socket.user_cookie.id, data.post_id, data.content, function(id) {
@@ -212,6 +193,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		});
 	});
+
 	socket.on("ans", function(data) {
 		db.addAnswer(socket.user_cookie.id, data.parent_id, data.content, function(id) {
 			db.getAnswer(id, function(results) {
@@ -229,10 +211,8 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		});
 	});
+
 	socket.on("post", function(data) {
-
-		console.log(socket.user_cookie.id); //Returns correct facebookID
-
 		db.addQuestion(socket.user_cookie.id, data.title, data.content, function(id) {
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
@@ -244,6 +224,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		});
 	});
+
 	socket.on('vote', function(clientVote) {
 		console.log(clientVote);
 		if (clientVote.type == 1) {

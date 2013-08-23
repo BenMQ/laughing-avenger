@@ -19,23 +19,14 @@ exports.dashBoard = function(req,res){
     res.send('Welcome to your dashboard!');
 }
 
+exports.postAuthenticate = function(req, res){
+    // The request will be redirected to Facebook for authentication, so this
+    // function will not be called.
+}
+
 exports.loginError = function(req,res){
     console.log("Login error log");
 }
-
-exports.loginSuccess = function(req,res){
-
-    //access sessionID and user after login success
-    console.log(req.sessionID);
-
-    console.log(req.session.passport); //retrieve passport's user ID
-
-    console.log(req.user);
-
-    console.log("Login successful.");
-    res.redirect()
-}
-
 
 exports.logout = function(req,res){
     console.log(res)
