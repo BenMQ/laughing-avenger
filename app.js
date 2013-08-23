@@ -1,19 +1,56 @@
+var AUTH_COOKIE_NAME = 'express.sid';
+var SECRET_KEY = 'secret';
+var FACEBOOK_APP_ID = "492242497533605";
+var FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
+var FBAUTH_CALLBACK_URL = "http://dev.fragen.cmq.me:4321/auth/facebook/callback";
+
 var express = require("express");
 var graph = require('fbgraph');
 var app = express();
-app.set('view engine', 'ejs');
-app.use("/public", express.static(__dirname + '/public'));
-app.use(express.cookieParser());
-app.use(express.session({ secret: 'fragen' }));
-
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
 var routes = require('./routes');
+var db = require('./database.api.js');
 var config = require("./config/config.js");
+var cookie = require('cookie');
+var store  = new express.session.MemoryStore();
+var passport = require('passport')
+  , FacebookStrategy = require('passport-facebook').Strategy;
 
+app.set('view engine', 'ejs');
+app.use("/public", express.static(__dirname + '/public'));
+app.use(parseCookie = express.cookieParser(SECRET_KEY));
+app.use(express.session({
+	secret: SECRET_KEY,
+    key: AUTH_COOKIE_NAME, //session key for user auth cookie
+    store:store,
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
-var FACEBOOK_APP_ID = "492242497533605";
-var FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+passport.use(new FacebookStrategy({
+    clientID: FACEBOOK_APP_ID,
+    clientSecret: FACEBOOK_APP_SECRET,
+    callbackURL: FBAUTH_CALLBACK_URL
+  },
+
+  function(accessToken, refreshToken, profile, done) {
+    process.nextTick(function () {
+    	// console.log(profile);
+    	var usr = {id:profile.id, username:profile.username, displayName:profile.displayName}
+    	// console.log(user);
+    	return done(null, usr);
+    });
+  }
+));
 
 // http://developers.facebook.com/docs/reference/login/extended-permissions/
 var conf = {
@@ -28,7 +65,7 @@ app.get('/login', function(req, res){
   res.render("index");
 });
 
-app.get('/auth/facebook', function(req, res) {
+app.get('/auth/fb', function(req, res) {
 
   // we don't have a code yet
   // so we'll redirect to the oauth dialog
@@ -83,28 +120,39 @@ app.get('/invite', function(req, res) {
 	});
 });
 
-
-
-
-
-
-
-// Routes, refactored to routes/index.js
+// Auth routes
 app.get("/", routes.main);
 app.get('/masterArr', function(req, res) {
-    res.json(masterArr);
+	res.json(masterArr);
 });
+app.get('/auth/facebook',
+  passport.authenticate('facebook'),
+  routes.postAuthenticate);
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/loginError'}),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    console.log("Auth success!");
+    //access sessionID and user after login success
+    // console.log(req);
+    // console.log(req.sessionID);
+    // console.log(req.session.passport); //retrieve passport's user ID
+
+    res.redirect('/');
+  });
+app.get('/loginError', routes.loginError);
+app.get('/logout', routes.logout);
 // app.get('/classes/:moduleCode', routes.modulePage);
 // app.get('/dashboard', routes.dashBoard);
 
 // Introducing master arr, where we store all data
 var masterArr = [];
 masterArr.findPost = function(id) {
-	for (var i=0; i<masterArr.length; i++) {
+	for (var i = 0; i < masterArr.length; i++) {
 		if (masterArr[i].id == id) {
 			return masterArr[i];
 		}
-		for (var j=0; j<masterArr[i].answers.length; j++) {
+		for (var j = 0; j < masterArr[i].answers.length; j++) {
 			if (masterArr[i].answers[j].id == id) {
 				return masterArr[i].answers[j];
 			}
@@ -114,7 +162,6 @@ masterArr.findPost = function(id) {
 
 // Init db
 // Retrieve posts from mysql db and push to masterArr
-var db = require('./database.api.js');
 db.init(config.db);
 console.log('db module init!');
 
@@ -155,36 +202,76 @@ db.getQuestions(10, 0, function(results) {
 	}
 });
 
+
+
 // For server side, emit sender and handler almost always together
 // The flow is: 1. Received emit from client 2. Push to masterArr
 //				3. Store to db 4. emit a signal to all client
 
 io.sockets.on("connection", function(socket) { //general handler for all socket connection events
-	socket.on("comment", function(data) {
-		db.addComment(data.user_id, data.post_id, data.content, function(id) {
-			db.getComment(id, function(results) {
-				if (results[0]) {
-					for (var i = 0; i < masterArr.length; i++) {
+	console.log('socket connected!')
 
-						// Find the post which this comment belongs to
-						if (masterArr[i].id == results[0].post_id) {
-							masterArr[i].answers.push(results[0]);
-							io.sockets.emit('ans', results[0]);
-							break;
+	var cookies = cookie.parse(socket.handshake.headers.cookie);
+	// console.log(cookies);
+
+	// console.log(cookies['express.sid']);
+	var c = cookies[AUTH_COOKIE_NAME];
+	var session_id = c.substring(c.indexOf(':')+1,c.indexOf('.'));
+
+	console.log("parsed session_id:" + session_id);
+
+	store.get(session_id, function(err, session) {
+        console.log('Retrieving user info from session store using auth cookie');
+        console.log(session);
+
+        if(session){
+        	var user_cookie = session.passport.user;
+        	console.log(user_cookie);
+
+        	// Example:
+        	// user_cookie = { id: '100003334235610',
+        	// 				username: 'yos.riady',
+        	// 				displayName: 'Yos Riady' }
+
+        	socket.user_cookie = user_cookie; //attach cookie to socket object
+        }
+
+    });
+
+	socket.on("comment", function(data) {
+		db.addComment(socket.user_cookie.id, data.post_id, data.content, function(id) {
+			console.log('enter 1');
+			db.getComment(id, function(results) {
+				console.log('enter 2');
+				if (results[0]) {
+					console.log('enter 3');
+					console.log(results);
+					var cur_post = masterArr.findPost(results[0].post_id);
+					if (cur_post) {
+						console.log('enter 4');
+						if (cur_post.comments) {
+							cur_post.comments.push(results[0]);
 						}
+						else {
+							cur_post.comments = [];
+							cur_post.comments.push(results[0]);
+						}
+						io.sockets.emit('comment', results[0]);
 					}
 				}
 			});
 		});
 	});
+
 	socket.on("ans", function(data) {
-		db.addAnswer(data.owner_id, data.parent_id, data.content, function(id) {
+		db.addAnswer(socket.user_cookie.id, data.parent_id, data.content, function(id) {
 			db.getAnswer(id, function(results) {
 				if (results[0]) {
 					for (var i = 0; i < masterArr.length; i++) {
 						// Find the question which this answer belongs to
 						if (masterArr[i].id == results[0].parent_id) {
 							masterArr[i].answers.push(results[0]);
+							masterArr[i].answers[masterArr[i].answers.length-1].comments=[];
 							io.sockets.emit('ans', results[0]);
 							break;
 						}
@@ -193,21 +280,24 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		});
 	});
+
 	socket.on("post", function(data) {
-		db.addQuestion(data.owner_id, data.title, data.content, function(id) {
+		db.addQuestion(socket.user_cookie.id, data.title, data.content, function(id) {
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
 					masterArr.push(results[0]);
 					masterArr[masterArr.length - 1].answers = [];
+					masterArr[masterArr.length - 1].comments = [];
 					io.sockets.emit('post', results[0]);
 				}
 			});
 		});
 	});
+
 	socket.on('vote', function(clientVote) {
 		console.log(clientVote);
 		if (clientVote.type == 1) {
-			db.voteUp(clientVote.user_id, clientVote.post_id, function(result) {
+			db.voteUp(socket.user_cookie.id, clientVote.post_id, function(result) {
 				if (result) {
 					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {
@@ -222,7 +312,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		}
 		else if (clientVote.type == -1) {
-			db.voteDown(clientVote.user_id, clientVote.post_id, function(result) {
+			db.voteDown(socket.user_cookie.id, clientVote.post_id, function(result) {
 				if (result) {
 					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {

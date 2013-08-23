@@ -6,13 +6,13 @@
 //----- brings unexpected behaviour. ----------------
 // And things that don't need the document to be ready, should not be inside document.ready
 $(document).ready(function() {
-	
+
 	// get master arr from server, and display
 	$.get("/masterArr", function(data) {
 		// The problem with class is, there are some stuff that should be singleton
 		// Here .eq(0) is just a failsafe. We should be careful
 		var container = $('.messageBoard').eq(0);
-		for (var i = 0; i < data.length; i++) {
+		for (var i = data.length-1; i >= 0; i--) {
 			// TODO: differentiate post, answer, comment. Display accordingly
 			displayPost(data[data.length - 1 - i], container);
 		}
@@ -27,7 +27,7 @@ $(document).ready(function() {
 window.socket = io.connect(":4321/");
 
 function displayComment(data, container) {
-	container.append($('<p class="comment">'+data.content+'</p>'));
+	container.append($('<p class="comment">' + data.content + '</p>'));
 }
 
 // Displaying a post item on page using a post obj
@@ -43,16 +43,16 @@ function displayPost(data, container) {
 	var textDiv = $('<div class="textDiv" data-msgid="' + data.id + '">');
 	var txt = $("<p>" + "<span class='title'>" + data.title + "</span>" + data.content + "</p>");
 	textDiv.append(txt);
-	
-	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
+
+	var qnCommentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
 	if (data.comments && data.comments.length > 0) {
 		console.log('In displayPost');
 		console.log('TODO display the comments');
 		for (var i = 0; i < data.comments.length; i++) {
-			displayComment(data.comments[i], commentsDiv);
+			displayComment(data.comments[i], qnCommentsDiv);
 		}
 	}
-	
+
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
 	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
 	var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
@@ -86,7 +86,14 @@ function displayPost(data, container) {
 			var answer = $('<p class="answer" data-msgid="' + data.answers[i].id + '">' +
 					data.answers[i].content + '</p>');
 
-			var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.id + '">');
+			var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.answers[i].id + '">');
+			if (data.answers[i].comments && data.answers[i].comments.length > 0) {
+				for (var j = 0; j < data.answers[i].comments.length; j++) {
+					displayComment(data.answers[i].comments[j], commentsDiv);
+				}
+			}
+
+			var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.answers[i].id + '">');
 			var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
 			var commentBtn = $('<button class="commentBtn">Add Comment</button>');
 			commentBtn.click(newComment);
@@ -106,6 +113,7 @@ function displayPost(data, container) {
 			answerDiv
 					.append(answer)
 					.append(ansVoteDiv)
+					.append(commentsDiv)
 					.append(ansCommentDiv);
 			answersDiv.prepend(answerDiv);
 			console.log(answerDiv);
@@ -116,7 +124,7 @@ function displayPost(data, container) {
 
 	masterPostDiv
 			.append(textDiv)
-			.append(commentsDiv)
+			.append(qnCommentsDiv)
 			.append(voteDiv)
 			.append(commentDiv)
 			.append(ansDiv)
@@ -141,6 +149,13 @@ socket.on("ans", function(data) {
 	var answer = $('<p class="answer" data-msgid="' + data.id + '">' +
 			data.content + '</p>');
 
+	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
+	if (data.comments && data.comments.length > 0) {
+		for (var j = 0; j < data.comments.length; j++) {
+			displayComment(data.comments[j], commentsDiv);
+		}
+	}
+
 	var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.id + '">');
 	var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
 	var commentBtn = $('<button class="commentBtn">Add Comment</button>');
@@ -161,14 +176,15 @@ socket.on("ans", function(data) {
 	answerDiv
 			.append(answer)
 			.append(ansVoteDiv)
+			.append(commentsDiv)
 			.append(ansCommentDiv);
 	$('.answersDiv', parentQn).prepend(answerDiv);
 });
 socket.on("comment", function(data) {
 	console.log(data);
-	var parent = $('.answerDiv[data-msgid="' + data.post_id + '"]' + ', .textDiv[data-msgid="' + data.post_id + '"]').eq(0);
+	var parent = $('.answerDiv[data-msgid="' + data.post_id + '"] .commentsDiv' + ', .masterPostDiv[data-msgid="' + data.post_id + '"] .commentsDiv').eq(0);
 	console.log(parent);
-	parent.append();
+	displayComment(data, parent);
 });
 socket.on('vote', function(postData) {
 	console.log(postData);
@@ -186,20 +202,28 @@ socket.on('vote', function(postData) {
 // To the server
 function upVote() {
 	console.log('send out up vote');
-	socket.emit('vote', {user_id: window.user.id, post_id: $(this).parent().attr("data-msgid"), type: 1});
+	socket.emit('vote', {
+		// user_id: window.user.id,
+		post_id: $(this).parent().attr("data-msgid"),
+		type: 1
+	});
 }
 function downVote() {
-	socket.emit('vote', {user_id: window.user.id, post_id: $(this).parent().attr("data-msgid"), type: -1});
+	socket.emit('vote', {
+		// user_id: window.user.id,
+		post_id: $(this).parent().attr("data-msgid"),
+		type: -1
+	});
 }
 function newPost() {
 	// The problem with class is, there are some stuff that should be singleton
 	// Here .eq(0) is just a failsafe. We should be careful
 	var msgTitle = $(".newPostDiv .newPostTitle").eq(0);
 	var msgText = $(".newPostDiv .newPostText").eq(0);
-	var owner_id = window.user.id;
+	// var owner_id = window.user.id;
 
 	socket.emit("post", {
-		owner_id: owner_id,
+		// owner_id: owner_id,
 		title: msgTitle.val(),
 		content: msgText.val(),
 		type: 0, // Though not needed
@@ -209,12 +233,15 @@ function newPost() {
 	msgText.val("");
 }
 function newComment() {
+	console.log('send new comment');
 	var input = $(this).siblings('.commentInput').eq(0);
-	socket.emit('comment', {
-		user_id: window.user.id,
+	var obj = {
+		// user_id: window.user.id,
 		post_id: $(this).parent().attr('data-msgid'),
 		content: input.val(),
-	});
+	};
+	console.log(obj);
+	socket.emit('comment', obj);
 	input.val("");
 }
 function newAns() {
@@ -222,7 +249,7 @@ function newAns() {
 	socket.emit('ans', {
 		parent_id: $(this).parent().attr('data-msgid'),
 		content: ansInput.val(),
-		owner_id: window.user.id,
+		// owner_id: window.user.id,
 	});
 	ansInput.val("");
 }
