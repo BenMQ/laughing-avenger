@@ -14,7 +14,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'the primary key\n' ,
   `title` VARCHAR(255) NOT NULL ,
   `content` TEXT NULL ,
-  `owner_id` INT NOT NULL COMMENT 'ID of the user that posted this' ,
+  `owner_id` BIGINT NOT NULL COMMENT 'ID of the user that posted this' ,
   `type` INT NOT NULL COMMENT '0 for question, 1 for answer' ,
   `parent_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'NULL for question, id of parent question for answers' ,
   `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time created' ,
@@ -43,7 +43,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `laughing_avenger`.`vote` ;
 
 CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`vote` (
-  `user_id` INT UNSIGNED NOT NULL ,
+  `user_id` BIGINT UNSIGNED NOT NULL ,
   `post_id` INT UNSIGNED NOT NULL ,
   `type` TINYINT NULL COMMENT '1 for upvote, -1 for downvote' ,
   PRIMARY KEY (`user_id`, `post_id`) ,
@@ -63,7 +63,7 @@ DROP TABLE IF EXISTS `laughing_avenger`.`comment` ;
 
 CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`comment` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `user_id` INT UNSIGNED NOT NULL ,
+  `user_id` BIGINT UNSIGNED NOT NULL ,
   `post_id` INT UNSIGNED NOT NULL ,
   `content` TEXT NOT NULL ,
   `timestamp` TIMESTAMP NOT NULL ,
