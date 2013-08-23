@@ -14,13 +14,8 @@ var cookie = require('cookie');
 app.use(parseCookie = express.cookieParser('secret'));
 app.use(express.session({
 	secret: 'secret',
-    key: 'express.sid',
+    key: 'express.sid', //session key for user auth cookie
     store:store,
-	// cookie: {
- //            path: '/',
- //            httpOnly: true,
- //            maxAge: null
- //        }
 }));
 
 var FACEBOOK_APP_ID = "492242497533605";
@@ -48,9 +43,9 @@ passport.use(new FacebookStrategy({
   function(accessToken, refreshToken, profile, done) {
     process.nextTick(function () {
     	// console.log(profile);
-    	var user = {id:profile.id, username:profile.username, displayName:profile.displayName}
+    	var usr = {id:profile.id, username:profile.username, displayName:profile.displayName}
     	// console.log(user);
-    	return done(null, user);
+    	return done(null, usr);
     });
   }
 ));
@@ -159,14 +154,8 @@ db.getQuestions(10, 0, function(results) {
 io.sockets.on("connection", function(socket) { //general handler for all socket connection events
 	console.log('socket connected!')
 
-	//TODO:
-		// 1. Install cookie npm module -OK
-		// 2.	parse.cookie sessionID -OK
-		// 3.	use sessionId to get user facebookID from store -OK
-		// 4.  set as data.user_id for socket handlers below
-
 	var cookies = cookie.parse(socket.handshake.headers.cookie);
-	console.log(cookies);
+	// console.log(cookies);
 
 	// console.log(cookies['express.sid']);
 	var session_id = cookies['express.sid'].substring(cookies['express.sid'].indexOf(':')+1,cookies['express.sid'].indexOf('.'));
@@ -174,19 +163,33 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	console.log("parsed session_id:" + session_id);
 
 	store.get(session_id, function(err, session) {
-        console.log('Retrieving auth cookie from session store');
+        console.log('Retrieving user info from session store using auth cookie');
+        console.log(session);
 
         if(session){
         	var user_cookie = session.passport.user;
         	console.log(user_cookie);
+
+        	// Example:
+        	// user_cookie = { id: '100003334235610',
+        	// 				username: 'yos.riady',
+        	// 				displayName: 'Yos Riady' }
+
+        	socket.user_cookie = user_cookie; //attach cookie to socket object
         }
 
     });
 
 
+	//TODO:
+	// 1. Install cookie npm module -OK
+	// 2.	parse.cookie sessionID -OK
+	// 3.	use sessionId to get user facebookID from store -OK
+	// 4.  user_cookie.id to replace data.user_id for socket handlers below -OK
+	// 5. Why is the owner_id not the same in the database?
 
 	socket.on("comment", function(data) {
-		db.addComment(data.user_id, data.post_id, data.content, function(id) {
+		db.addComment(socket.user_cookie.id, data.post_id, data.content, function(id) {
 			console.log('enter 1');
 			db.getComment(id, function(results) {
 				console.log('enter 2');
@@ -210,7 +213,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 		});
 	});
 	socket.on("ans", function(data) {
-		db.addAnswer(data.owner_id, data.parent_id, data.content, function(id) {
+		db.addAnswer(socket.user_cookie.id, data.parent_id, data.content, function(id) {
 			db.getAnswer(id, function(results) {
 				if (results[0]) {
 					for (var i = 0; i < masterArr.length; i++) {
@@ -228,16 +231,9 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 	socket.on("post", function(data) {
 
+		console.log(socket.user_cookie.id); //Returns correct facebookID
 
-
-
-
-		//Need to get user ID from cookie/sessions
-
-
-
-
-		db.addQuestion(data.owner_id, data.title, data.content, function(id) {
+		db.addQuestion(socket.user_cookie.id, data.title, data.content, function(id) {
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
 					masterArr.push(results[0]);
@@ -251,7 +247,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	socket.on('vote', function(clientVote) {
 		console.log(clientVote);
 		if (clientVote.type == 1) {
-			db.voteUp(clientVote.user_id, clientVote.post_id, function(result) {
+			db.voteUp(socket.user_cookie.id, clientVote.post_id, function(result) {
 				if (result) {
 					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {
@@ -266,7 +262,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		}
 		else if (clientVote.type == -1) {
-			db.voteDown(clientVote.user_id, clientVote.post_id, function(result) {
+			db.voteDown(socket.user_cookie.id, clientVote.post_id, function(result) {
 				if (result) {
 					db.getPost(clientVote.post_id, function(results) {
 						if (results[0]) {
