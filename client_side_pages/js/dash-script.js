@@ -16,14 +16,15 @@ function addEvtForNavLinks(){
 	});
 }
 
-function tile(iter){
-	var tile = $('<div></div>');
+function tile(){
+	var tile = $('<div></div>'),
+		index = Math.floor(Math.random()*tileColorClass.length);
 	tile.attr({
-		class : 'col-md-5 live-tile ' +	 tileColorClass[iter-1],
+		class : 'col-md-5 live-tile ' +	 tileColorClass[index],
 		'data-mode':'none',
 		'data-bounce':true
 	});
-
+	tileColorClass.splice(index,1);
 	return tile;
 }
 
@@ -36,11 +37,9 @@ function tileElem(mod){
 }
 
 function addTiles(){
-	var tileGrp = $('.tiles.tile-group'),
-		iter = 1;
+	var tileGrp = $('.tiles.tile-group');
 	for(mod in moduleAlloc){
-		tileGrp.append(tile(iter).append(tileElem(mod)));
-		iter++;
+		tileGrp.append(tile().append(tileElem(mod)));
 	}
 }
 
