@@ -21,8 +21,7 @@ function tile(iter){
 	tile.attr({
 		class : 'col-md-5 live-tile ' +	 tileColorClass[iter-1],
 		'data-mode':'none',
-		'data-bounce':true,
-		'data-bounce-dir':'*,c'
+		'data-bounce':true
 	});
 
 	return tile;
