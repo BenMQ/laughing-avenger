@@ -1,0 +1,187 @@
+/*
+ * Misc
+ ******************************/
+@font-face
+{
+	font-family: giddyup;
+	src: url('giddyupwebpro.ttf');
+}
+
+/*
+ * body
+ ******************************/
+ body{
+ 	padding-top:50px;
+ 	font-family: 'Open Sans',sans-serif;
+ 	overflow-x: hidden;	
+ }
+
+h1,h2,h3,h4,h5,h6 {
+	font-weight:300;
+ 	font-family: 'Open Sans',sans-serif;
+}
+
+h1 {
+	font-weight:300;
+	font-size:50px;
+	text-align:center;
+	line-height:55px;
+	text-shadow:0 1px 1px rgba(0,0,0,0.8);
+	margin-bottom:30px;
+}
+
+/*
+ * Header
+ ******************************/
+ #navpane{
+ 	background-color: rgb(83,54,98);
+ 	-webkit-box-shadow: 0px 2px 2px #888;
+    -moz-box-shadow:    0px 2px 2px #888;
+    box-shadow:         0px 2px 2px #888;
+    border-bottom-width: 0px;
+ }
+
+ .nav-container{
+ 	max-width: 1000px;
+ }
+
+ .selected{
+ 	position: absolute;
+ 	background-image: url(../img/arrow.png);
+ 	height:8px;
+ 	width:12px;
+ 	left:45%;
+ 	bottom:-2.5%;
+ }
+
+ .navbar-default .navbar-nav>li>a{ 	
+	color:white;
+ 	opacity:0.7;
+ }
+ .navbar-default .navbar-nav>li>a:hover, 
+ .navbar-default .navbar-nav>li>a:focus,
+ .navbar-default .navbar-nav>li.active>a:hover, 
+ .navbar-default .navbar-nav>li.active>a:focus,
+ .navbar-default .navbar-nav>li.active>a{
+	background-color:transparent;
+	color:white;
+ 	opacity:1.0;
+ }
+
+ .navbar-brand{
+ 	padding:2.5px;
+ }
+
+ .icon{
+ 	background-image: url(../img/fragen-icon.png);
+ 	display:block;
+ 	background-repeat: no-repeat;
+ 	height:30px;
+ 	width:104px;
+ 	margin-top: 10px;
+ }
+
+/*
+ * Content
+ ******************************/
+ #content{
+ 	background-image: url(../img/old_mathematics.png);
+ }
+
+ #main{
+ 	position:relative;
+ 	margin:auto;
+ 	background-image: url(../img/fragen-mainb.png);
+ 	display:block;
+ 	background-repeat: no-repeat;
+ 	height:400px;
+ 	width:576px;
+ }
+
+ #main>#btn-facebook{
+	position: absolute;
+	left: 32%;
+	bottom: 44.25%;
+ }
+
+ #btn-facebook{
+ 	color: white;
+	background-color: #3b5998;
+	border-color: #133783;
+	font-weight: bold;
+	font-family: tahoma;
+ }
+
+ #btn-facebook:hover{
+ 	color: #3b5998;
+	background-color: white;
+	border-color: #133783;
+ }
+
+ #type-anim{
+ 	position: absolute;
+	left: 9%;
+	bottom: 19%;
+ } 
+
+ #type-anim h1{
+ 	margin: 0;
+	width: 473px;
+ 	color:white;
+ 	font-size: 55px;
+ 	font-family: 'giddyup';
+ }
+
+ .row-shadow{
+ 	margin-top:5px;
+ 	border-top:1px solid #eee;
+ 	-webkit-box-shadow: 0px -2px 4px #888;
+    -moz-box-shadow:    0px -2px 4px #888;
+    box-shadow:         0px -2px 4px #888; 
+ }
+
+ .light{
+ 	color:#343434;
+ 	background-color: white;
+ }
+
+ .container{
+ 	text-align: center;
+ }
+
+ .thumbnail{
+ 	border:0px;
+ 	border-radius: 0px;
+ }
+
+ .dark{
+ 	background-color:rgba(0,0,0,0.8);
+ }
+
+ .dark,.dark h3,.dark p{
+ 	color:white;
+ }
+
+ #team img{
+ 	border-radius:100px;
+ }
+
+ #team .thumbnail{
+ 	background-color: transparent;
+ }
+
+ .social i.icon-circle{
+	color: #3b5998;
+ }
+
+  .social i.icon-facebook{
+	color: white;
+ }
+
+ .social i:hover{
+    -webkit-transform:rotate(120deg);
+    -moz-transform:rotate(120deg);
+    -o-transform:rotate(120deg);
+    /* filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1.5); */
+    -ms-transform:rotate(120deg);
+ }
