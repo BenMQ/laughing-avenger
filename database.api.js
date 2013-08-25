@@ -199,6 +199,6 @@ self.reopen = function(postId, next) {
 
 self.updateUserInfo = function(fbid, fbUsername, picUrl, fbName, next) {
 	var query = "INSERT INTO user (user_id , fb_username, fbpic_url, name) VALUES('" + mysql.escape([fbid, fbUsername, picUrl, fbName]) + ")"
-				+ ' ON DUPLICATE KEY UPDATE fb_username=VALUES(fbUsername), fbpic_url=VALUES(picUrl), name=VALUES(fbName)';
+				+ ' ON DUPLICATE KEY UPDATE fb_username=VALUES(fb_username), fbpic_url=VALUES(fbpic_url), name=VALUES(name)';
 	__query(query, next);
 }
