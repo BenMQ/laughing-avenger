@@ -12,8 +12,9 @@ DROP TABLE IF EXISTS `laughing_avenger`.`user` ;
 
 CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`user` (
   `user_id` BIGINT UNSIGNED NOT NULL COMMENT 'fbid of the user' ,
-  `first_name` VARCHAR(100) NULL ,
-  `last_name` VARCHAR(100) NULL ,
+  `fb_username` VARCHAR(100) NULL ,
+  `fbpic_url` VARCHAR(255) NULL ,
+  `name` VARCHAR(100) NULL ,
   PRIMARY KEY (`user_id`) )
 ENGINE = InnoDB;
 
@@ -118,6 +119,7 @@ DROP TABLE IF EXISTS `laughing_avenger`.`module` ;
 CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`module` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `title` VARCHAR(100) NOT NULL ,
+  `description` TEXT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
