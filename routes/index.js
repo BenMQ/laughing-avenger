@@ -1,6 +1,11 @@
 /**
  * Defines routes for application
 */
+
+exports.index = function(req,res){
+    res.render('welcome');
+}
+
 exports.main = function(req, res) {
     // console.log(req.user);
 

@@ -52,7 +52,8 @@ passport.use(new FacebookStrategy({
 ));
 
 // Auth routes
-app.get("/", routes.main);
+app.get("/", routes.index);
+app.get("/main", routes.main);
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
@@ -69,7 +70,7 @@ app.get('/auth/facebook/callback',
     // console.log(req.sessionID);
     // console.log(req.session.passport); //retrieve passport's user ID
 
-    res.redirect('/');
+    res.redirect('/main');
   });
 app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
