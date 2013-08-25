@@ -1,9 +1,3 @@
-var AUTH_COOKIE_NAME = 'express.sid';
-var SECRET_KEY = 'secret';
-var FACEBOOK_APP_ID = "492242497533605";
-var FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
-var FBAUTH_CALLBACK_URL = "http://dev.fragen.cmq.me:4321/auth/facebook/callback";
-
 var express = require("express");
 var graph = require('fbgraph');
 var app = express();
@@ -19,10 +13,10 @@ var passport = require('passport')
 
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
-app.use(parseCookie = express.cookieParser(SECRET_KEY));
+app.use(parseCookie = express.cookieParser(config.SECRET_KEY));
 app.use(express.session({
-	secret: SECRET_KEY,
-    key: AUTH_COOKIE_NAME, //session key for user auth cookie
+	secret: config.SECRET_KEY,
+    key: config.AUTH_COOKIE_NAME, //session key for user auth cookie
     store:store,
 }));
 app.use(passport.initialize());
@@ -37,9 +31,9 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new FacebookStrategy({
-    clientID: FACEBOOK_APP_ID,
-    clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: FBAUTH_CALLBACK_URL
+    clientID: config.FACEBOOK_APP_ID,
+    clientSecret: config.FACEBOOK_APP_SECRET,
+    callbackURL: config.FBAUTH_CALLBACK_URL
   },
 
   function(accessToken, refreshToken, profile, done) {
@@ -121,7 +115,9 @@ app.get('/invite', function(req, res) {
 });
 
 // Auth routes
-app.get("/", routes.main);
+app.get("/", routes.index);
+app.get("/main", routes.main);
+
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
@@ -138,7 +134,7 @@ app.get('/auth/facebook/callback',
     // console.log(req.sessionID);
     // console.log(req.session.passport); //retrieve passport's user ID
 
-    res.redirect('/');
+    res.redirect('/main');
   });
 app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
@@ -215,7 +211,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	// console.log(cookies);
 
 	// console.log(cookies['express.sid']);
-	var c = cookies[AUTH_COOKIE_NAME];
+	var c = cookies[config.AUTH_COOKIE_NAME];
 	var session_id = c.substring(c.indexOf(':')+1,c.indexOf('.'));
 
 	console.log("parsed session_id:" + session_id);
@@ -233,10 +229,17 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
         	// 				username: 'yos.riady',
         	// 				displayName: 'Yos Riady' }
 
+        	user_cookie.id = parseInt(user_cookie.id);
+
+        	//here need to check and create user
+        	db.updateUserInfo(user_cookie.id, user_cookie.username, "", user_cookie.displayName, function(){})
+
+
+
         	socket.user_cookie = user_cookie; //attach cookie to socket object
         }
-
     });
+
 
 	socket.on("comment", function(data) {
 		db.addComment(socket.user_cookie.id, data.post_id, data.content, function(id) {
@@ -329,6 +332,8 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		}
 	});
+
+
 });
 
 server.listen(config.port);

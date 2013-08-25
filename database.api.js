@@ -196,3 +196,9 @@ self.reopen = function(postId, next) {
 	var query = 'UPDATE post SET close_time=NULL WHERE id=' + mysql.escape(postId);
 	__query(query, next);
 }
+
+self.updateUserInfo = function(fbid, fbUsername, picUrl, fbName, next) {
+	var query = "INSERT INTO user (user_id , fb_username, fbpic_url, name) VALUES(" + mysql.escape([fbid, fbUsername, picUrl, fbName]) + ")"
+				+ ' ON DUPLICATE KEY UPDATE fb_username=VALUES(fb_username), fbpic_url=VALUES(fbpic_url), name=VALUES(name)';
+	__query(query, next);
+}

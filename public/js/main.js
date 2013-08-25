@@ -18,6 +18,9 @@ $(document).ready(function() {
 		}
 		console.log(data);
 	});
+//	$.get("/userVotes", function(data) {
+//		
+//	});
 
 	$(".newPostBtn").click(newPost);
 }); // End of document.ready
