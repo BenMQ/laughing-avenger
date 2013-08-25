@@ -160,10 +160,10 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
         	// 				username: 'yos.riady',
         	// 				displayName: 'Yos Riady' }
 
-
+        	user_cookie.id = parseInt(user_cookie.id);
 
         	//here need to check and create user
-
+        	db.updateUserInfo(user_cookie.id, user_cookie.username, "", user_cookie.displayName, function(){})
 
 
 
