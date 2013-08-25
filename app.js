@@ -170,6 +170,8 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 
     });
 
+    if (user_cookie){
+
 	socket.on("comment", function(data) {
 		db.addComment(socket.user_cookie.id, data.post_id, data.content, function(id) {
 			console.log('enter 1');
@@ -261,6 +263,9 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		}
 	});
+
+	}
+
 });
 
 server.listen(config.port);
