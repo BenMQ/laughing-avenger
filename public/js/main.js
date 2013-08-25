@@ -205,20 +205,28 @@ socket.on('vote', function(postData) {
 // To the server
 function upVote() {
 	console.log('send out up vote');
-	socket.emit('vote', {user_id: window.user.id, post_id: $(this).parent().attr("data-msgid"), type: 1});
+	socket.emit('vote', {
+		// user_id: window.user.id,
+		post_id: $(this).parent().attr("data-msgid"),
+		type: 1
+	});
 }
 function downVote() {
-	socket.emit('vote', {user_id: window.user.id, post_id: $(this).parent().attr("data-msgid"), type: -1});
+	socket.emit('vote', {
+		// user_id: window.user.id,
+		post_id: $(this).parent().attr("data-msgid"),
+		type: -1
+	});
 }
 function newPost() {
 	// The problem with class is, there are some stuff that should be singleton
 	// Here .eq(0) is just a failsafe. We should be careful
 	var msgTitle = $(".newPostDiv .newPostTitle").eq(0);
 	var msgText = $(".newPostDiv .newPostText").eq(0);
-	var owner_id = window.user.id;
+	// var owner_id = window.user.id;
 
 	socket.emit("post", {
-		owner_id: owner_id,
+		// owner_id: owner_id,
 		title: msgTitle.val(),
 		content: msgText.val(),
 		type: 0, // Though not needed
@@ -231,7 +239,7 @@ function newComment() {
 	console.log('send new comment');
 	var input = $(this).siblings('.commentInput').eq(0);
 	var obj = {
-		user_id: window.user.id,
+		// user_id: window.user.id,
 		post_id: $(this).parent().attr('data-msgid'),
 		content: input.val(),
 	};
@@ -244,7 +252,7 @@ function newAns() {
 	socket.emit('ans', {
 		parent_id: $(this).parent().attr('data-msgid'),
 		content: ansInput.val(),
-		owner_id: window.user.id,
+		// owner_id: window.user.id,
 	});
 	ansInput.val("");
 }
