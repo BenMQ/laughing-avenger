@@ -48,10 +48,10 @@ passport.use(new FacebookStrategy({
 
 // http://developers.facebook.com/docs/reference/login/extended-permissions/
 var conf = {
-    client_id: FACEBOOK_APP_ID,
-    client_secret:FACEBOOK_APP_SECRET,
+    client_id: config.FACEBOOK_APP_ID,
+    client_secret:config.FACEBOOK_APP_SECRET,
     scope:'user_about_me, publish_stream, read_friendlists',
-    redirect_uri:'http://dev.fragen.cmq.me:4321/auth/facebook'
+    redirect_uri: config.FBGRAPH_REDIRECT_URL
 };
 
 
@@ -90,8 +90,6 @@ app.get('/auth/fb', function(req, res) {
 
 
 });
-
-var pizza;
 
 // user gets sent here after being authorized
 app.get('/invite', function(req, res) {

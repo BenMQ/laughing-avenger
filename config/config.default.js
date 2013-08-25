@@ -11,6 +11,7 @@ config.SECRET_KEY = 'secret';
 config.FACEBOOK_APP_ID = "492242497533605";
 config.FACEBOOK_APP_SECRET = "c7fdfdb90ef722119f78eb0476e64de2";
 config.FBAUTH_CALLBACK_URL = "http://dev.fragen.cmq.me:4321/auth/facebook/callback";
+config.FBGRAPH_REDIRECT_URL = 'http://dev.fragen.cmq.me:4321/auth/facebook'
 
 
 // Port that express listens to
