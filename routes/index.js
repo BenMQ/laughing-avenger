@@ -7,13 +7,15 @@ exports.index = function(req,res){
 }
 
 exports.main = function(req, res) {
-    // console.log(req.user);
-
     console.log("SessionID:" + req.sessionID);
-    console.log(req.session.passport); //retrieve passport's user ID
+    console.log(req.session.passport); //retrieve user passport
 
+    if(req.isAuthenticated()){
+        res.render('socketBoard', { user: req.user });
+    } else {
+        res.redirect("/");
+    }
 
-    res.render('socketBoard', { user: req.user });
 }
 
 exports.modulePage = function(req,res){
