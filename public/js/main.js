@@ -224,7 +224,10 @@ function newPost() {
 	var msgTitle = $(".newPostDiv .newPostTitle").eq(0);
 	var msgText = $(".newPostDiv .newPostText").eq(0);
 	// var owner_id = window.user.id;
-
+	if (msgTitle.val() === "") {
+		alert("Please input question title!");
+		return;
+	}
 	socket.emit("post", {
 		// owner_id: owner_id,
 		title: msgTitle.val(),
@@ -238,6 +241,10 @@ function newPost() {
 function newComment() {
 	console.log('send new comment');
 	var input = $(this).siblings('.commentInput').eq(0);
+	if (input.val() === "") {
+		alert("Please input comment content!");
+		return;
+	}	
 	var obj = {
 		// user_id: window.user.id,
 		post_id: $(this).parent().attr('data-msgid'),
@@ -249,6 +256,10 @@ function newComment() {
 }
 function newAns() {
 	var ansInput = $(this).siblings('.ansInput');
+	if (ansInput.val() === "") {
+		alert("Please input answer content!");
+		return;
+	}
 	socket.emit('ans', {
 		parent_id: $(this).parent().attr('data-msgid'),
 		content: ansInput.val(),
