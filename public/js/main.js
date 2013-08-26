@@ -12,9 +12,9 @@ $(document).ready(function() {
 		// The problem with class is, there are some stuff that should be singleton
 		// Here .eq(0) is just a failsafe. We should be careful
 		var container = $('.messageBoard').eq(0);
-		for (var i = data.length-1; i >= 0; i--) {
+		for (var i = data.length - 1; i >= 0; i--) {
 			// TODO: differentiate post, answer, comment. Display accordingly
-			displayPost(data[data.length - 1 - i], container);
+			displayPost(data[data.length - 1 - i], container, false);
 		}
 		console.log(data);
 	});
@@ -29,14 +29,18 @@ $(document).ready(function() {
 //like a persistent tube between client and server on directory '/'
 window.socket = io.connect(":4321/");
 
-function displayComment(data, container) {
-	container.append($('<p class="comment">' + data.content + '</p>'));
+function displayComment(data, container, blink) {
+	var com = $('<p class="comment">' + data.content + '</p>');
+	container.append(com);
+	if (blink) {
+		myBlink(com);
+	}
 }
 
 // Displaying a post item on page using a post obj
 // Container is a jquery obj
 // Not sorted yet (but the db query result is sorted)!
-function displayPost(data, container) {
+function displayPost(data, container, blink) {
 	if (!data.content) {
 		// The post must have content, else display what!
 		return;
@@ -52,7 +56,7 @@ function displayPost(data, container) {
 		console.log('In displayPost');
 		console.log('TODO display the comments');
 		for (var i = 0; i < data.comments.length; i++) {
-			displayComment(data.comments[i], qnCommentsDiv);
+			displayComment(data.comments[i], qnCommentsDiv, false);
 		}
 	}
 
@@ -92,7 +96,7 @@ function displayPost(data, container) {
 			var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.answers[i].id + '">');
 			if (data.answers[i].comments && data.answers[i].comments.length > 0) {
 				for (var j = 0; j < data.answers[i].comments.length; j++) {
-					displayComment(data.answers[i].comments[j], commentsDiv);
+					displayComment(data.answers[i].comments[j], commentsDiv, false);
 				}
 			}
 
@@ -134,6 +138,9 @@ function displayPost(data, container) {
 			.append(answersDiv);
 
 	container.prepend(masterPostDiv);
+	if (blink) {
+		myBlink(masterPostDiv);
+	}
 }
 
 // These are emit handlers. When a signal sent received,
@@ -143,7 +150,7 @@ socket.on("post", function(data) { //event listener, when server sends message, 
 	// The problem with class is, there are some stuff that should be singleton
 	// Here .eq(0) is just a failsafe. We should be careful
 	var container = $('.messageBoard').eq(0);
-	displayPost(data, container);
+	displayPost(data, container, true);
 });
 socket.on("ans", function(data) {
 	// Find the parent qn and prepend to it
@@ -155,7 +162,7 @@ socket.on("ans", function(data) {
 	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
 	if (data.comments && data.comments.length > 0) {
 		for (var j = 0; j < data.comments.length; j++) {
-			displayComment(data.comments[j], commentsDiv);
+			displayComment(data.comments[j], commentsDiv, false);
 		}
 	}
 
@@ -182,12 +189,13 @@ socket.on("ans", function(data) {
 			.append(commentsDiv)
 			.append(ansCommentDiv);
 	$('.answersDiv', parentQn).prepend(answerDiv);
+	myBlink(answerDiv);
 });
 socket.on("comment", function(data) {
 	console.log(data);
 	var parent = $('.answerDiv[data-msgid="' + data.post_id + '"] .commentsDiv' + ', .masterPostDiv[data-msgid="' + data.post_id + '"] .commentsDiv').eq(0);
 	console.log(parent);
-	displayComment(data, parent);
+	displayComment(data, parent, true);
 });
 socket.on('vote', function(postData) {
 	console.log(postData);
@@ -244,7 +252,7 @@ function newComment() {
 	if (input.val() === "") {
 		alert("Please input comment content!");
 		return;
-	}	
+	}
 	var obj = {
 		// user_id: window.user.id,
 		post_id: $(this).parent().attr('data-msgid'),
@@ -266,4 +274,41 @@ function newAns() {
 		// owner_id: window.user.id,
 	});
 	ansInput.val("");
+}
+
+function myBlink($obj) {
+	var i = 0;
+	$obj.css("opacity", i);
+	var exe = setInterval(function() {
+		i += 0.01;
+		if (i > 1) {
+			i = 1;
+		}
+		$obj.css("opacity", i);
+	}, 5);
+	setTimeout(function() {
+		clearInterval(exe);
+		exe = setInterval(function() {
+			i -= 0.01;
+			if (i < 0) {
+				i = 0;
+			}
+			$obj.css("opacity", i);
+//			console.log("set new i: "+i);
+		}, 5);
+		setTimeout(function() {
+			clearInterval(exe);
+			exe = setInterval(function() {
+				i += 0.01;
+				if (i > 1) {
+					i = 1;
+				}
+				$obj.css("opacity", i);
+			}, 5);
+			setTimeout(function() {
+				clearInterval(exe);
+
+			}, 500);
+		}, 500);
+	}, 500);
 }
