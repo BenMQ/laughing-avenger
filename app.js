@@ -47,7 +47,7 @@ passport.use(new FacebookStrategy({
 ));
 
 // http://developers.facebook.com/docs/reference/login/extended-permissions/
-var conf = {
+var FBGRAPH_CONFIG = {
     client_id: config.FACEBOOK_APP_ID,
     client_secret:config.FACEBOOK_APP_SECRET,
     scope:'user_about_me, publish_stream, read_friendlists',
@@ -65,8 +65,8 @@ app.get('/auth/fb', function(req, res) {
   // so we'll redirect to the oauth dialog
   if (!req.query.code) {
     var authUrl = graph.getOauthUrl({
-        "client_id":     conf.client_id
-      , "redirect_uri":  conf.redirect_uri
+        "client_id":     FBGRAPH_CONFIG.client_id
+      , "redirect_uri":  FBGRAPH_CONFIG.redirect_uri
     });
 
     if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
@@ -80,9 +80,9 @@ app.get('/auth/fb', function(req, res) {
   // code is set
   // we'll send that and get the access token
   graph.authorize({
-      "client_id":      conf.client_id
-    , "redirect_uri":   conf.redirect_uri
-    , "client_secret":  conf.client_secret
+      "client_id":      FBGRAPH_CONFIG.client_id
+    , "redirect_uri":   FBGRAPH_CONFIG.redirect_uri
+    , "client_secret":  FBGRAPH_CONFIG.client_secret
     , "code":           req.query.code
   }, function (err, facebookRes) {
     res.redirect('/invite');
@@ -196,8 +196,6 @@ db.getQuestions(10, 0, function(results) {
 	}
 });
 
-
-
 // For server side, emit sender and handler almost always together
 // The flow is: 1. Received emit from client 2. Push to masterArr
 //				3. Store to db 4. emit a signal to all client
@@ -206,9 +204,6 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	console.log('socket connected!')
 
 	var cookies = cookie.parse(socket.handshake.headers.cookie);
-	// console.log(cookies);
-
-	// console.log(cookies['express.sid']);
 	var c = cookies[config.AUTH_COOKIE_NAME];
 	var session_id = c.substring(c.indexOf(':')+1,c.indexOf('.'));
 
@@ -229,15 +224,13 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 
         	user_cookie.id = parseInt(user_cookie.id);
 
-        	//here need to check and create user
+        	//Creates or updates existing user
         	db.updateUserInfo(user_cookie.id, user_cookie.username, "", user_cookie.displayName, function(){})
 
-
-
-        	socket.user_cookie = user_cookie; //attach cookie to socket object
+        	//Attach user information to socket object
+        	socket.user_cookie = user_cookie;
         }
     });
-
 
 	socket.on("comment", function(data) {
 		db.addComment(socket.user_cookie.id, data.post_id, data.content, function(id) {
