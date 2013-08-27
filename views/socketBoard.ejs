@@ -6,8 +6,8 @@
         <link href='http://fonts.googleapis.com/css?family=Merriweather:300,700' rel='stylesheet' type='text/css'>
         <script type="text/javascript" src="/socket.io/socket.io.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/public/js/jquery.tinysort.js"></script>
         <script type="text/javascript" src="/public/js/main.js"></script>
-
     </head>
     <body>
         <div id="fb-root"></div>
@@ -60,6 +60,8 @@
                     <textarea class="newPostText" rows="5" cols="40" placeholder="Your Question Here"></textarea><br>
                     <button class="newPostBtn">Send</button>
                     <hr>
+					<button class="sortByTimeDesc">Sort By Time</button>
+					<button class="sortByVotes">Sort By Votes</button>
                 </div>
 
                 <div class="messageBoard">  </div>

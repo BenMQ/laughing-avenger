@@ -6,24 +6,40 @@
 //----- brings unexpected behaviour. ----------------
 // And things that don't need the document to be ready, should not be inside document.ready
 $(document).ready(function() {
-
 	// get master arr from server, and display
 	$.get("/masterArr", function(data) {
 		// The problem with class is, there are some stuff that should be singleton
 		// Here .eq(0) is just a failsafe. We should be careful
-		var container = $('.messageBoard').eq(0);
-		for (var i = data.length - 1; i >= 0; i--) {
-			// TODO: differentiate post, answer, comment. Display accordingly
-			displayPost(data[data.length - 1 - i], container, false);
-		}
-		console.log(data);
+		init(data);
 	});
 //	$.get("/userVotes", function(data) {
 //		
 //	});
 
 	$(".newPostBtn").click(newPost);
+	$(".messageBoard .masterPostDiv").tsort({order:'desc',attr:'data-timestamp'});
+	$(".sortByTimeDesc").click(function() {
+		$(".messageBoard .masterPostDiv").tsort({order:'desc',attr:'data-timestamp'});
+		sortAns();
+	});
+	$(".sortByVotes").click(function() {
+		$(".messageBoard .masterPostDiv").tsort('.voteDiv span.votes', {order:'desc'}, {order:'desc',attr:'data-timestamp'});
+		sortAns();
+	});
 }); // End of document.ready
+
+function sortAns() {
+	$(".messageBoard .masterPostDiv .answersDiv .answerDiv").tsort('.ansVoteDiv span.votes', {order:'desc'}, {order:'desc',attr:'data-msgid'});
+}
+
+function init(masterArr) {
+	var container = $('.messageBoard').eq(0);
+		for (var i = masterArr.length - 1; i >= 0; i--) {
+			// TODO: differentiate post, answer, comment. Display accordingly
+			displayPost(masterArr[masterArr.length - 1 - i], container, false);
+		}
+		console.log(masterArr);
+}
 
 // init socket
 //like a persistent tube between client and server on directory '/'
@@ -44,9 +60,9 @@ function displayPost(data, container, blink) {
 	if (!data.content) {
 		// The post must have content, else display what!
 		return;
-	}
-	var masterPostDiv = $('<div class="masterPostDiv" data-msgid="' + data.id + '">');
-
+	}console.log(data.timestamp);
+	var masterPostDiv = $('<div class="masterPostDiv" data-timestamp="'+data.timestamp+'" data-msgid="' + data.id + '">'); //data-votes="'+data.votecount+'" '+'
+	
 	var textDiv = $('<div class="textDiv" data-msgid="' + data.id + '">');
 	var txt = $("<p>" + "<span class='title'>" + data.title + "</span>" + data.content + "</p>");
 	textDiv.append(txt);
@@ -202,6 +218,7 @@ socket.on('vote', function(postData) {
 	// Individual vote is useless. Just send a standard post obj from server
 	if (postData.type == 0) {
 		$('.masterPostDiv .voteDiv' + '[data-msgid="' + postData.id + '"]' + ' span.votes').text(postData.votecount);
+		
 	}
 	else if (postData.type == 1) {
 		console.log('received ans vote');
