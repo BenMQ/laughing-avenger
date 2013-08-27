@@ -6,6 +6,9 @@
 //----- brings unexpected behaviour. ----------------
 // And things that don't need the document to be ready, should not be inside document.ready
 $(document).ready(function() {
+	// Our obj, horray!
+	// Nothing much stored there, though
+	window.fragen = {};
 	// get master arr from server, and display
 	$.get("/masterArr", function(data) {
 		// The problem with class is, there are some stuff that should be singleton
@@ -17,28 +20,60 @@ $(document).ready(function() {
 //	});
 
 	$(".newPostBtn").click(newPost);
-	$(".messageBoard .masterPostDiv").tsort({order:'desc',attr:'data-timestamp'});
-	$(".sortByTimeDesc").click(function() {
-		$(".messageBoard .masterPostDiv").tsort({order:'desc',attr:'data-timestamp'});
-		sortAns();
+	$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
+	
+	$(".sortByTime").click(function() {
+		if (window.fragen && window.fragen.sortByTime) {
+			clearInterval(window.fragen.sortByTime);
+		}
+		if (window.fragen && window.fragen.sortByVotes) {
+			clearInterval(window.fragen.sortByVotes);
+		}
+		$(this).toggleClass("acting");
+		if ($(this).hasClass("acting")) {
+			$(".sortByVotes").removeClass("acting");
+			$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
+			sortAns();
+			window.fragen.sortByTime = setInterval(function() {
+				console.log("auto by time hahaha");
+				$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
+				sortAns();
+			}, 5000);
+		}
 	});
-	$(".sortByVotes").click(function() {
-		$(".messageBoard .masterPostDiv").tsort('.voteDiv span.votes', {order:'desc'}, {order:'desc',attr:'data-timestamp'});
-		sortAns();
+	$("button.sortByVotes").click(function() {
+		if (window.fragen && window.fragen.sortByTime) {
+			clearInterval(window.fragen.sortByTime);
+		}
+		if (window.fragen && window.fragen.sortByVotes) {
+			clearInterval(window.fragen.sortByVotes);
+		}
+		$(this).toggleClass('acting');
+		if ($(this).hasClass("acting")) {
+			$(".sortByTime").removeClass("acting");
+			$(".messageBoard .masterPostDiv").tsort('.voteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-timestamp'});
+			sortAns();
+			window.fragen.sortByVotes = setInterval(function() {
+				console.log("auto by votes hahaha");
+				$(".messageBoard .masterPostDiv").tsort('.voteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-timestamp'});
+				sortAns();
+			}, 5000);
+		}
+		return false;
 	});
 }); // End of document.ready
 
 function sortAns() {
-	$(".messageBoard .masterPostDiv .answersDiv .answerDiv").tsort('.ansVoteDiv span.votes', {order:'desc'}, {order:'desc',attr:'data-msgid'});
+	$(".messageBoard .masterPostDiv .answersDiv .answerDiv").tsort('.ansVoteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-msgid'});
 }
 
 function init(masterArr) {
 	var container = $('.messageBoard').eq(0);
-		for (var i = masterArr.length - 1; i >= 0; i--) {
-			// TODO: differentiate post, answer, comment. Display accordingly
-			displayPost(masterArr[masterArr.length - 1 - i], container, false);
-		}
-		console.log(masterArr);
+	for (var i = masterArr.length - 1; i >= 0; i--) {
+		// TODO: differentiate post, answer, comment. Display accordingly
+		displayPost(masterArr[masterArr.length - 1 - i], container, false);
+	}
+	console.log(masterArr);
 }
 
 // init socket
@@ -60,17 +95,15 @@ function displayPost(data, container, blink) {
 	if (!data.content) {
 		// The post must have content, else display what!
 		return;
-	}console.log(data.timestamp);
-	var masterPostDiv = $('<div class="masterPostDiv" data-timestamp="'+data.timestamp+'" data-msgid="' + data.id + '">'); //data-votes="'+data.votecount+'" '+'
-	
+	}
+	var masterPostDiv = $('<div class="masterPostDiv" data-timestamp="' + data.timestamp + '" data-msgid="' + data.id + '">'); //data-votes="'+data.votecount+'" '+'
+
 	var textDiv = $('<div class="textDiv" data-msgid="' + data.id + '">');
 	var txt = $("<p>" + "<span class='title'>" + data.title + "</span>" + data.content + "</p>");
 	textDiv.append(txt);
 
 	var qnCommentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
 	if (data.comments && data.comments.length > 0) {
-		console.log('In displayPost');
-		console.log('TODO display the comments');
 		for (var i = 0; i < data.comments.length; i++) {
 			displayComment(data.comments[i], qnCommentsDiv, false);
 		}
@@ -102,9 +135,7 @@ function displayPost(data, container, blink) {
 	var answersDiv = $('<div class="answersDiv" data-msgid="' + data.id + '">');
 
 	if (data.answers && data.answers.length > 0) {
-		console.log('In displayAns');
 		for (var i = 0; i < data.answers.length; i++) {
-			console.log('forloop');
 			var answerDiv = $('<div class="answerDiv" data-msgid="' + data.answers[i].id + '">');
 			var answer = $('<p class="answer" data-msgid="' + data.answers[i].id + '">' +
 					data.answers[i].content + '</p>');
@@ -139,8 +170,6 @@ function displayPost(data, container, blink) {
 					.append(commentsDiv)
 					.append(ansCommentDiv);
 			answersDiv.prepend(answerDiv);
-			console.log(answerDiv);
-			console.log(ansVoteDiv);
 		}
 	}
 
@@ -208,20 +237,16 @@ socket.on("ans", function(data) {
 	myBlink(answerDiv);
 });
 socket.on("comment", function(data) {
-	console.log(data);
 	var parent = $('.answerDiv[data-msgid="' + data.post_id + '"] .commentsDiv' + ', .masterPostDiv[data-msgid="' + data.post_id + '"] .commentsDiv').eq(0);
-	console.log(parent);
 	displayComment(data, parent, true);
 });
 socket.on('vote', function(postData) {
-	console.log(postData);
 	// Individual vote is useless. Just send a standard post obj from server
 	if (postData.type == 0) {
 		$('.masterPostDiv .voteDiv' + '[data-msgid="' + postData.id + '"]' + ' span.votes').text(postData.votecount);
-		
+
 	}
 	else if (postData.type == 1) {
-		console.log('received ans vote');
 		$('.masterPostDiv[data-msgid="' + postData.parent_id + '"] .answersDiv .answerDiv[data-msgid="' + postData.id + '"] .ansVoteDiv span.votes').text(postData.votecount);
 	}
 });
@@ -229,7 +254,6 @@ socket.on('vote', function(postData) {
 // Here are the emit senders. Through some trigger, the page will send signals
 // To the server
 function upVote() {
-	console.log('send out up vote');
 	socket.emit('vote', {
 		// user_id: window.user.id,
 		post_id: $(this).parent().attr("data-msgid"),
@@ -264,7 +288,6 @@ function newPost() {
 	msgText.val("");
 }
 function newComment() {
-	console.log('send new comment');
 	var input = $(this).siblings('.commentInput').eq(0);
 	if (input.val() === "") {
 		alert("Please input comment content!");
@@ -275,7 +298,6 @@ function newComment() {
 		post_id: $(this).parent().attr('data-msgid'),
 		content: input.val(),
 	};
-	console.log(obj);
 	socket.emit('comment', obj);
 	input.val("");
 }
@@ -311,7 +333,6 @@ function myBlink($obj) {
 				i = 0;
 			}
 			$obj.css("opacity", i);
-//			console.log("set new i: "+i);
 		}, 5);
 		setTimeout(function() {
 			clearInterval(exe);
