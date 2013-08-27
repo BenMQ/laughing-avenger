@@ -308,7 +308,7 @@ function myBlink($obj) {
 			setTimeout(function() {
 				clearInterval(exe);
 
-			}, 500);
+			}, 1200);
 		}, 500);
 	}, 500);
 }
