@@ -108,26 +108,30 @@ self.getComment = function(id, next) {
 
 /**
  * Creates a new question.
- * @param {integer}  user    ID of the user who created the question
- * @param {string}   title   Title of the question
- * @param {string}   content Content of the question
- * @param {Function} next    Callback. ID of the created question is provided.
+ * @param {integer}  user       ID of the user who created the question
+ * @param {string}   title      Title of the question
+ * @param {string}   content    Content of the question
+ * @param {boolean}  anonymous  Indicates if the post is anonymous
+ * @param {Function} next       Callback. ID of the created question is provided.
  */
-self.addQuestion = function(user, title, content, next) {
+self.addQuestion = function(user, title, content, anonymous, next) {
 	var query = 'INSERT INTO post SET ?';
-	var question = {owner_id: user, title: title, content: content, type: __QUESTION};
+	anonymous = (anonymous ? __YES : __NO);
+	var question = {owner_id: user, title: title, content: content, anonymous: anonymous, type: __QUESTION};
 	__insertQuery(query, question, next);
 }
 
-self.addAnswer = function(user, questionId, content, next) {
+self.addAnswer = function(user, questionId, content, anonymous, next) {
 	var query = 'INSERT INTO post SET ?';
-	var answer = {owner_id: user, content: content, type: __ANSWER, parent_id: questionId};
+	anonymous = (anonymous ? __YES : __NO);
+	var answer = {owner_id: user, content: content, anonymous: anonymous, type: __ANSWER, parent_id: questionId};
 	__insertQuery(query, answer, next);
 }
 
-self.addComment = function(user, postId, content, next) {
+self.addComment = function(user, postId, content, anonymous, next) {
 	var query = 'INSERT INTO comment SET ?';
-	var answer = {user_id: user, post_id: postId, content: content};
+	anonymous = (anonymous ? __YES : __NO);
+	var answer = {user_id: user, post_id: postId, content: content, anonymous: anonymous};
 	__insertQuery(query, answer, next);
 }
 
