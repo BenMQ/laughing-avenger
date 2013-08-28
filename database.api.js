@@ -8,6 +8,8 @@ var __QUESTION = 0;
 var __ANSWER = 1;
 var __UP = 1;
 var __DOWN = -1;
+var __NO = 0;
+var __YES = 1;
 
 /**
  * Initialise the db connection with a config object
@@ -200,5 +202,55 @@ self.reopen = function(postId, next) {
 self.updateUserInfo = function(fbid, fbUsername, picUrl, fbName, next) {
 	var query = "INSERT INTO user (user_id , fb_username, fbpic_url, name) VALUES(" + mysql.escape([fbid, fbUsername, picUrl, fbName]) + ")"
 				+ ' ON DUPLICATE KEY UPDATE fb_username=VALUES(fb_username), fbpic_url=VALUES(fbpic_url), name=VALUES(name)';
+	__query(query, next);
+}
+
+/**
+ * Get all votes casted by the user
+ * @param  {integer}  user fbid of the user
+ * @param  {Function} next callback, a list of objects with post_id and type property (+/- 1 for up/down vote) 
+ */
+self.getVotes = function(user, next) {
+	var query = 'SELECT post_id, type FROM vote WHERE user_id = ' + mysql.escape(user);
+	__query(query, next);
+}
+
+/**
+ * Get the vote of user for a particular post
+ * @param  {integer}  user  fbid of the user
+ * @param  {integer}  post  post id to query
+ * @param  {Function} next  callback, contains the type property if a vote is found. 
+ */
+self.getVoteByPost = function(user, post, next) {
+	var query = 'SELECT type FROM vote WHERE user_id = ' + mysql.escape(user) + ' AND post_id = ' + mysql.escape(post);
+	__query(query, next);
+}
+
+self.createModule = function(title, description, next) {
+	var query = 'INSERT INTO module (title, description) VALUES("' + mysql.escape([title, description]) + '")';
+	__insertQuery(query, next);
+}
+
+self.enroll = function(user, moduleId, next) {
+	var query = 'INSERT INTO enrollment (user_id, module_id) VALUES(' + mysql.escape([user, moduleId]) + ')';
+	__query(query, next);
+}
+
+// opposite to enroll
+self.withdraw = function(user, moduleId, next) {
+	var query = 'DELETE FROM enrollment WHERE user_id = ' + mysql.escape(user) + ' AND module_id = ' mysql.escape(moduleId) + ')';
+	__query(query, next); 
+}
+
+
+self.addManager = function(user, moduleId, next) {
+	var query = 'INSERT INTO enrollment (user_id, module_id, is_manager) VALUES(' + mysql.escape([user, moduleId, __YES]) + ')'
+				+ ' ON DUPLICATE KEY UPDATE is_manager=VALUES(is_manager)';
+	__query(query, next);
+}
+
+self.removeManager = function(user, moduleId, next) {
+	var query = 'UPDATE enrollment SET is_manager = ' + __NO + ' WHERE user_id = ' + mysql.escape(user)
+			 	+ ' AND module_id = ' mysql.escape(moduleId);
 	__query(query, next);
 }
