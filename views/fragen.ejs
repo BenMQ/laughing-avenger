@@ -1,0 +1,114 @@
+<html>
+<head>
+	<!--content determined dynamically-->
+	<title>CS3216 | Ask and Learn</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta charset='utf-8' />
+	<link href="../public/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,300" rel="stylesheet" type="text/css" />
+	<link href='http://fonts.googleapis.com/css?family=Raleway:400,200,300' rel='stylesheet' type='text/css'>
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
+	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="../public/css/jquery.mCustomScrollbar.css" />
+	<link rel="stylesheet" type="text/css" href="../public/css/fragen-style.css" />
+</head>
+<body>
+	<header id='nav-pane'>
+		<nav class="navbar navbar-default navbar-fixed-top" id='navpane' role="navigation">
+			<div class="container nav-container">
+	  			<div class="navbar-header">
+			    	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+				       <span class="sr-only">Toggle navigation</span>
+				       <span class="icon-bar"></span>
+				       <span class="icon-bar"></span>
+				       <span class="icon-bar"></span>	
+			   		</button>
+	    			<a class="navbar-brand" href="#"><span class='icon'></a>	
+	    		</div>	
+	    		<nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
+			    	<ul class="nav navbar-nav">
+			        	<li><a href="#">DASHBOARD</a></li>
+			        	<li><a href="#">SIGN OUT</a></li>
+			        </ul>
+			    </nav>
+	    	</div>	
+  		</nav>
+	</header>
+	<div id="content">
+		<div id="mod-desc">
+			<h1 id='mod-name'>CS3216</h1> <!--content determined dynamically-->
+			<h3 id='mod-title'>SOFTWARE ON EVOLVING PLATFORMS</h3>
+		</div>
+		<div class='row' id='wrapper'>
+			<div class="col-md-10 col-md-offset-1">
+				<div id="qna-wrapper">
+					<div id="qn-view">
+						<div class="panel-group" id="accordion">
+  							<div class="panel panel-default">
+   		 						<div class="panel-heading">
+   	   								<h3 class="qn-title panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Pigeon Hole Principle ???</a></h3>
+   	   								<div class="stats clearfix	">
+   	   									<div class="total-votes"><span class='net-vote'>2</span><span>votes</span></div>
+   	   									<div class="total-answers"><span class='answer-number'>2</span><span>answers</span></div>
+   	   								</div>
+    							</div>
+		    					<div id="collapseOne" class="panel-collapse collapse">
+		      						<div class="panel-body">
+		        						<div class="chat-bubble-question textDiv">
+		        							<h4 class="title">Pigeon Hole Principle ???</h4> <!--same as panel-title-->
+		        							<div class="question-by"><img src="../img/muneer-fb.png" title='Muhammad Muneer'></div>
+		        							<span class="question-body">
+		        								You went through the proof too fast, it was hard to follow.You went through the proof too fast, it was hard to follow.You went through the proof too fast, it was hard to follow.You went through the proof too fast, it was hard to follow.You went through the proof too fast, it was hard to follow
+		        							</span>
+		        							<div class="commentsDiv">
+		        								<span class="comment">+1 Ya I have the same problem<span class='comment-by'>Muhammad Muneer</span></span>
+		        								<span class="comment">+1 Me Too<span class='comment-by'>Muhammad Muneer</span></span>
+		        							</div>
+		        							<div class="misc-btns">
+		        								<span class='net-vote'>2</span>
+		        								<a class='upvote'><i class="icon-chevron-up"></i></a>
+		        								<a class='downvote'><i class="icon-chevron-down"></i></a>
+		        								<a class='answer-btn'><span>answer</span></a>
+		        								<a class='comment-btn'><span>comment</span></a>
+		        							</div>
+		        						</div>
+		        						<div class="chat-bubble-answer textDiv">
+		        							<div class="answer-by"><img src="../img/minqi.png" title='Minqi'></div>
+		        							<span class="answer-body">
+		        								My answer is simple.Read the notes.
+		        							</span>
+		        							<div class="commentsDiv">
+		        								<span class="comment">+1 That actually solves my prob. Thanks<span class='comment-by'>Muhammad Muneer</span></span>
+		        								<span class="comment">+1 Same here<span class='comment-by'>Boyang</span></span>
+		        							</div>
+		        							<div class="misc-btns">
+		        								<span class='net-vote'>5</span>
+		        								<a class='upvote'><i class="icon-chevron-up"></i></a>
+		        								<a class='downvote'></span><i class="icon-chevron-down"></i></a>
+		        								<a class='comment-btn'><span>comment</span></a>
+		        							</div>
+		        						</div>
+		      						</div>
+		    					</div>
+  							</div>
+						</div>
+					</div>
+					<textarea id='title-view' placeholder='Title for your Question'></textarea>
+					<div id="ans-view-wrapper">
+						<textarea id='ans-view' placeholder='Ask Question'></textarea>
+						<button id='submit' class='btn btn-default'>Send</button>
+					</div>
+				</div>
+			</div>
+			<!--to be integrated later-->
+			<div class="col-md-3" style='display:none'>
+				<div id="notification"></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+	<script type="text/javascript" src='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'></script>
+	<script src="../public/js/jquery.mCustomScrollbar.concat.min.js"></script>
+	<script type="text/javascript" src='../public/js/fragen-script.js'></script>
+</body>
+</html>
