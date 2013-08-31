@@ -216,6 +216,11 @@ self.updateUserInfo = function(fbid, fbUsername, picUrl, fbName, next) {
 	__query(query, next);
 }
 
+self.getUserInfo = function(fbid, next) {
+	var query = 'SELECT * FROM user WHERE user_id = ' + mysql.escape(fbid);
+	__query(query, next);
+}
+
 /**
  * Get all votes casted by the user
  * @param  {integer}  user fbid of the user
