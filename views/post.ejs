@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 	<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# fragen-ask: http://ogp.me/ns/fb/fragen-ask#">
-		<meta property="fb:app_id" content="492242497533605" /> 
-		<meta property="og:type"   content="fragen-ask:question" /> 
-		<meta property="og:url"    content="http://fragen.cmq.me/post" /> 
-		<meta property="og:title"  content="Sample Question" /> 
-		<meta property="og:image"  content="http://fragen.cmq.me/public/img/fragen-iconb.png" />
+		<meta property="fb:app_id"       content="492242497533605" /> 
+		<meta property="og:type"         content="fragen-ask:question" /> 
+		<meta property="og:url"          content="http://fragen.cmq.me/question/<%= content.id %>" /> 
+		<meta property="og:title"        content="<%= content.title %>" />
+		<% if (content.description) { %>
+		<meta property="og:description"  content="<%= content.description %>"/>
+		<% } %>
+		<meta property="og:image"        content="http://fragen.cmq.me/public/img/fragen-iconb.png" />
 		<title>Test Open Graph</title>
 	</head>
 	<body>
@@ -21,13 +24,16 @@ fjs.parentNode.insertBefore(js, fjs);
 <!-- Add to Timeline -->
 <div class="fb-add-to-timeline" data-show-faces="true" ></div>
 		<a href='##' onclick='publish()'>Publish a story</a>
+		<%= content.title %>
+		<br/>
+		<%= content.content %>
 		<script type="text/javascript">
 			function publish() {
 				FB.api(
 					'me/fragen-ask:answer',
 					'post',
 					{
-						question: "http://fragen.cmq.me/ogtest"
+						question: "http://fragen.cmq.me/question/<%= content.id %>"
 					},
 					function(response) {
 						console.log(response);

@@ -140,7 +140,15 @@ app.get('/logout', routes.logout);
 
 
 // Test Open Graph Story
-app.get('/post', routes.post);
+app.get('/question/:questionId', function(req, res) {
+	db.getQuestion(req.params.questionId, function(result) {
+		if (result.length) {
+			res.render('post', {content: result[0]});
+		} else {
+			res.redirect('/main');
+		}
+	})
+});
 
 // Introducing master arr, where we store all data
 var masterArr = [];

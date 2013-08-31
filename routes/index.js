@@ -41,5 +41,5 @@ exports.logout = function(req,res){
 }
 
 exports.post = function(req, res){
-    res.render('post');
+    
 }
