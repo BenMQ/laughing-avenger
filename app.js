@@ -47,10 +47,11 @@ function(accessToken, refreshToken, profile, done) {
 
 // http://developers.facebook.com/docs/reference/login/extended-permissions/
 var conf = {
-	client_id: config.FACEBOOK_APP_ID,
-	client_secret: config.FACEBOOK_APP_SECRET,
-	scope: 'user_about_me, publish_stream, read_friendlists',
-	redirect_uri: config.FBGRAPH_REDIRECT_URL
+
+    client_id: config.FACEBOOK_APP_ID,
+    client_secret:config.FACEBOOK_APP_SECRET,
+    scope:'user_about_me, publish_stream, read_friendlists, publish actions',
+    redirect_uri: config.FBGRAPH_REDIRECT_URL
 };
 
 
@@ -58,41 +59,41 @@ app.get('/login', function(req, res) {
 	res.render("index");
 });
 
-app.get('/auth/fb', function(req, res) {
+app.get('/invite', function(req, res) {
 
-	// we don't have a code yet
-	// so we'll redirect to the oauth dialog
-	if (!req.query.code) {
-		var authUrl = graph.getOauthUrl({
-			"client_id": conf.client_id
-					, "redirect_uri": conf.redirect_uri
-		});
 
-		if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
-			res.redirect(authUrl);
-		} else {  //req.query.error == 'access_denied'
-			res.send('access denied');
-		}
-		return;
-	}
+  // we don't have a code yet
+  // so we'll redirect to the oauth dialog
+  if (!req.query.code) {
+    var authUrl = graph.getOauthUrl({
+        "client_id":     conf.client_id
+      , "redirect_uri":  conf.redirect_uri
+    });
 
-	// code is set
-	// we'll send that and get the access token
-	graph.authorize({
-		"client_id": conf.client_id
-				, "redirect_uri": conf.redirect_uri
-				, "client_secret": conf.client_secret
-				, "code": req.query.code
-	}, function(err, facebookRes) {
-		res.redirect('/invite');
-	});
+    if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
+      res.redirect(authUrl);
+    } else {  //req.query.error == 'access_denied'
+      res.send('access denied');
+    }
+    return;
+  }
+
+  // code is set
+  // we'll send that and get the access token
+  graph.authorize({
+      "client_id":      conf.client_id
+    , "redirect_uri":   conf.redirect_uri
+    , "client_secret":  conf.client_secret
+    , "code":           req.query.code
+  }, function (err, facebookRes) {
+    res.redirect('/friends');
+  });
 
 
 });
 
 // user gets sent here after being authorized
-app.get('/invite', function(req, res) {
-	console.log("logged in!");
+app.get('/friends', function(req, res) {
 	console.log(req);
 
 	//Make graph queries!

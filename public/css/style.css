@@ -126,7 +126,8 @@ h1 {
 
  #type-anim h1{
  	margin: 0;
-	width: 473px;
+    margin-left: -10px;
+	width: 500px;
  	color:white;
  	font-size: 55px;
  	font-family: 'giddyup';
