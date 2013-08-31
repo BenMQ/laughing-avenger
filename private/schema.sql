@@ -57,22 +57,22 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
   CONSTRAINT `post_parentid_id`
     FOREIGN KEY (`parent_id` )
     REFERENCES `laughing_avenger`.`post` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `post_accepted_answer_id`
     FOREIGN KEY (`accepted_answer` )
     REFERENCES `laughing_avenger`.`post` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE SET NULL
     ON UPDATE NO ACTION,
   CONSTRAINT `post_user_user_id`
     FOREIGN KEY (`owner_id` )
     REFERENCES `laughing_avenger`.`user` (`user_id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `post_module_id`
     FOREIGN KEY (`id` )
     REFERENCES `laughing_avenger`.`module` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -92,12 +92,12 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`vote` (
   CONSTRAINT `vote_post_id_id`
     FOREIGN KEY (`post_id` )
     REFERENCES `laughing_avenger`.`post` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `vote_user_user_id`
     FOREIGN KEY (`user_id` )
     REFERENCES `laughing_avenger`.`user` (`user_id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -120,12 +120,12 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`comment` (
   CONSTRAINT `comment_post_id_id`
     FOREIGN KEY (`post_id` )
     REFERENCES `laughing_avenger`.`post` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `comment_user_user_id`
     FOREIGN KEY (`user_id` )
     REFERENCES `laughing_avenger`.`user` (`user_id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -145,12 +145,12 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`enrollment` (
   CONSTRAINT `enrollment_user_user_id`
     FOREIGN KEY (`user_id` )
     REFERENCES `laughing_avenger`.`user` (`user_id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `enrollment_module_mod_id`
     FOREIGN KEY (`module_id` )
     REFERENCES `laughing_avenger`.`module` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
