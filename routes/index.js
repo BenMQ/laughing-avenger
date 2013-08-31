@@ -2,8 +2,6 @@
  * Defines routes for application
 */
 
-//TODO: Write an ensureAuthenticated function wrapper
-
 exports.index = function(req,res){
     res.render('welcome');
 }

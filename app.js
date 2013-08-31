@@ -59,7 +59,7 @@ app.get('/login', function(req, res){
   res.render("index");
 });
 
-app.get('/auth/fb', function(req, res) {
+app.get('/invite', function(req, res) {
 
   // we don't have a code yet
   // so we'll redirect to the oauth dialog
@@ -85,14 +85,14 @@ app.get('/auth/fb', function(req, res) {
     , "client_secret":  FBGRAPH_CONFIG.client_secret
     , "code":           req.query.code
   }, function (err, facebookRes) {
-    res.redirect('/invite');
+    res.redirect('/friends');
   });
 
 
 });
 
 // user gets sent here after being authorized
-app.get('/invite', function(req, res) {
+app.get('/friends', function(req, res) {
 	console.log("logged in!");
 	console.log(req);
 
@@ -102,7 +102,7 @@ app.get('/invite', function(req, res) {
 	// });
 
 	//return all friends of me()
-	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me())"
+	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,100)"
 	graph.fql(query, function(err, fdata) {
 		console.log(fdata.data); // { data: [ { uid: 513485082, name: 'Jeremy Tan' }, ] }
 
