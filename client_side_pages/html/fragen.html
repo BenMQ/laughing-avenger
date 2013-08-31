@@ -48,9 +48,8 @@
    		 						<div class="panel-heading">
    	   								<h3 class="qn-title panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Pigeon Hole Principle ???</a></h3>
    	   								<div class="stats clearfix	">
-   	   									<div class="total-votes"><span class='vote-number'>1</span><span>votes</span></div>
+   	   									<div class="total-votes"><span class='net-vote'>2</span><span>votes</span></div>
    	   									<div class="total-answers"><span class='answer-number'>2</span><span>answers</span></div>
-   	   									<div class="total-views"><span class='view-number'>3</span><span>views</span></div>
    	   								</div>
     							</div>
 		    					<div id="collapseOne" class="panel-collapse collapse">
@@ -66,8 +65,9 @@
 		        								<span class="comment">+1 Me Too<span class='comment-by'>Muhammad Muneer</span></span>
 		        							</div>
 		        							<div class="misc-btns">
-		        								<a class='upvote'><span class='upvote-count'>2</span><i class="icon-chevron-up"></i></a>
-		        								<a class='downvote'><span class='downvote-count'>3</span><i class="icon-chevron-down"></i></a>
+		        								<span class='net-vote'>2</span>
+		        								<a class='upvote'><i class="icon-chevron-up"></i></a>
+		        								<a class='downvote'><i class="icon-chevron-down"></i></a>
 		        								<a class='answer-btn'><span>answer</span></a>
 		        								<a class='comment-btn'><span>comment</span></a>
 		        							</div>
@@ -82,8 +82,9 @@
 		        								<span class="comment">+1 Same here<span class='comment-by'>Boyang</span></span>
 		        							</div>
 		        							<div class="misc-btns">
-		        								<a class='upvote'><span class='upvote-count'>5</span><i class="icon-chevron-up"></i></a>
-		        								<a class='downvote'><span class='downvote-count' style='display:none'></span><i class="icon-chevron-down"></i></a>
+		        								<span class='net-vote'>5</span>
+		        								<a class='upvote'><i class="icon-chevron-up"></i></a>
+		        								<a class='downvote'></span><i class="icon-chevron-down"></i></a>
 		        								<a class='comment-btn'><span>comment</span></a>
 		        							</div>
 		        						</div>
@@ -92,8 +93,10 @@
   							</div>
 						</div>
 					</div>
-					<div id="text-area">
+					<textarea id='title-view' placeholder='Title for your Question'></textarea>
+					<div id="ans-view-wrapper">
 						<textarea id='ans-view' placeholder='Ask Question'></textarea>
+						<button id='submit' class='btn btn-default'>Send</button>
 					</div>
 				</div>
 			</div>

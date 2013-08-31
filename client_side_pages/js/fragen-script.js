@@ -20,6 +20,7 @@ function addCustomScrollBar(){
 
 function addEvtForAnswer(){
   $('.answer-btn').on('click',function(){
+    $('#title-view').hide();
     var textArea = $('#ans-view');
     textArea.attr('placeholder','What\'s your answer?');
     textArea.animate({
@@ -32,6 +33,7 @@ function addEvtForAnswer(){
 
 function addEvtForComment(){
   $('.comment-btn').on('click',function(){
+    $('#title-view').hide();
     var textArea = $('#ans-view');
     textArea.attr('placeholder','What\'s your comment');
     textArea.animate({
@@ -43,14 +45,35 @@ function addEvtForComment(){
 }
 
 function addEvtForTextArea(){
-  var textArea = $('#ans-view');
+  var textArea = $('#ans-view-wrapper');
   textArea.focusin(function(){
-    $(this).animate({height:'20%'},500);
+    textArea.find('#ans-view').animate({height:'20%'},500);
   });
   textArea.focusout(function(){
-    textArea.animate({height:'10%'},500);
+    textArea.find('#ans-view').animate({height:'10%'},'fast');
+    $('#title-view').fadeIn(500);
   });
+}
 
+function voteNoAnim(votebtn){
+    var voteSpan = votebtn.parent().find('.net-vote'); 
+    var voteNo = parseInt(voteSpan.text());
+    if(voteNo > 0) {
+      voteSpan.css('color','rgb(43,97,117)');
+    }else if(voteNo < 0){
+      voteSpan.css('color','crimson');
+    }
+}
+
+function addEvtForVoteBtn(){
+  $('.upvote').on('click',function(){
+    $(this).toggleClass('selected-pos');
+    voteNoAnim($(this));
+  });
+  $('.downvote').on('click',function(){
+    $(this).toggleClass('selected-neg');
+    voteNoAnim($(this));
+  });
 }
 
 $(function(){
@@ -58,4 +81,6 @@ $(function(){
   addCustomScrollBar();
   addEvtForAnswer();
   addEvtForComment();
+  addEvtForVoteBtn();
+  addEvtForTextArea();
 })
