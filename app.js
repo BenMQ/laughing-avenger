@@ -1,4 +1,5 @@
 var express = require("express");
+var graph = require('fbgraph');
 var app = express();
 var server = require("http").createServer(app);
 var io = require("socket.io").listen(server);
@@ -44,6 +45,72 @@ passport.use(new FacebookStrategy({
     });
   }
 ));
+
+// http://developers.facebook.com/docs/reference/login/extended-permissions/
+var conf = {
+    client_id: config.FACEBOOK_APP_ID,
+    client_secret:config.FACEBOOK_APP_SECRET,
+    scope:'user_about_me, publish_stream, read_friendlists',
+    redirect_uri: config.FBGRAPH_REDIRECT_URL
+};
+
+
+app.get('/login', function(req, res){
+  res.render("index");
+});
+
+app.get('/auth/fb', function(req, res) {
+
+  // we don't have a code yet
+  // so we'll redirect to the oauth dialog
+  if (!req.query.code) {
+    var authUrl = graph.getOauthUrl({
+        "client_id":     conf.client_id
+      , "redirect_uri":  conf.redirect_uri
+    });
+
+    if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
+      res.redirect(authUrl);
+    } else {  //req.query.error == 'access_denied'
+      res.send('access denied');
+    }
+    return;
+  }
+
+  // code is set
+  // we'll send that and get the access token
+  graph.authorize({
+      "client_id":      conf.client_id
+    , "redirect_uri":   conf.redirect_uri
+    , "client_secret":  conf.client_secret
+    , "code":           req.query.code
+  }, function (err, facebookRes) {
+    res.redirect('/invite');
+  });
+
+
+});
+
+// user gets sent here after being authorized
+app.get('/invite', function(req, res) {
+	console.log("logged in!");
+	console.log(req);
+
+	//Make graph queries!
+	// graph.get("yosriady", function(err, res) {
+	// 	console.log(res); // { id: '4', name: 'Mark Zuckerberg'... }
+	// });
+
+	//return all friends of me()
+	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me())"
+	graph.fql(query, function(err, fdata) {
+		console.log(fdata.data); // { data: [ { uid: 513485082, name: 'Jeremy Tan' }, ] }
+
+		//here need to pass data and render using EJS
+		res.render("invite", {friends: fdata.data});
+
+	});
+});
 
 // Auth routes
 app.get("/", routes.index);
