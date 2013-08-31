@@ -11,6 +11,8 @@ var store = new express.session.MemoryStore();
 var passport = require('passport')
 		, FacebookStrategy = require('passport-facebook').Strategy;
 
+var magicModuleId = 1; // cs1231
+
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
 app.use(parseCookie = express.cookieParser(config.SECRET_KEY));
@@ -47,13 +49,11 @@ function(accessToken, refreshToken, profile, done) {
 
 // http://developers.facebook.com/docs/reference/login/extended-permissions/
 var conf = {
-
-    client_id: config.FACEBOOK_APP_ID,
-    client_secret:config.FACEBOOK_APP_SECRET,
-    scope:'user_about_me, publish_stream, read_friendlists, publish actions',
-    redirect_uri: config.FBGRAPH_REDIRECT_URL
+	client_id: config.FACEBOOK_APP_ID,
+	client_secret: config.FACEBOOK_APP_SECRET,
+	scope: 'user_about_me, publish_stream, read_friendlists, publish actions',
+	redirect_uri: config.FBGRAPH_REDIRECT_URL
 };
-
 
 app.get('/login', function(req, res) {
 	res.render("index");
@@ -62,32 +62,32 @@ app.get('/login', function(req, res) {
 app.get('/invite', function(req, res) {
 
 
-  // we don't have a code yet
-  // so we'll redirect to the oauth dialog
-  if (!req.query.code) {
-    var authUrl = graph.getOauthUrl({
-        "client_id":     conf.client_id
-      , "redirect_uri":  conf.redirect_uri
-    });
+	// we don't have a code yet
+	// so we'll redirect to the oauth dialog
+	if (!req.query.code) {
+		var authUrl = graph.getOauthUrl({
+			"client_id": conf.client_id
+					, "redirect_uri": conf.redirect_uri
+		});
 
-    if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
-      res.redirect(authUrl);
-    } else {  //req.query.error == 'access_denied'
-      res.send('access denied');
-    }
-    return;
-  }
+		if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
+			res.redirect(authUrl);
+		} else {  //req.query.error == 'access_denied'
+			res.send('access denied');
+		}
+		return;
+	}
 
-  // code is set
-  // we'll send that and get the access token
-  graph.authorize({
-      "client_id":      conf.client_id
-    , "redirect_uri":   conf.redirect_uri
-    , "client_secret":  conf.client_secret
-    , "code":           req.query.code
-  }, function (err, facebookRes) {
-    res.redirect('/friends');
-  });
+	// code is set
+	// we'll send that and get the access token
+	graph.authorize({
+		"client_id": conf.client_id
+				, "redirect_uri": conf.redirect_uri
+				, "client_secret": conf.client_secret
+				, "code": req.query.code
+	}, function(err, facebookRes) {
+		res.redirect('/friends');
+	});
 
 
 });
@@ -161,7 +161,7 @@ console.log('db module init!');
 
 var db_limit = 10; // How many qns do you want in one page?
 var db_offset = 0; // TODO: multipage thingy
-db.getQuestions(10, 0, function(results) {
+db.getQuestions(magicModuleId, 10, 0, function(results) {
 	for (var i = 0; i < results.length; i++) {
 		// console.log(results[i]);
 		masterArr.push(results[i]);
@@ -228,34 +228,36 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			// 				displayName: 'Yos Riady' }
 
 			user_cookie.id = parseInt(user_cookie.id);
-
+			
+			// side track a little. Here we retrieve all the votes from this 
+			// specific user. It needs to be here because we need id
+			db.getVotes(user_cookie.id, function(data) {
+				socket.emit('userVotes', data);
+			});
+			
 			user_cookie.picurl = '';
 			// retrieve user fbpic url
 			graph.get(user_cookie.id + "?fields=picture", function(err, res) {
 				console.log(res);
 				user_cookie.picurl = res.picture.data.url; // { picture: 'http://profile.ak.fbcdn.net/'... }
-				
+
 				//here need to check and create user
 				db.updateUserInfo(user_cookie.id, user_cookie.username, user_cookie.picurl, user_cookie.displayName, function() {
 				});
 			});
 
 			socket.user_cookie = user_cookie; //attach cookie to socket object
+			
 		}
 	});
 
 
 	socket.on("comment", function(data) {
-		db.addComment(socket.user_cookie.id, data.post_id, data.content, function(id) {
-			console.log('enter 1');
+		db.addComment(socket.user_cookie.id, data.post_id, data.content, false, function(id) {
 			db.getComment(id, function(results) {
-				console.log('enter 2');
 				if (results[0]) {
-					console.log('enter 3');
-					console.log(results);
 					var cur_post = masterArr.findPost(results[0].post_id);
 					if (cur_post) {
-						console.log('enter 4');
 						if (cur_post.comments) {
 							cur_post.comments.push(results[0]);
 						}
@@ -271,7 +273,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("ans", function(data) {
-		db.addAnswer(socket.user_cookie.id, data.parent_id, data.content, function(id) {
+		db.addAnswer(socket.user_cookie.id, data.parent_id, data.content, false, function(id) {
 			db.getAnswer(id, function(results) {
 				if (results[0]) {
 					for (var i = 0; i < masterArr.length; i++) {
@@ -289,7 +291,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("post", function(data) {
-		db.addQuestion(socket.user_cookie.id, data.title, data.content, function(id) {
+		db.addQuestion(socket.user_cookie.id, data.title, data.content, magicModuleId, false, function(id) {
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
 					masterArr.push(results[0]);
@@ -336,7 +338,12 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		}
 	});
-
+	
+	socket.on('rmVote', function(clientVote) {
+		db.voteCancel(socket.user_cookie.id, clientVote.post_id, function(results) {
+			console.log("cancel vote");
+		});
+	});
 
 });
 

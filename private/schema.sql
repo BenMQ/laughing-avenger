@@ -54,6 +54,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
   INDEX `question_answer_postid_idx` (`parent_id` ASC) ,
   INDEX `post_accepted_answer_id_idx` (`accepted_answer` ASC) ,
   INDEX `post_user_user_id_idx` (`owner_id` ASC) ,
+  INDEX `post_module_id_idx` (`module_id` ASC) ,
   CONSTRAINT `post_parentid_id`
     FOREIGN KEY (`parent_id` )
     REFERENCES `laughing_avenger`.`post` (`id` )
@@ -70,7 +71,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
     ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `post_module_id`
-    FOREIGN KEY (`id` )
+    FOREIGN KEY (`module_id` )
     REFERENCES `laughing_avenger`.`module` (`id` )
     ON DELETE CASCADE
     ON UPDATE NO ACTION)

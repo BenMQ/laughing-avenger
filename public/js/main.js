@@ -14,14 +14,13 @@ $(document).ready(function() {
 		// The problem with class is, there are some stuff that should be singleton
 		// Here .eq(0) is just a failsafe. We should be careful
 		init(data);
+
 	});
-//	$.get("/userVotes", function(data) {
-//		
-//	});
+
 
 	$(".newPostBtn").click(newPost);
 	$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
-	
+
 	$(".sortByTime").click(function() {
 		if (window.fragen && window.fragen.sortByTime) {
 			clearInterval(window.fragen.sortByTime);
@@ -74,6 +73,22 @@ function init(masterArr) {
 		displayPost(masterArr[masterArr.length - 1 - i], container, false);
 	}
 	console.log(masterArr);
+}
+
+function initVotes(data) {
+	for (var i = 0; i < data.length; i++) {
+		var vote = data[i];
+		var votediv = $('.masterPostDiv[data-msgid="' + vote.post_id + '"] .voteDiv, ' + '.answerDiv[data-msgid="' + vote.post_id + '"] .ansVoteDiv');
+		console.log(votediv);
+		if (vote.type == 1) {
+			$('.upVoteBtn', votediv).css("border", "2px solid green");
+			$('.upVoteBtn', votediv).addClass("selected-pos");
+		}
+		else {
+			$('.downVoteBtn', votediv).css("border", "2px solid red");
+			$('.upVoteBtn', votediv).addClass("selected-neg");
+		}
+	}
 }
 
 // init socket
@@ -253,22 +268,43 @@ socket.on('vote', function(postData) {
 		$('.masterPostDiv[data-msgid="' + postData.parent_id + '"] .answersDiv .answerDiv[data-msgid="' + postData.id + '"] .ansVoteDiv span.votes').text(postData.votecount);
 	}
 });
+socket.on("userVotes", function(data) {
+	console.log("!!got emit!");
+	console.log(data);
+	initVotes(data);
+});
 
 // Here are the emit senders. Through some trigger, the page will send signals
 // To the server
 function upVote() {
-	socket.emit('vote', {
-		// user_id: window.user.id,
-		post_id: $(this).parent().attr("data-msgid"),
-		type: 1
-	});
+	if (!$(this).hasClass("selected-pos")) {
+		socket.emit('rmVote', {
+			post_id: $(this).parent().attr("data-msgid"),
+		});
+	}
+	else {
+		socket.emit('vote', {
+			// user_id: window.user.id,
+			post_id: $(this).parent().attr("data-msgid"),
+			type: 1
+		});
+	}
+	$(this).toggleClass("selected-pos");
 }
 function downVote() {
-	socket.emit('vote', {
-		// user_id: window.user.id,
-		post_id: $(this).parent().attr("data-msgid"),
-		type: -1
-	});
+	if (!$(this).hasClass("selected-neg")) {
+		socket.emit('rmVote', {
+			post_id: $(this).parent().attr("data-msgid"),
+		});
+	}
+	else {
+		socket.emit('vote', {
+			// user_id: window.user.id,
+			post_id: $(this).parent().attr("data-msgid"),
+			type: -1
+		});
+	}
+	$(this).toggleClass("selected-neg");
 }
 function newPost() {
 	// The problem with class is, there are some stuff that should be singleton
@@ -352,4 +388,5 @@ function myBlink($obj) {
 			}, 1200);
 		}, 500);
 	}, 500);
+
 }
