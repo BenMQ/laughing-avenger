@@ -178,6 +178,11 @@ self.getVote = function(user, postId, next) {
 	})
 }
 
+self.getAllVotesByUser = function(user, next) {
+	var query = 'SELECT * FROM vote WHERE user_id = ' + mysql.escape(user);
+	__query(query, next);
+}
+
 /**
  * Select an answer as accepted.
  * @param  {integer}  answerId Answer to be accepted
