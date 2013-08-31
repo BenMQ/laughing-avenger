@@ -50,7 +50,7 @@ passport.use(new FacebookStrategy({
 var conf = {
     client_id: config.FACEBOOK_APP_ID,
     client_secret:config.FACEBOOK_APP_SECRET,
-    scope:'user_about_me, publish_stream, read_friendlists',
+    scope:'user_about_me, publish_stream, read_friendlists, publish actions',
     redirect_uri: config.FBGRAPH_REDIRECT_URL
 };
 
@@ -59,7 +59,7 @@ app.get('/login', function(req, res){
   res.render("index");
 });
 
-app.get('/auth/fb', function(req, res) {
+app.get('/invite', function(req, res) {
 
   // we don't have a code yet
   // so we'll redirect to the oauth dialog
@@ -85,15 +85,14 @@ app.get('/auth/fb', function(req, res) {
     , "client_secret":  conf.client_secret
     , "code":           req.query.code
   }, function (err, facebookRes) {
-    res.redirect('/invite');
+    res.redirect('/friends');
   });
 
 
 });
 
 // user gets sent here after being authorized
-app.get('/invite', function(req, res) {
-	console.log("logged in!");
+app.get('/friends', function(req, res) {
 	console.log(req);
 
 	//Make graph queries!
