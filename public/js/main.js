@@ -92,14 +92,16 @@ function displayComment(data, container, blink) {
 // Container is a jquery obj
 // Not sorted yet (but the db query result is sorted)!
 function displayPost(data, container, blink) {
-	if (!data.content) {
-		// The post must have content, else display what!
-		return;
-	}
 	var masterPostDiv = $('<div class="masterPostDiv" data-timestamp="' + data.timestamp + '" data-msgid="' + data.id + '">'); //data-votes="'+data.votecount+'" '+'
 
 	var textDiv = $('<div class="textDiv" data-msgid="' + data.id + '">');
-	var txt = $("<p>" + "<span class='title'>" + data.title + "</span>" + data.content + "</p>");
+	var txt;
+	if (data.content) {
+		txt = $("<p>" + "<span class='title'>" + data.title + "</span>" + data.content + "</p>");
+	}
+	else {
+		txt = $("<p>" + "<span class='title'>" + data.title + "</span></p>");
+	}
 	textDiv.append(txt);
 
 	var qnCommentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
@@ -181,7 +183,6 @@ function displayPost(data, container, blink) {
 			.append(commentDiv)
 			.append(ansDiv)
 			.append(answersDiv);
-
 	container.prepend(masterPostDiv);
 	if (blink) {
 		myBlink(masterPostDiv);
@@ -195,6 +196,8 @@ socket.on("post", function(data) { //event listener, when server sends message, 
 	// The problem with class is, there are some stuff that should be singleton
 	// Here .eq(0) is just a failsafe. We should be careful
 	var container = $('.messageBoard').eq(0);
+//	console.log(container);
+//	console.log(data);
 	displayPost(data, container, true);
 });
 socket.on("ans", function(data) {
