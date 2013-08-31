@@ -40,6 +40,6 @@ exports.logout = function(req,res){
     console.log("You are logged out!");
 }
 
-exports.ogtest = function(req, res){
-    res.render('ogtest');
+exports.post = function(req, res){
+    res.render('post');
 }

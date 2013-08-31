@@ -140,7 +140,7 @@ app.get('/logout', routes.logout);
 
 
 // Test Open Graph Story
-app.get('/ogtest', routes.ogtest);
+app.get('/post', routes.post);
 
 // Introducing master arr, where we store all data
 var masterArr = [];
