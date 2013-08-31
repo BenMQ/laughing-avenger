@@ -2,11 +2,6 @@
  * Defines routes for application
 */
 
-exports.inviteUser = function(req,res){
-
-
-}
-
 
 // Route for Fragen index page
 exports.index = function(req,res){
@@ -25,10 +20,6 @@ exports.main = function(req, res) {
 
 }
 
-exports.modulePage = function(req,res){
-    res.send('Welcome to ' + req.params.moduleCode);
-}
-
 exports.dashBoard = function(req,res){
     res.send('Welcome to your dashboard!');
 }
@@ -39,14 +30,19 @@ exports.postAuthenticate = function(req, res){
 }
 
 exports.loginError = function(req,res){
-    console.log("Login error log");
+    console.log("Failed to log in.");
 }
 
-exports.logout = function(req,res){
-    console.log(res)
+exports.logout = function(req, res){
+    req.logout();
     console.log("You are logged out!");
+    res.redirect('/');
 }
 
 exports.ogtest = function(req, res){
     res.render('ogtest');
+}
+
+exports.modulePage = function(req,res){
+    res.send('Welcome to ' + req.params.moduleCode);
 }
