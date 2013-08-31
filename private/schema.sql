@@ -20,6 +20,19 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `laughing_avenger`.`module`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `laughing_avenger`.`module` ;
+
+CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`module` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `title` VARCHAR(100) NOT NULL ,
+  `description` TEXT NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `laughing_avenger`.`post`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `laughing_avenger`.`post` ;
@@ -32,6 +45,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
   `type` INT NOT NULL COMMENT '0 for question, 1 for answer' ,
   `parent_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'NULL for question, id of parent question for answers' ,
   `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time created' ,
+  `module_id` INT UNSIGNED NULL ,
   `votecount` INT NOT NULL DEFAULT 0 COMMENT 'upvote minus downvote' ,
   `close_time` TIMESTAMP NULL DEFAULT NULL COMMENT 'NULL for open questions\n' ,
   `accepted_answer` INT UNSIGNED NULL DEFAULT NULL COMMENT 'id for the answer accepted' ,
@@ -40,20 +54,26 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
   INDEX `question_answer_postid_idx` (`parent_id` ASC) ,
   INDEX `post_accepted_answer_id_idx` (`accepted_answer` ASC) ,
   INDEX `post_user_user_id_idx` (`owner_id` ASC) ,
+  INDEX `post_module_id_idx` (`module_id` ASC) ,
   CONSTRAINT `post_parentid_id`
     FOREIGN KEY (`parent_id` )
     REFERENCES `laughing_avenger`.`post` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `post_accepted_answer_id`
     FOREIGN KEY (`accepted_answer` )
     REFERENCES `laughing_avenger`.`post` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE SET NULL
     ON UPDATE NO ACTION,
   CONSTRAINT `post_user_user_id`
     FOREIGN KEY (`owner_id` )
     REFERENCES `laughing_avenger`.`user` (`user_id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `post_module_id`
+    FOREIGN KEY (`module_id` )
+    REFERENCES `laughing_avenger`.`module` (`id` )
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -73,12 +93,12 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`vote` (
   CONSTRAINT `vote_post_id_id`
     FOREIGN KEY (`post_id` )
     REFERENCES `laughing_avenger`.`post` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `vote_user_user_id`
     FOREIGN KEY (`user_id` )
     REFERENCES `laughing_avenger`.`user` (`user_id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -101,26 +121,13 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`comment` (
   CONSTRAINT `comment_post_id_id`
     FOREIGN KEY (`post_id` )
     REFERENCES `laughing_avenger`.`post` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `comment_user_user_id`
     FOREIGN KEY (`user_id` )
     REFERENCES `laughing_avenger`.`user` (`user_id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `laughing_avenger`.`module`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `laughing_avenger`.`module` ;
-
-CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`module` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `title` VARCHAR(100) NOT NULL ,
-  `description` TEXT NULL ,
-  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -139,12 +146,12 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`enrollment` (
   CONSTRAINT `enrollment_user_user_id`
     FOREIGN KEY (`user_id` )
     REFERENCES `laughing_avenger`.`user` (`user_id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `enrollment_module_mod_id`
     FOREIGN KEY (`module_id` )
     REFERENCES `laughing_avenger`.`module` (`id` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 

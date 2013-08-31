@@ -8,6 +8,8 @@ var __QUESTION = 0;
 var __ANSWER = 1;
 var __UP = 1;
 var __DOWN = -1;
+var __NO = 0;
+var __YES = 1;
 
 /**
  * Initialise the db connection with a config object
@@ -48,15 +50,16 @@ __getTime = function() {
 	return new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 }
 /**
- * Get a list of questions, sorted in reverse chronological order
- * @param  {integer}   limit  Number of results to return
- * @param  {integer}   offset Offset from the first item
- * @param  {Function}  next   Callback in the form of function(result), where
- *                            result is an array of objects. Each row is returned
- *                            as an object with column name as field name
+ * Get a list of questions in a module, sorted in reverse chronological order
+ * @param  {integer}   moduleId Module ID to query
+ * @param  {integer}   limit    Number of results to return
+ * @param  {integer}   offset   Offset from the first item
+ * @param  {Function}  next     Callback in the form of function(result), where
+ *                              result is an array of objects. Each row is returned
+ *                              as an object with column name as field name
  */
-self.getQuestions = function(limit, offset, next) {
-	var query = "SELECT * FROM post WHERE type = " + __QUESTION
+self.getQuestions = function(moduleId, limit, offset, next) {
+	var query = "SELECT * FROM post WHERE type = " + __QUESTION + " AND module_id = " + mysql.escape(moduleId)
 				+ " ORDER BY timestamp DESC"
 				+ " LIMIT " + mysql.escape(offset) + ', ' + mysql.escape(limit);
 	__query(query, next);
@@ -106,26 +109,31 @@ self.getComment = function(id, next) {
 
 /**
  * Creates a new question.
- * @param {integer}  user    ID of the user who created the question
- * @param {string}   title   Title of the question
- * @param {string}   content Content of the question
- * @param {Function} next    Callback. ID of the created question is provided.
+ * @param {integer}  user       ID of the user who created the question
+ * @param {string}   title      Title of the question
+ * @param {string}   content    Content of the question
+ * @param {integer}  moduleId   The module this question belongs to
+ * @param {boolean}  anonymous  Indicates if the post is anonymous
+ * @param {Function} next       Callback. ID of the created question is provided.
  */
-self.addQuestion = function(user, title, content, next) {
+self.addQuestion = function(user, title, content, moduleId, anonymous, next) {
 	var query = 'INSERT INTO post SET ?';
-	var question = {owner_id: user, title: title, content: content, type: __QUESTION};
+	anonymous = (anonymous ? __YES : __NO);
+	var question = {owner_id: user, title: title, content: content, module_id: moduleId, anonymous: anonymous, type: __QUESTION};
 	__insertQuery(query, question, next);
 }
 
-self.addAnswer = function(user, questionId, content, next) {
+self.addAnswer = function(user, questionId, content, anonymous, next) {
 	var query = 'INSERT INTO post SET ?';
-	var answer = {owner_id: user, content: content, type: __ANSWER, parent_id: questionId};
+	anonymous = (anonymous ? __YES : __NO);
+	var answer = {owner_id: user, content: content, anonymous: anonymous, type: __ANSWER, parent_id: questionId};
 	__insertQuery(query, answer, next);
 }
 
-self.addComment = function(user, postId, content, next) {
+self.addComment = function(user, postId, content, anonymous, next) {
 	var query = 'INSERT INTO comment SET ?';
-	var answer = {user_id: user, post_id: postId, content: content};
+	anonymous = (anonymous ? __YES : __NO);
+	var answer = {user_id: user, post_id: postId, content: content, anonymous: anonymous};
 	__insertQuery(query, answer, next);
 }
 
@@ -170,6 +178,11 @@ self.getVote = function(user, postId, next) {
 	})
 }
 
+self.getAllVotesByUser = function(user, next) {
+	var query = 'SELECT * FROM vote WHERE user_id = ' + mysql.escape(user);
+	__query(query, next);
+}
+
 /**
  * Select an answer as accepted.
  * @param  {integer}  answerId Answer to be accepted
@@ -200,5 +213,76 @@ self.reopen = function(postId, next) {
 self.updateUserInfo = function(fbid, fbUsername, picUrl, fbName, next) {
 	var query = "INSERT INTO user (user_id , fb_username, fbpic_url, name) VALUES(" + mysql.escape([fbid, fbUsername, picUrl, fbName]) + ")"
 				+ ' ON DUPLICATE KEY UPDATE fb_username=VALUES(fb_username), fbpic_url=VALUES(fbpic_url), name=VALUES(name)';
+	__query(query, next);
+}
+
+self.getUserInfo = function(fbid, next) {
+	var query = 'SELECT * FROM user WHERE user_id = ' + mysql.escape(fbid);
+	__query(query, next);
+}
+
+self.getAllUsers = function(next) {
+	var query = 'SELECT * FROM user';
+	__query(query, next);
+}
+
+/**
+ * Get all votes casted by the user
+ * @param  {integer}  user fbid of the user
+ * @param  {Function} next callback, a list of objects with post_id and type property (+/- 1 for up/down vote) 
+ */
+self.getVotes = function(user, next) {
+	var query = 'SELECT post_id, type FROM vote WHERE user_id = ' + mysql.escape(user);
+	__query(query, next);
+}
+
+/**
+ * Get the vote of user for a particular post
+ * @param  {integer}  user  fbid of the user
+ * @param  {integer}  post  post id to query
+ * @param  {Function} next  callback, contains the type property if a vote is found. 
+ */
+self.getVoteByPost = function(user, post, next) {
+	var query = 'SELECT type FROM vote WHERE user_id = ' + mysql.escape(user) + ' AND post_id = ' + mysql.escape(post);
+	__query(query, next);
+}
+
+self.createModule = function(title, description, next) {
+	var query = 'INSERT INTO module (title, description) VALUES("' + mysql.escape([title, description]) + '")';
+	__insertQuery(query, next);
+}
+
+self.getAllModules = function(next) {
+	var query = 'SELECT * FROM module';
+	__query(query, next);
+}
+
+self.getModulesByUser = function(user, moduleId, next) {
+	var query = 'SELECT * FROM module m WHERE EXISTS '
+				+ '(SELECT * FROM enrollment WHERE user_id = ' + mysql.escape(user) + 'module_id = m.id)';
+	__query(query, next);
+}
+
+self.enroll = function(user, moduleId, next) {
+	var query = 'INSERT INTO enrollment (user_id, module_id) VALUES(' + mysql.escape([user, moduleId]) + ')';
+	__query(query, next);
+}
+
+// opposite to enroll
+self.withdraw = function(user, moduleId, next) {
+	var query = 'DELETE FROM enrollment WHERE user_id = ' + mysql.escape(user) + ' AND module_id = ' mysql.escape(moduleId) + ')';
+	__query(query, next); 
+}
+
+
+self.addManager = function(user, moduleId, next) {
+	var query = 'INSERT INTO enrollment (user_id, module_id, is_manager) VALUES(' + mysql.escape([user, moduleId, __YES]) + ')'
+				+ ' ON DUPLICATE KEY UPDATE is_manager=VALUES(is_manager)';
+	__query(query, next);
+}
+
+self.removeManager = function(user, moduleId, next) {
+	var query = 'UPDATE enrollment SET is_manager = ' + __NO + ' WHERE user_id = ' + mysql.escape(user)
+			 	+ ' AND module_id = ' mysql.escape(moduleId);
 	__query(query, next);
 }
