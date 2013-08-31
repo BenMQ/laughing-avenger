@@ -91,6 +91,10 @@ app.get('/invite', function(req, res) {
 
 });
 
+app.get('/invite/:fb_id', routes.modulePage);
+
+
+
 // user gets sent here after being authorized
 app.get('/friends', function(req, res) {
 	console.log(req);
