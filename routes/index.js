@@ -39,8 +39,8 @@ exports.logout = function(req, res){
     res.redirect('/');
 }
 
-exports.ogtest = function(req, res){
-    res.render('ogtest');
+exports.post = function(req, res){
+    
 }
 
 exports.modulePage = function(req,res){
