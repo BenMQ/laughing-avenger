@@ -221,6 +221,11 @@ self.getUserInfo = function(fbid, next) {
 	__query(query, next);
 }
 
+self.getAllUsers = function(next) {
+	var query = 'SELECT * FROM user';
+	__query(query, next);
+}
+
 /**
  * Get all votes casted by the user
  * @param  {integer}  user fbid of the user
