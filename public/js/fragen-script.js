@@ -6,7 +6,7 @@ function addEvtForNavLinks(){
 }
 
 function addCustomScrollBar(){
-   $("#qn-view,#notification,#ans-view").mCustomScrollbar({
+   $("#qn-view,#notification").mCustomScrollbar({
       theme: 'dark-thin',
       advanced:{
           autoScrollOnFocus: false,
