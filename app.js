@@ -7,86 +7,85 @@ var routes = require('./routes');
 var db = require('./database.api.js');
 var config = require("./config/config.js");
 var cookie = require('cookie');
-var store  = new express.session.MemoryStore();
+var store = new express.session.MemoryStore();
 var passport = require('passport')
-  , FacebookStrategy = require('passport-facebook').Strategy;
+		, FacebookStrategy = require('passport-facebook').Strategy;
 
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
 app.use(parseCookie = express.cookieParser(config.SECRET_KEY));
 app.use(express.session({
 	secret: config.SECRET_KEY,
-    key: config.AUTH_COOKIE_NAME, //session key for user auth cookie
-    store:store,
+	key: config.AUTH_COOKIE_NAME, //session key for user auth cookie
+	store: store,
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
-  done(null, user);
+	done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+	done(null, obj);
 });
 
 passport.use(new FacebookStrategy({
-    clientID: config.FACEBOOK_APP_ID,
-    clientSecret: config.FACEBOOK_APP_SECRET,
-    callbackURL: config.FBAUTH_CALLBACK_URL
-  },
-
-  function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function () {
-    	// console.log(profile);
-    	var usr = {id:profile.id, username:profile.username, displayName:profile.displayName}
-    	// console.log(user);
-    	return done(null, usr);
-    });
-  }
+	clientID: config.FACEBOOK_APP_ID,
+	clientSecret: config.FACEBOOK_APP_SECRET,
+	callbackURL: config.FBAUTH_CALLBACK_URL
+},
+function(accessToken, refreshToken, profile, done) {
+	process.nextTick(function() {
+		// console.log(profile);
+		var usr = {id: profile.id, username: profile.username, displayName: profile.displayName}
+		// console.log(user);
+		return done(null, usr);
+	});
+}
 ));
 
 // http://developers.facebook.com/docs/reference/login/extended-permissions/
 var conf = {
-    client_id: config.FACEBOOK_APP_ID,
-    client_secret:config.FACEBOOK_APP_SECRET,
-    scope:'user_about_me, publish_stream, read_friendlists',
-    redirect_uri: config.FBGRAPH_REDIRECT_URL
+	client_id: config.FACEBOOK_APP_ID,
+	client_secret: config.FACEBOOK_APP_SECRET,
+	scope: 'user_about_me, publish_stream, read_friendlists',
+	redirect_uri: config.FBGRAPH_REDIRECT_URL
 };
 
 
-app.get('/login', function(req, res){
-  res.render("index");
+app.get('/login', function(req, res) {
+	res.render("index");
 });
 
 app.get('/auth/fb', function(req, res) {
 
-  // we don't have a code yet
-  // so we'll redirect to the oauth dialog
-  if (!req.query.code) {
-    var authUrl = graph.getOauthUrl({
-        "client_id":     conf.client_id
-      , "redirect_uri":  conf.redirect_uri
-    });
+	// we don't have a code yet
+	// so we'll redirect to the oauth dialog
+	if (!req.query.code) {
+		var authUrl = graph.getOauthUrl({
+			"client_id": conf.client_id
+					, "redirect_uri": conf.redirect_uri
+		});
 
-    if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
-      res.redirect(authUrl);
-    } else {  //req.query.error == 'access_denied'
-      res.send('access denied');
-    }
-    return;
-  }
+		if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
+			res.redirect(authUrl);
+		} else {  //req.query.error == 'access_denied'
+			res.send('access denied');
+		}
+		return;
+	}
 
-  // code is set
-  // we'll send that and get the access token
-  graph.authorize({
-      "client_id":      conf.client_id
-    , "redirect_uri":   conf.redirect_uri
-    , "client_secret":  conf.client_secret
-    , "code":           req.query.code
-  }, function (err, facebookRes) {
-    res.redirect('/invite');
-  });
+	// code is set
+	// we'll send that and get the access token
+	graph.authorize({
+		"client_id": conf.client_id
+				, "redirect_uri": conf.redirect_uri
+				, "client_secret": conf.client_secret
+				, "code": req.query.code
+	}, function(err, facebookRes) {
+		res.redirect('/invite');
+	});
 
 
 });
@@ -120,20 +119,20 @@ app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
 app.get('/auth/facebook',
-  passport.authenticate('facebook'),
-  routes.postAuthenticate);
+		passport.authenticate('facebook'),
+		routes.postAuthenticate);
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/loginError'}),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    console.log("Auth success!");
-    //access sessionID and user after login success
-    // console.log(req);
-    // console.log(req.sessionID);
-    // console.log(req.session.passport); //retrieve passport's user ID
+		passport.authenticate('facebook', {failureRedirect: '/loginError'}),
+function(req, res) {
+	// Successful authentication, redirect home.
+	console.log("Auth success!");
+	//access sessionID and user after login success
+	// console.log(req);
+	// console.log(req.sessionID);
+	// console.log(req.session.passport); //retrieve passport's user ID
 
-    res.redirect('/main');
-  });
+	res.redirect('/main');
+});
 app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
 // app.get('/classes/:moduleCode', routes.modulePage);
@@ -210,33 +209,39 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 
 	// console.log(cookies['express.sid']);
 	var c = cookies[config.AUTH_COOKIE_NAME];
-	var session_id = c.substring(c.indexOf(':')+1,c.indexOf('.'));
+	var session_id = c.substring(c.indexOf(':') + 1, c.indexOf('.'));
 
 	console.log("parsed session_id:" + session_id);
 
 	store.get(session_id, function(err, session) {
-        console.log('Retrieving user info from session store using auth cookie');
-        console.log(session);
+		console.log('Retrieving user info from session store using auth cookie');
+		console.log(session);
 
-        if(session){
-        	var user_cookie = session.passport.user;
-        	console.log(user_cookie);
+		if (session) {
+			var user_cookie = session.passport.user;
+			console.log(user_cookie);
 
-        	// Example:
-        	// user_cookie = { id: '100003334235610',
-        	// 				username: 'yos.riady',
-        	// 				displayName: 'Yos Riady' }
+			// Example:
+			// user_cookie = { id: '100003334235610',
+			// 				username: 'yos.riady',
+			// 				displayName: 'Yos Riady' }
 
-        	user_cookie.id = parseInt(user_cookie.id);
+			user_cookie.id = parseInt(user_cookie.id);
 
-        	//here need to check and create user
-        	db.updateUserInfo(user_cookie.id, user_cookie.username, "", user_cookie.displayName, function(){})
+			user_cookie.picurl = '';
+			// retrieve user fbpic url
+			graph.get(user_cookie.id + "?fields=picture", function(err, res) {
+				console.log(res);
+				user_cookie.picurl = res.picture.data.url; // { picture: 'http://profile.ak.fbcdn.net/'... }
+				
+				//here need to check and create user
+				db.updateUserInfo(user_cookie.id, user_cookie.username, user_cookie.picurl, user_cookie.displayName, function() {
+				});
+			});
 
-
-
-        	socket.user_cookie = user_cookie; //attach cookie to socket object
-        }
-    });
+			socket.user_cookie = user_cookie; //attach cookie to socket object
+		}
+	});
 
 
 	socket.on("comment", function(data) {
@@ -272,7 +277,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 						// Find the question which this answer belongs to
 						if (masterArr[i].id == results[0].parent_id) {
 							masterArr[i].answers.push(results[0]);
-							masterArr[i].answers[masterArr[i].answers.length-1].comments=[];
+							masterArr[i].answers[masterArr[i].answers.length - 1].comments = [];
 							io.sockets.emit('ans', results[0]);
 							break;
 						}
