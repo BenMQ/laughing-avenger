@@ -50,15 +50,16 @@ __getTime = function() {
 	return new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 }
 /**
- * Get a list of questions, sorted in reverse chronological order
- * @param  {integer}   limit  Number of results to return
- * @param  {integer}   offset Offset from the first item
- * @param  {Function}  next   Callback in the form of function(result), where
- *                            result is an array of objects. Each row is returned
- *                            as an object with column name as field name
+ * Get a list of questions in a module, sorted in reverse chronological order
+ * @param  {integer}   moduleId Module ID to query
+ * @param  {integer}   limit    Number of results to return
+ * @param  {integer}   offset   Offset from the first item
+ * @param  {Function}  next     Callback in the form of function(result), where
+ *                              result is an array of objects. Each row is returned
+ *                              as an object with column name as field name
  */
-self.getQuestions = function(limit, offset, next) {
-	var query = "SELECT * FROM post WHERE type = " + __QUESTION
+self.getQuestions = function(moduleId, limit, offset, next) {
+	var query = "SELECT * FROM post WHERE type = " + __QUESTION + " AND module_id = " + mysql.escape(moduleId)
 				+ " ORDER BY timestamp DESC"
 				+ " LIMIT " + mysql.escape(offset) + ', ' + mysql.escape(limit);
 	__query(query, next);
@@ -111,13 +112,14 @@ self.getComment = function(id, next) {
  * @param {integer}  user       ID of the user who created the question
  * @param {string}   title      Title of the question
  * @param {string}   content    Content of the question
+ * @param {integer}  moduleId   The module this question belongs to
  * @param {boolean}  anonymous  Indicates if the post is anonymous
  * @param {Function} next       Callback. ID of the created question is provided.
  */
-self.addQuestion = function(user, title, content, anonymous, next) {
+self.addQuestion = function(user, title, content, moduleId, anonymous, next) {
 	var query = 'INSERT INTO post SET ?';
 	anonymous = (anonymous ? __YES : __NO);
-	var question = {owner_id: user, title: title, content: content, anonymous: anonymous, type: __QUESTION};
+	var question = {owner_id: user, title: title, content: content, module_id: moduleId, anonymous: anonymous, type: __QUESTION};
 	__insertQuery(query, question, next);
 }
 
@@ -233,6 +235,17 @@ self.getVoteByPost = function(user, post, next) {
 self.createModule = function(title, description, next) {
 	var query = 'INSERT INTO module (title, description) VALUES("' + mysql.escape([title, description]) + '")';
 	__insertQuery(query, next);
+}
+
+self.getAllModules = function(next) {
+	var query = 'SELECT * FROM module';
+	__query(query, next);
+}
+
+self.getModulesByUser = function(user, moduleId, next) {
+	var query = 'SELECT * FROM module m WHERE EXISTS '
+				+ '(SELECT * FROM enrollment WHERE user_id = ' + mysql.escape(user) + 'module_id = m.id)';
+	__query(query, next);
 }
 
 self.enroll = function(user, moduleId, next) {
