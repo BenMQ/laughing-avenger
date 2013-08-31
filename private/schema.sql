@@ -45,7 +45,7 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`post` (
   `type` INT NOT NULL COMMENT '0 for question, 1 for answer' ,
   `parent_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'NULL for question, id of parent question for answers' ,
   `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time created' ,
-  `module_id` INT UNSIGNED NOT NULL ,
+  `module_id` INT UNSIGNED NULL ,
   `votecount` INT NOT NULL DEFAULT 0 COMMENT 'upvote minus downvote' ,
   `close_time` TIMESTAMP NULL DEFAULT NULL COMMENT 'NULL for open questions\n' ,
   `accepted_answer` INT UNSIGNED NULL DEFAULT NULL COMMENT 'id for the answer accepted' ,
