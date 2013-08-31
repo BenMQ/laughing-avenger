@@ -49,11 +49,10 @@ function(accessToken, refreshToken, profile, done) {
 
 // http://developers.facebook.com/docs/reference/login/extended-permissions/
 var conf = {
-
-    client_id: config.FACEBOOK_APP_ID,
-    client_secret:config.FACEBOOK_APP_SECRET,
-    scope:'user_about_me, publish_stream, read_friendlists, publish_actions',
-    redirect_uri: config.FBGRAPH_REDIRECT_URL
+	client_id: config.FACEBOOK_APP_ID,
+	client_secret: config.FACEBOOK_APP_SECRET,
+	scope: 'user_about_me, publish_stream, read_friendlists, publish_actions',
+	redirect_uri: config.FBGRAPH_REDIRECT_URL
 };
 
 app.get('/login', function(req, res) {
@@ -245,13 +244,13 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			// 				displayName: 'Yos Riady' }
 
 			user_cookie.id = parseInt(user_cookie.id);
-			
+
 			// side track a little. Here we retrieve all the votes from this 
 			// specific user. It needs to be here because we need id
 			db.getVotes(user_cookie.id, function(data) {
 				socket.emit('userVotes', data);
 			});
-			
+
 			user_cookie.picurl = '';
 			// retrieve user fbpic url
 			graph.get(user_cookie.id + "?fields=picture", function(err, res) {
@@ -264,7 +263,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 
 			socket.user_cookie = user_cookie; //attach cookie to socket object
-			
+
 		}
 	});
 
@@ -355,10 +354,20 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 		}
 	});
-	
+
 	socket.on('rmVote', function(clientVote) {
+
 		db.voteCancel(socket.user_cookie.id, clientVote.post_id, function(results) {
 			console.log("cancel vote");
+			db.getPost(clientVote.post_id, function(results) {
+				if (results[0]) {
+					var curPost = masterArr.findPost(results[0].id);
+					if (curPost) {
+						curPost.votecount = results[0].votecount;
+					}
+					io.sockets.emit('vote', results[0]);
+				}
+			});
 		});
 	});
 

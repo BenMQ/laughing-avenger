@@ -81,12 +81,12 @@ function initVotes(data) {
 		var votediv = $('.masterPostDiv[data-msgid="' + vote.post_id + '"] .voteDiv, ' + '.answerDiv[data-msgid="' + vote.post_id + '"] .ansVoteDiv');
 		console.log(votediv);
 		if (vote.type == 1) {
-			$('.upVoteBtn', votediv).css("border", "2px solid green");
+			
 			$('.upVoteBtn', votediv).addClass("selected-pos");
 		}
 		else {
-			$('.downVoteBtn', votediv).css("border", "2px solid red");
-			$('.upVoteBtn', votediv).addClass("selected-neg");
+			
+			$('.downVoteBtn', votediv).addClass("selected-neg");
 		}
 	}
 }
@@ -277,7 +277,7 @@ socket.on("userVotes", function(data) {
 // Here are the emit senders. Through some trigger, the page will send signals
 // To the server
 function upVote() {
-	if (!$(this).hasClass("selected-pos")) {
+	if ($(this).hasClass("selected-pos")) {
 		socket.emit('rmVote', {
 			post_id: $(this).parent().attr("data-msgid"),
 		});
@@ -292,7 +292,7 @@ function upVote() {
 	$(this).toggleClass("selected-pos");
 }
 function downVote() {
-	if (!$(this).hasClass("selected-neg")) {
+	if ($(this).hasClass("selected-neg")) {
 		socket.emit('rmVote', {
 			post_id: $(this).parent().attr("data-msgid"),
 		});

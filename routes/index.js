@@ -18,7 +18,7 @@ exports.main = function(req, res) {
     console.log(req.session.passport); //retrieve user passport
 
     if(req.isAuthenticated()){
-        res.render('fragen', { user: req.user });
+        res.render('socketBoard', { user: req.user });
     } else {
         res.redirect("/");
     }
