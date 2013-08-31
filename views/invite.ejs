@@ -8,6 +8,7 @@
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,300" rel="stylesheet" type="text/css" />
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet" />
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
     <style>
         ul li {
             list-style-type: none;
@@ -24,12 +25,33 @@
             display:inline;
 
         }
-
     </style>
-
-
 </head>
 <body>
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        // init the FB JS SDK
+        FB.init({
+            appId: '492242497533605',
+            status: true,
+            cookie: true,
+            xfbml: true,
+            oauth: true
+        });
+
+        // Additional initialization code such as adding Event Listeners goes here
+      };
+
+      // Load the SDK asynchronously
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/all.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
 
 
 
@@ -42,12 +64,33 @@
     <div id ='friend'>
         <img src='<%= friends[i].pic_square %>' />
         <a href='http://facebook.com/<%= friends[i].username %>'><h4><%=friends[i].name%></h4></a>
-        <a href='#' class='invite'>Send Invite</a>
+        <a href='javascript:void(0)' data-fbid='<%= friends[i].uid %>' class='invite'>Send Invite</a>
     </div>
 
     </li>
 <% } %>
 </ul>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $("a.invite").click(function(){
+                var fb_id = $(this).data('fbid');
+
+                FB.ui({
+                  method: 'feed',
+                  link: 'http://fragen.cmq.me',
+                  picture: 'http://fragen.cmq.me/public/img/fragen-iconb.png',
+                  name: 'Fragen',
+                  caption: 'Fragen Q & A',
+                  description: 'Come join me on Fragen, the realtime Q & A site!',
+                  to: fb_id,
+                }, function(response){});
+
+                });
+        });
+
+    </script>
 
 </body>
 </html>

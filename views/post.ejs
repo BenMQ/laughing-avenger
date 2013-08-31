@@ -23,8 +23,6 @@ js = d.createElement(s); js.id = id;
 js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=492242497533605";
 fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
-<!-- Add to Timeline -->
-<div class="fb-add-to-timeline" data-show-faces="true" ></div>
 		<a href='##' onclick='publish()'>Publish a story</a>
 		<%= content.title %>
 		<br/>
@@ -35,7 +33,8 @@ fjs.parentNode.insertBefore(js, fjs);
 					'me/fragen-ask:answer',
 					'post',
 					{
-						question: "http://fragen.cmq.me/question/<%= content.id %>"
+						question: "http://fragen.cmq.me/question/<%= content.id %>",
+						privacy:  {'value': 'ALL_FRIENDS'}
 					},
 					function(response) {
 						console.log(response);
