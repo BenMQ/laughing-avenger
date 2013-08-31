@@ -4,7 +4,9 @@ var moduleAlloc = {
  	'CS2103':'SOFTWARE ENGINEERING',
  	'EE2020':'DIGITAL FUNDAMENTALS',
  	'EE2021':'DEVICES AND CIRCUITS',
- 	'CG2271':'REAL-TIME OPERATING SYSTEM'
+ 	'CG2271':'REAL-TIME OPERATING SYSTEM',
+ 	'CS3108B':'INDEPENDENT WORK',
+ 	'SSA2202': 'CHANGING LANDSCAPES OF SINGAPORE'
 };
 
 var tileColorClass = ['sienna','olive','crimson','amber','cobalt','magenta','mauve','teal','steel','lime'];

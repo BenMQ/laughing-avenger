@@ -50,7 +50,7 @@ passport.use(new FacebookStrategy({
 var conf = {
     client_id: config.FACEBOOK_APP_ID,
     client_secret:config.FACEBOOK_APP_SECRET,
-    scope:'user_about_me, publish_stream, read_friendlists, publish actions',
+    scope:'user_about_me, publish_stream, read_friendlists, publish_actions',
     redirect_uri: config.FBGRAPH_REDIRECT_URL
 };
 
@@ -141,6 +141,10 @@ app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
 // app.get('/classes/:moduleCode', routes.modulePage);
 // app.get('/dashboard', routes.dashBoard);
+
+
+// Test Open Graph Story
+app.get('/ogtest', routes.ogtest);
 
 // Introducing master arr, where we store all data
 var masterArr = [];
