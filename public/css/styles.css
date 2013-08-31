@@ -1,5 +1,10 @@
 /* @Boyang added some ad hoc stuff just to make things clearer to see
 Dear Yos pls delete these when the time comes */
+.sortByTime.acting, .sortByVotes.acting {
+	border: 3px solid purple;
+	border-radius: 2px;
+}
+
 .commentsDiv p.comment {
 	background-color: #FFFF99;
 	font-style: italic;
