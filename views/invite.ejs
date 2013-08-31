@@ -15,11 +15,8 @@
             float: left;
             width: 300px;
             padding: 10px;
-<<<<<<< HEAD
-=======
             background: #eee;
             margin: 10px;
->>>>>>> 2ad52165b0b8d4926942f58d17d16f92787f0d9d
         }
 
         ul li h4 {
@@ -27,11 +24,6 @@
             display:inline;
 
         }
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 2ad52165b0b8d4926942f58d17d16f92787f0d9d
     </style>
 
 
@@ -41,6 +33,7 @@
 
 
 <h1>Invite your friends to fragen!</h1>
+<a href='#' class='invite'>Open Invite Dialog</a>
 
 <ul>
 <% for(var i=0; i<friends.length; i++) {%>
@@ -49,7 +42,6 @@
     <div id ='friend'>
         <img src='<%= friends[i].pic_square %>' />
         <a href='http://facebook.com/<%= friends[i].username %>'><h4><%=friends[i].name%></h4></a>
-        <a href='#' class='invite'>Invite</a>
     </div>
 
     </li>

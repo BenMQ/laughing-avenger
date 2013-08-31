@@ -101,8 +101,12 @@ app.get('/friends', function(req, res) {
 	// 	console.log(res); // { id: '4', name: 'Mark Zuckerberg'... }
 	// });
 
-	//return all friends of me()
 	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,100)"
+
+    //return User's Facebook profile info
+    // var query = "SELECT uid, username, name, pic_square FROM user WHERE uid=me()"
+
+
 	graph.fql(query, function(err, fdata) {
 		console.log(fdata.data); // { data: [ { uid: 513485082, name: 'Jeremy Tan' }, ] }
 
