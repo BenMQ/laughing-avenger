@@ -2,6 +2,13 @@
  * Defines routes for application
 */
 
+exports.inviteUser = function(req,res){
+
+
+}
+
+
+// Route for Fragen index page
 exports.index = function(req,res){
     res.render('welcome');
 }
@@ -38,4 +45,8 @@ exports.loginError = function(req,res){
 exports.logout = function(req,res){
     console.log(res)
     console.log("You are logged out!");
+}
+
+exports.post = function(req, res){
+    
 }

@@ -49,10 +49,11 @@ function(accessToken, refreshToken, profile, done) {
 
 // http://developers.facebook.com/docs/reference/login/extended-permissions/
 var conf = {
-	client_id: config.FACEBOOK_APP_ID,
-	client_secret: config.FACEBOOK_APP_SECRET,
-	scope: 'user_about_me, publish_stream, read_friendlists, publish actions',
-	redirect_uri: config.FBGRAPH_REDIRECT_URL
+
+    client_id: config.FACEBOOK_APP_ID,
+    client_secret:config.FACEBOOK_APP_SECRET,
+    scope:'user_about_me, publish_stream, read_friendlists, publish_actions',
+    redirect_uri: config.FBGRAPH_REDIRECT_URL
 };
 
 app.get('/login', function(req, res) {
@@ -91,6 +92,10 @@ app.get('/invite', function(req, res) {
 
 
 });
+
+app.get('/invite/:fb_id', routes.modulePage);
+
+
 
 // user gets sent here after being authorized
 app.get('/friends', function(req, res) {
@@ -138,6 +143,18 @@ app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
 // app.get('/classes/:moduleCode', routes.modulePage);
 // app.get('/dashboard', routes.dashBoard);
+
+
+// Test Open Graph Story
+app.get('/question/:questionId', function(req, res) {
+	db.getQuestion(req.params.questionId, function(result) {
+		if (result.length) {
+			res.render('post', {content: result[0]});
+		} else {
+			res.redirect('/main');
+		}
+	})
+});
 
 // Introducing master arr, where we store all data
 var masterArr = [];
