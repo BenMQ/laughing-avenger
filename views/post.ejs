@@ -5,10 +5,12 @@
 		<meta property="og:type"         content="fragen-ask:question" /> 
 		<meta property="og:url"          content="http://fragen.cmq.me/question/<%= content.id %>" /> 
 		<meta property="og:title"        content="<%= content.title %>" />
-		<% if (content.description) { %>
-		<meta property="og:description"  content="<%= content.description %>"/>
+		<% if (content.content) { %>
+		<meta property="og:description"  content="<%= content.content %>"/>
 		<% } %>
 		<meta property="og:image"        content="http://fragen.cmq.me/public/img/fragen-iconb.png" />
+		<meta property="og:image:width"  content="90px" />
+		<meta property="og:image:height" content="90px" />
 		<title>Test Open Graph</title>
 	</head>
 	<body>
