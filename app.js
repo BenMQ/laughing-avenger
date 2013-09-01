@@ -338,5 +338,5 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 
 });
 
-server.listen(config.port);
+server.listen(config.port);//"dev.fragen.cmq.me"
 console.log("Express is listening on port " + config.port);

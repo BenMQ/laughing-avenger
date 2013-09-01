@@ -1,5 +1,9 @@
 /* basic scrollbar styling */
 /* vertical scrollbar */
+.mCSB_dragger {
+	margin-left: 0 !important;
+}
+
 .mCSB_container{
 	width:auto;
 	margin-right:30px;

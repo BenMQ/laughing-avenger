@@ -14,7 +14,8 @@ $(document).ready(function() {
 		// The problem with class is, there are some stuff that should be singleton
 		// Here .eq(0) is just a failsafe. We should be careful
 		init(data);
-
+//		relocateMessageBoard();
+//		addCustomScrollBar();
 	});
 
 
@@ -62,6 +63,13 @@ $(document).ready(function() {
 	});
 }); // End of document.ready
 
+function relocateMessageBoard() {
+	var newboard = $("#qn-view > .mCustomScrollBox"); //> .mCSB_container
+	console.log(newboard);
+	$(".messageBoard").removeClass("messageBoard");
+	newboard.addClass("messageBoard");	
+}
+
 function sortAns() {
 	$(".messageBoard .masterPostDiv .answersDiv .answerDiv").tsort('.ansVoteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-msgid'});
 }
@@ -72,7 +80,7 @@ function init(masterArr) {
 		// TODO: differentiate post, answer, comment. Display accordingly
 		displayPost(masterArr[masterArr.length - 1 - i], container, false);
 	}
-	console.log(masterArr);
+	console.log(JSON.stringify(masterArr));
 }
 
 function initVotes(data) {
@@ -81,11 +89,11 @@ function initVotes(data) {
 		var votediv = $('.masterPostDiv[data-msgid="' + vote.post_id + '"] .voteDiv, ' + '.answerDiv[data-msgid="' + vote.post_id + '"] .ansVoteDiv');
 		console.log(votediv);
 		if (vote.type == 1) {
-			
+
 			$('.upVoteBtn', votediv).addClass("selected-pos");
 		}
 		else {
-			
+
 			$('.downVoteBtn', votediv).addClass("selected-neg");
 		}
 	}
