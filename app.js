@@ -7,9 +7,11 @@ var routes = require('./routes');
 var db = require('./database.api.js');
 var config = require("./config/config.js");
 var cookie = require('cookie');
-var store  = new express.session.MemoryStore();
+var store = new express.session.MemoryStore();
 var passport = require('passport')
-  , FacebookStrategy = require('passport-facebook').Strategy;
+		, FacebookStrategy = require('passport-facebook').Strategy;
+
+var magicModuleId = 1; // cs1231
 
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
@@ -17,21 +19,22 @@ app.use(express.bodyParser());
 app.use(parseCookie = express.cookieParser(config.SECRET_KEY));
 app.use(express.session({
 	secret: config.SECRET_KEY,
-    key: config.AUTH_COOKIE_NAME, //session key for user auth cookie
-    store:store,
+	key: config.AUTH_COOKIE_NAME, //session key for user auth cookie
+	store: store,
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
-  done(null, user);
+	done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+	done(null, obj);
 });
 
 passport.use(new FacebookStrategy({
+
     clientID: config.FACEBOOK_APP_ID,
     clientSecret: config.FACEBOOK_APP_SECRET,
     callbackURL: config.FBAUTH_CALLBACK_URL
@@ -81,20 +84,20 @@ app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
 app.get('/auth/facebook',
-  passport.authenticate('facebook'),
-  routes.postAuthenticate);
+		passport.authenticate('facebook'),
+		routes.postAuthenticate);
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/loginError'}),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    console.log("Auth success!");
-    //access sessionID and user after login success
-    // console.log(req);
-    // console.log(req.sessionID);
-    // console.log(req.session.passport); //retrieve passport's user ID
+		passport.authenticate('facebook', {failureRedirect: '/loginError'}),
+function(req, res) {
+	// Successful authentication, redirect home.
+	console.log("Auth success!");
+	//access sessionID and user after login success
+	// console.log(req);
+	// console.log(req.sessionID);
+	// console.log(req.session.passport); //retrieve passport's user ID
 
-    res.redirect('/main');
-  });
+	res.redirect('/main');
+});
 app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
 // app.get('/classes/:moduleCode', routes.modulePage);
@@ -184,43 +187,55 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 
 	// console.log(cookies['express.sid']);
 	var c = cookies[config.AUTH_COOKIE_NAME];
-	var session_id = c.substring(c.indexOf(':')+1,c.indexOf('.'));
+	var session_id = c.substring(c.indexOf(':') + 1, c.indexOf('.'));
 
 	console.log("parsed session_id:" + session_id);
 
 	store.get(session_id, function(err, session) {
-        console.log('Retrieving user info from session store using auth cookie');
-        console.log(session);
+		console.log('Retrieving user info from session store using auth cookie');
+		console.log(session);
 
-        if(session){
-        	var user_cookie = session.passport.user;
-        	console.log(user_cookie);
+		if (session) {
+			var user_cookie = session.passport.user;
+			console.log(user_cookie);
 
-        	// Example:
-        	// user_cookie = { id: '100003334235610',
-        	// 				username: 'yos.riady',
-        	// 				displayName: 'Yos Riady' }
-        	user_cookie.id = parseInt(user_cookie.id);
+			// Example:
+			// user_cookie = { id: '100003334235610',
+			// 				username: 'yos.riady',
+			// 				displayName: 'Yos Riady' }
 
-        	//Create or update user
-        	db.updateUserInfo(user_cookie.id, user_cookie.username, "", user_cookie.displayName, function(){})
+			user_cookie.id = parseInt(user_cookie.id);
 
-        	socket.user_cookie = user_cookie; //attach cookie to socket object
-        }
-    });
+			// side track a little. Here we retrieve all the votes from this
+			// specific user. It needs to be here because we need id
+			db.getVotes(user_cookie.id, function(data) {
+				socket.emit('userVotes', data);
+			});
+
+			user_cookie.picurl = '';
+			// retrieve user fbpic url
+			graph.get(user_cookie.id + "?fields=picture", function(err, res) {
+				console.log(res);
+				user_cookie.picurl = res.picture.data.url; // { picture: 'http://profile.ak.fbcdn.net/'... }
+
+				//here need to check and create user
+				db.updateUserInfo(user_cookie.id, user_cookie.username, user_cookie.picurl, user_cookie.displayName, function() {
+				});
+			});
+
+			socket.user_cookie = user_cookie; //attach cookie to socket object
+
+		}
+	});
+
 
 
 	socket.on("comment", function(data) {
-		db.addComment(socket.user_cookie.id, data.post_id, data.content, function(id) {
-			console.log('enter 1');
+		db.addComment(socket.user_cookie.id, data.post_id, data.content, false, function(id) {
 			db.getComment(id, function(results) {
-				console.log('enter 2');
 				if (results[0]) {
-					console.log('enter 3');
-					console.log(results);
 					var cur_post = masterArr.findPost(results[0].post_id);
 					if (cur_post) {
-						console.log('enter 4');
 						if (cur_post.comments) {
 							cur_post.comments.push(results[0]);
 						}
@@ -236,14 +251,14 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("ans", function(data) {
-		db.addAnswer(socket.user_cookie.id, data.parent_id, data.content, function(id) {
+		db.addAnswer(socket.user_cookie.id, data.parent_id, data.content, false, function(id) {
 			db.getAnswer(id, function(results) {
 				if (results[0]) {
 					for (var i = 0; i < masterArr.length; i++) {
 						// Find the question which this answer belongs to
 						if (masterArr[i].id == results[0].parent_id) {
 							masterArr[i].answers.push(results[0]);
-							masterArr[i].answers[masterArr[i].answers.length-1].comments=[];
+							masterArr[i].answers[masterArr[i].answers.length - 1].comments = [];
 							io.sockets.emit('ans', results[0]);
 							break;
 						}
@@ -254,7 +269,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("post", function(data) {
-		db.addQuestion(socket.user_cookie.id, data.title, data.content, 1, false, function(id) {
+		db.addQuestion(socket.user_cookie.id, data.title, data.content, magicModuleId, false, function(id) {
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
 					masterArr.push(results[0]);
@@ -302,6 +317,21 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 		}
 	});
 
+	socket.on('rmVote', function(clientVote) {
+
+		db.voteCancel(socket.user_cookie.id, clientVote.post_id, function(results) {
+			console.log("cancel vote");
+			db.getPost(clientVote.post_id, function(results) {
+				if (results[0]) {
+					var curPost = masterArr.findPost(results[0].id);
+					if (curPost) {
+						curPost.votecount = results[0].votecount;
+					}
+					io.sockets.emit('vote', results[0]);
+				}
+			});
+		});
+	});
 
 });
 

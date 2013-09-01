@@ -1,5 +1,14 @@
 /* @Boyang added some ad hoc stuff just to make things clearer to see
 Dear Yos pls delete these when the time comes */
+
+.selected-pos {
+	border: 2px solid green;
+}
+.selected-neg {
+	border: 2px solid red;
+}
+
+
 .sortByTime.acting, .sortByVotes.acting {
 	border: 3px solid purple;
 	border-radius: 2px;
