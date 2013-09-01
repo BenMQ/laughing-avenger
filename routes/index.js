@@ -15,9 +15,6 @@ exports.main = function(req, res) {
     res.render('socketBoard', { user: req.user });
 }
 
-exports.dashBoard = function(req,res){
-    res.send('Welcome to your dashboard!');
-}
 
 exports.postAuthenticate = function(req, res){
     // The request will be redirected to Facebook for authentication, so this
