@@ -270,13 +270,8 @@ self.enroll = function(user, moduleId, next) {
 
 // opposite to enroll
 self.withdraw = function(user, moduleId, next) {
-<<<<<<< HEAD
 	var query = 'DELETE FROM enrollment WHERE user_id = ' + mysql.escape(user) + ' AND module_id = ' + mysql.escape(moduleId) + ')';
 	__query(query, next);
-=======
-	var query = 'DELETE FROM enrollment WHERE user_id = ' + mysql.escape(user) + ' AND module_id = ' +mysql.escape(moduleId) + ')';
-	__query(query, next); 
->>>>>>> a40434399bc01d1076accf59a748835410233951
 }
 
 
@@ -287,12 +282,8 @@ self.addManager = function(user, moduleId, next) {
 }
 
 self.removeManager = function(user, moduleId, next) {
-<<<<<<< HEAD
 	var query = 'UPDATE enrollment SET is_manager = ' + __NO + ' WHERE user_id = ' + mysql.escape(user)
 			 	+ ' AND module_id = ' + mysql.escape(moduleId);
-=======
-	var query = "UPDATE enrollment SET is_manager = " + __NO + " WHERE user_id = " + mysql.escape(user)+ " AND module_id = "+mysql.escape(moduleId);
->>>>>>> a40434399bc01d1076accf59a748835410233951
 	__query(query, next);
 }
 
