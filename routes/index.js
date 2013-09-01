@@ -12,12 +12,7 @@ exports.main = function(req, res) {
     console.log("SessionID:" + req.sessionID);
     console.log(req.session.passport); //retrieve user passport
 
-    if(req.isAuthenticated()){
-        res.render('socketBoard', { user: req.user });
-    } else {
-        res.redirect("/");
-    }
-
+    res.render('socketBoard', { user: req.user });
 }
 
 exports.dashBoard = function(req,res){
@@ -30,7 +25,7 @@ exports.postAuthenticate = function(req, res){
 }
 
 exports.loginError = function(req,res){
-    console.log("Failed to log in.");
+    res.send("Failed to log in.");
 }
 
 exports.logout = function(req, res){

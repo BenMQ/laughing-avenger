@@ -1,4 +1,5 @@
 var express = require("express");
+var connect = require('connect')
 var graph = require('fbgraph');
 var app = express();
 var server = require("http").createServer(app);
@@ -52,33 +53,37 @@ passport.use(new FacebookStrategy({
   }
 ));
 
-app.get('/login', function(req, res){
-  res.render("index");
-});
+// Wrapper auth function
+function ensureAuthenticated(req, res, next){
+    if(req.isAuthenticated()){
+        return next();
+    } else {
+        res.redirect("/");
+    }
+}
 
-app.get('/friends', function(req, res) {
+app.get('/friends', ensureAuthenticated , function(req, res) {
 	//return all friends of me()
-	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,150)"
-	graph.fql(query, function(err, fdata) {
+		var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,150)"
+		graph.fql(query, function(err, fdata) {
 
-        var app_friends = [];
-        db.getAllUsers(function(db_users){
-            db.compute_intersection(db_users, fdata.data, function(err, app_friends){
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log(app_friends);
-                }
+	        var app_friends = [];
+	        db.getAllUsers(function(db_users){
+	            db.compute_intersection(db_users, fdata.data, function(err, app_friends){
+	                if (err) {
+	                    console.log(err);
+	                } else {
+	                    console.log(app_friends);
+	                }
 
-                res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data});
-            })
-        });
-	});
+	                res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data});
+	            })
+	        });
+		});
 });
 
-// Auth routes
 app.get("/", routes.index);
-app.get("/main", routes.main);
+app.get("/main", ensureAuthenticated, routes.main);
 
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
@@ -100,8 +105,8 @@ function(req, res) {
 });
 app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
-// app.get('/classes/:moduleCode', routes.modulePage);
-// app.get('/dashboard', routes.dashBoard);
+// app.get('/classes/:moduleCode', ensureAuthenticated,routes.modulePage);
+// app.get('/dashboard', ensureAuthenticated,routes.dashBoard);
 
 
 // Test Open Graph Story
@@ -181,13 +186,11 @@ db.getQuestions(1,db_limit, db_offset, function(results) {
 
 io.sockets.on("connection", function(socket) { //general handler for all socket connection events
 	console.log('socket connected!')
-
 	var cookies = cookie.parse(socket.handshake.headers.cookie);
-	// console.log(cookies);
 
-	// console.log(cookies['express.sid']);
-	var c = cookies[config.AUTH_COOKIE_NAME];
-	var session_id = c.substring(c.indexOf(':') + 1, c.indexOf('.'));
+	console.log(cookies['express.sid']);
+	var session_id = connect.utils.parseSignedCookie(
+	                    cookies[config.AUTH_COOKIE_NAME], config.SECRET_KEY)
 
 	console.log("parsed session_id:" + session_id);
 
