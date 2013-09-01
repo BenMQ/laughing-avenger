@@ -53,23 +53,23 @@ app.get('/login', function(req, res){
   res.render("index");
 });
 
-// user gets sent here after being authorized
 app.get('/friends', function(req, res) {
-	console.log(req);
-
-	//Make graph queries!
-	// graph.get("yosriady", function(err, res) {
-	// 	console.log(res); // { id: '4', name: 'Mark Zuckerberg'... }
-	// });
-
 	//return all friends of me()
-	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me())"
+	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,150)"
 	graph.fql(query, function(err, fdata) {
-		console.log(fdata.data); // { data: [ { uid: 513485082, name: 'Jeremy Tan' }, ] }
 
-		//here need to pass data and render using EJS
-		res.render("invite", {friends: fdata.data});
+        var app_friends = [];
+        db.getAllUsers(function(db_users){
+            db.compute_intersection(db_users, fdata.data, function(err, app_friends){
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(app_friends);
+                }
 
+                res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data});
+            })
+        });
 	});
 });
 
@@ -134,7 +134,8 @@ console.log('db module init!');
 
 var db_limit = 10; // How many qns do you want in one page?
 var db_offset = 0; // TODO: multipage thingy
-db.getQuestions(10, 0, function(results) {
+
+db.getQuestions(1,db_limit, db_offset, function(results) {
 	for (var i = 0; i < results.length; i++) {
 		// console.log(results[i]);
 		masterArr.push(results[i]);
@@ -199,13 +200,10 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
         	// user_cookie = { id: '100003334235610',
         	// 				username: 'yos.riady',
         	// 				displayName: 'Yos Riady' }
-
         	user_cookie.id = parseInt(user_cookie.id);
 
-        	//here need to check and create user
+        	//Create or update user
         	db.updateUserInfo(user_cookie.id, user_cookie.username, "", user_cookie.displayName, function(){})
-
-
 
         	socket.user_cookie = user_cookie; //attach cookie to socket object
         }
@@ -256,7 +254,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("post", function(data) {
-		db.addQuestion(socket.user_cookie.id, data.title, data.content, function(id) {
+		db.addQuestion(socket.user_cookie.id, data.title, data.content, 1, false, function(id) {
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
 					masterArr.push(results[0]);

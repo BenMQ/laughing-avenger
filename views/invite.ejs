@@ -25,9 +25,15 @@
             display:inline;
 
         }
+
+        ul li.invited {
+            background: #FF9900;
+        }
+
     </style>
 </head>
 <body>
+    <!-- For Feed Dialog invites -->
     <div id="fb-root"></div>
     <script>
       window.fbAsyncInit = function() {
@@ -52,27 +58,34 @@
          fjs.parentNode.insertBefore(js, fjs);
        }(document, 'script', 'facebook-jssdk'));
     </script>
+    <!--  -->
 
 
+    <h1>Invite your friends to fragen!</h1>
 
-<h1>Invite your friends to fragen!</h1>
+    <ul>
+    <% for(var i=0; i<app_friends.length; i++) {%>
+        <li class ='invited'>
+            <div>
+                <img src='<%= app_friends[i].pic_square %>' />
+                <a href='http://facebook.com/<%= app_friends[i].username %>'><h4><%= app_friends[i].name %></h4> (Using Fragen)</a>
+            </div>
+        </li>
+    <% } %>
 
-<ul>
-<% for(var i=0; i<friends.length; i++) {%>
-    <li>
+    <% for(var i=0; i<to_invite_friends.length; i++) {%>
+        <li>
+            <div>
+                <img src='<%= to_invite_friends[i].pic_square %>' />
+                <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><h4><%= to_invite_friends[i].name %></h4></a>
+                <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' class='invite'>Send Invite</a>
+            </div>
+        </li>
+    <% } %>
+    </ul>
 
-    <div id ='friend'>
-        <img src='<%= friends[i].pic_square %>' />
-        <a href='http://facebook.com/<%= friends[i].username %>'><h4><%=friends[i].name%></h4></a>
-        <a href='javascript:void(0)' data-fbid='<%= friends[i].uid %>' class='invite'>Send Invite</a>
-    </div>
-
-    </li>
-<% } %>
-</ul>
-
+    <!-- For Feed dialog invites -->
     <script type="text/javascript">
-
         $(document).ready(function() {
             $("a.invite").click(function(){
                 var fb_id = $(this).data('fbid');
@@ -89,8 +102,8 @@
 
                 });
         });
-
     </script>
+    <!--  -->
 
 </body>
 </html>
