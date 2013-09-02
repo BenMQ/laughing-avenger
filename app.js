@@ -82,7 +82,7 @@ function(req, res) {
 app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
 
-app.get('/classes/:moduleCode', ensureAuthenticated,routes.modulePage);
+app.get('/modules/:moduleCode', ensureAuthenticated,routes.modulePage);
 
 app.get('/dashboard', ensureAuthenticated,
     function(req,res){
@@ -217,10 +217,12 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 
 			user_cookie.picurl = '';
+
 			// retrieve user fbpic url
-			graph.get(user_cookie.id + "?fields=picture", function(err, res) {
-				//console.log(res);
-				user_cookie.picurl = res.picture.data.url; // { picture: 'http://profile.ak.fbcdn.net/'... }
+			var query="SELECT pic_big FROM user WHERE uid=me()";
+			graph.fql(query, function(err, fdata) {
+				console.log(fdata.data[0].pic_big);
+				user_cookie.picurl = fdata.data[0].pic_big; // { picture: 'http://profile.ak.fbcdn.net/'... }
 
 				//here need to check and create user
 				db.updateUserInfo(user_cookie.id, user_cookie.username, user_cookie.picurl, user_cookie.displayName, function() {
@@ -228,7 +230,6 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 
 			socket.user_cookie = user_cookie; //attach cookie to socket object
-
 		}
 	});
 
