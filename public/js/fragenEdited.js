@@ -5,18 +5,18 @@ function addEvtForNavLinks(){
 	});
 }
 
-function addCustomScrollBar(){
-   $("#qn-view,#notification,#ans-view").mCustomScrollbar({
-      theme: 'dark-thin',
-      advanced:{
-          autoScrollOnFocus: false,
-          updateOnContentResize: true
-      },
-      scrollButtons:{
-        enable: true
-      }
-    });
-}
+//function addCustomScrollBar(){
+//   $("#qn-view,#notification,#ans-view").mCustomScrollbar({
+//      theme: 'dark-thin',
+//      advanced:{
+//          autoScrollOnFocus: false,
+//          updateOnContentResize: true
+//      },
+//      scrollButtons:{
+//        enable: true
+//      }
+//    });
+//}
 
 function addEvtForAnswer(){
   $('.answer-btn').on('click',function(){
@@ -45,12 +45,12 @@ function addEvtForComment(){
 }
 
 function addEvtForTextArea(){
-  var textArea = $('#ans-view-wrapper');
-  textArea.focusin(function(){
-    textArea.find('#ans-view').animate({height:'20%'},500);
+	var ans = $("#ans-view");
+  ans.focusin(function(){
+    ans.animate({height:'20%'},500);
   });
-  textArea.focusout(function(){
-    textArea.find('#ans-view').animate({height:'10%'},'fast');
+  ans.focusout(function(){
+    ans.animate({height:'10%'},'fast');
     $('#title-view').fadeIn(500);
   });
 }
@@ -78,9 +78,9 @@ function addEvtForVoteBtn(){
 
 $(function(){
 //	addEvtForNavLinks();
-  addCustomScrollBar();
+//  addCustomScrollBar();
 //  addEvtForAnswer();
 //  addEvtForComment();
 //  addEvtForVoteBtn();
-//  addEvtForTextArea();
+  addEvtForTextArea();
 })

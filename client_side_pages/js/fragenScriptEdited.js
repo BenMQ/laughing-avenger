@@ -5,18 +5,18 @@ function addEvtForNavLinks() {
 	});
 }
 
-function addCustomScrollBar() {
-	$("#qn-view").mCustomScrollbar({//,#notification,#ans-view
-		theme: 'dark-thin',
-		advanced: {
-			autoScrollOnFocus: false,
-			updateOnContentResize: true
-		},
-		scrollButtons: {
-			enable: true
-		}
-	});
-}
+//function addCustomScrollBar() {
+//	$("#qn-view").mCustomScrollbar({//,#notification,#ans-view
+//		theme: 'dark-thin',
+//		advanced: {
+//			autoScrollOnFocus: false,
+//			updateOnContentResize: true
+//		},
+//		scrollButtons: {
+//			enable: true
+//		}
+//	});
+//}
 
 function addEvtForAnswer() {
 	$('.answer-btn').on('click', function() {
@@ -89,5 +89,5 @@ $(function() {
 //  addEvtForAnswer();
 //  addEvtForComment();
 //  addEvtForVoteBtn();
-	addEvtForTextArea();
+//	addEvtForTextArea();
 })

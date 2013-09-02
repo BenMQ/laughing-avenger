@@ -9,6 +9,7 @@ $(document).ready(function() {
 	// Our obj, horray!
 	// Nothing much stored there, though
 	window.fragen = {};
+	
 	// get master arr from server, and display
 	$.get("/masterArr", function(data) {
 		// The problem with class is, there are some stuff that should be singleton
@@ -67,7 +68,7 @@ function relocateMessageBoard() {
 	var newboard = $("#qn-view > .mCustomScrollBox"); //> .mCSB_container
 	console.log(newboard);
 	$(".messageBoard").removeClass("messageBoard");
-	newboard.addClass("messageBoard");	
+	newboard.addClass("messageBoard");
 }
 
 function sortAns() {
@@ -104,10 +105,54 @@ function initVotes(data) {
 window.socket = io.connect(":4321/");
 
 function displayComment(data, container, blink) {
-	var com = $('<p class="comment">' + data.content + '</p>');
+	var com = $('<span class="comment">' + data.content + '</span>');
 	container.append(com);
 	if (blink) {
 		myBlink(com);
+	}
+}
+
+function displayAns(data, container, blink) {
+	var answerDiv = $('<div class="answerDiv" data-msgid="' + data.id + '">');
+	var textDiv = $('<div class="testDiv chat-bubble-answer" data-msgid="' + data.id + '">');
+	var answer = $('<p class="answer answer-body" data-msgid="' + data.id + '">' +
+			data.content + '</p>');
+
+	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
+	if (data.comments && data.comments.length > 0) {
+		for (var j = 0; j < data.comments.length; j++) {
+			displayComment(data.comments[j], commentsDiv, false);
+		}
+	}
+
+	
+	var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.id + '">');
+	var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
+	var commentBtn = $('<button class="commentBtn">Add Comment</button>');
+	commentBtn.click(newComment);
+	ansCommentDiv.append(commentInput).append(commentBtn);
+
+	var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.id + '">');
+	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
+	var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
+	var votesDisplay = $('<span class="votes">0</span>');
+	if (data.votecount) {
+		votesDisplay.text(data.votecount);
+	}
+	upVoteBtn.click(upVote);
+	downVoteBtn.click(downVote);
+	ansVoteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+
+	textDiv.append(answer).append(commentsDiv);
+
+	answerDiv
+			.append(textDiv)
+			.append(ansVoteDiv)
+			.append(ansCommentDiv);
+	container.prepend(answerDiv);
+	
+	if (blink) {
+		myBlink(answerDiv);
 	}
 }
 
@@ -115,15 +160,19 @@ function displayComment(data, container, blink) {
 // Container is a jquery obj
 // Not sorted yet (but the db query result is sorted)!
 function displayPost(data, container, blink) {
-	var masterPostDiv = $('<div class="masterPostDiv" data-timestamp="' + data.timestamp + '" data-msgid="' + data.id + '">'); //data-votes="'+data.votecount+'" '+'
-
-	var textDiv = $('<div class="textDiv" data-msgid="' + data.id + '">');
+	var masterPostDiv = $('<div class="masterPostDiv panel panel-default" data-timestamp="' + data.timestamp + '" data-msgid="' + data.id + '">'); //data-votes="'+data.votecount+'" '+'
+	var qnPanelHeading = $('<div class="qn-Panel panel-heading">');
+	var qntitle = $('<h3 class="qn-title panel-title"><a>'+data.title+'</a></h3>');
+	var clearfix = $('<div class="stats clearfix">');
+	
+	qnPanelHeading.append(qntitle).append(clearfix);
+	var textDiv = $('<div class="chat-bubble-question textDiv" data-msgid="' + data.id + '">');
 	var txt;
 	if (data.content) {
-		txt = $("<p>" + "<span class='title'>" + data.title + "</span>" + data.content + "</p>");
+		txt = $("<h4 class='title'>" + data.title + "</h4>" + "<p>"+data.content + "</p>");
 	}
 	else {
-		txt = $("<p>" + "<span class='title'>" + data.title + "</span></p>");
+		txt = $("<h4 class='title'>" + data.title + "</h4><p></p>");
 	}
 	textDiv.append(txt);
 
@@ -133,6 +182,8 @@ function displayPost(data, container, blink) {
 			displayComment(data.comments[i], qnCommentsDiv, false);
 		}
 	}
+
+	textDiv.append(qnCommentsDiv);
 
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
 	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
@@ -161,47 +212,14 @@ function displayPost(data, container, blink) {
 
 	if (data.answers && data.answers.length > 0) {
 		for (var i = 0; i < data.answers.length; i++) {
-			var answerDiv = $('<div class="answerDiv" data-msgid="' + data.answers[i].id + '">');
-			var answer = $('<p class="answer" data-msgid="' + data.answers[i].id + '">' +
-					data.answers[i].content + '</p>');
-
-			var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.answers[i].id + '">');
-			if (data.answers[i].comments && data.answers[i].comments.length > 0) {
-				for (var j = 0; j < data.answers[i].comments.length; j++) {
-					displayComment(data.answers[i].comments[j], commentsDiv, false);
-				}
-			}
-
-			var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.answers[i].id + '">');
-			var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
-			var commentBtn = $('<button class="commentBtn">Add Comment</button>');
-			commentBtn.click(newComment);
-			ansCommentDiv.append(commentInput).append(commentBtn);
-
-			var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.answers[i].id + '">');
-			var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
-			var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
-			var votesDisplay = $('<span class="votes">0</span>');
-			if (data.answers[i].votecount) {
-				votesDisplay.text(data.answers[i].votecount);
-			}
-			upVoteBtn.click(upVote);
-			downVoteBtn.click(downVote);
-			ansVoteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
-
-			answerDiv
-					.append(answer)
-					.append(ansVoteDiv)
-					.append(commentsDiv)
-					.append(ansCommentDiv);
-			answersDiv.prepend(answerDiv);
+			displayAns(data.answers[i], answersDiv, false);
 		}
 	}
 
-
 	masterPostDiv
+			.append(qnPanelHeading)
 			.append(textDiv)
-			.append(qnCommentsDiv)
+//			.append(qnCommentsDiv)
 			.append(voteDiv)
 			.append(commentDiv)
 			.append(ansDiv)
@@ -226,41 +244,45 @@ socket.on("post", function(data) { //event listener, when server sends message, 
 socket.on("ans", function(data) {
 	// Find the parent qn and prepend to it
 	var parentQn = $('.masterPostDiv[data-msgid="' + data.parent_id + '"]');
-	var answerDiv = $('<div class="answerDiv" data-msgid="' + data.id + '">');
-	var answer = $('<p class="answer" data-msgid="' + data.id + '">' +
-			data.content + '</p>');
-
-	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
-	if (data.comments && data.comments.length > 0) {
-		for (var j = 0; j < data.comments.length; j++) {
-			displayComment(data.comments[j], commentsDiv, false);
-		}
-	}
-
-	var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.id + '">');
-	var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
-	var commentBtn = $('<button class="commentBtn">Add Comment</button>');
-	commentBtn.click(newComment);
-	ansCommentDiv.append(commentInput).append(commentBtn);
-
-	var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.id + '">');
-	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
-	var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
-	var votesDisplay = $('<span class="votes">0</span>');
-	if (data.votecount) {
-		votesDisplay.text(data.votecount);
-	}
-	upVoteBtn.click(upVote);
-	downVoteBtn.click(downVote);
-	ansVoteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
-
-	answerDiv
-			.append(answer)
-			.append(ansVoteDiv)
-			.append(commentsDiv)
-			.append(ansCommentDiv);
-	$('.answersDiv', parentQn).prepend(answerDiv);
-	myBlink(answerDiv);
+	var container = $('.answersDiv', parentQn);
+	
+	displayAns(data, container, true);
+	
+//	var answerDiv = $('<div class="answerDiv" data-msgid="' + data.id + '">');
+//	var answer = $('<p class="answer" data-msgid="' + data.id + '">' +
+//			data.content + '</p>');
+//
+//	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
+//	if (data.comments && data.comments.length > 0) {
+//		for (var j = 0; j < data.comments.length; j++) {
+//			displayComment(data.comments[j], commentsDiv, false);
+//		}
+//	}
+//
+//	var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.id + '">');
+//	var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
+//	var commentBtn = $('<button class="commentBtn">Add Comment</button>');
+//	commentBtn.click(newComment);
+//	ansCommentDiv.append(commentInput).append(commentBtn);
+//
+//	var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.id + '">');
+//	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
+//	var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
+//	var votesDisplay = $('<span class="votes">0</span>');
+//	if (data.votecount) {
+//		votesDisplay.text(data.votecount);
+//	}
+//	upVoteBtn.click(upVote);
+//	downVoteBtn.click(downVote);
+//	ansVoteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+//
+//	answerDiv
+//			.append(answer)
+//			.append(ansVoteDiv)
+//			.append(commentsDiv)
+//			.append(ansCommentDiv);
+//	$('.answersDiv', parentQn).prepend(answerDiv);
+//	myBlink(answerDiv);
 });
 socket.on("comment", function(data) {
 	var parent = $('.answerDiv[data-msgid="' + data.post_id + '"] .commentsDiv' + ', .masterPostDiv[data-msgid="' + data.post_id + '"] .commentsDiv').eq(0);
@@ -350,6 +372,8 @@ function newComment() {
 }
 function newAns() {
 	var ansInput = $(this).siblings('.ansInput');
+	console.log(ansInput);
+	console.log(ansInput.val());
 	if (ansInput.val() === "") {
 		alert("Please input answer content!");
 		return;

@@ -19,6 +19,9 @@ Dear Yos pls delete these when the time comes */
 	border-radius: 2px;
 }
 
+.sortByTime, .sortByVotes {
+}
+
 .commentsDiv p.comment {
 	background-color: #FFFF99;
 	font-style: italic;
@@ -26,16 +29,19 @@ Dear Yos pls delete these when the time comes */
 	margin-top: 3px;
 	display: block;
 }
-
-.answersDiv .answerDiv .ansVoteDiv, .answersDiv .answerDiv p.answer {
-	display: inline-block;
+.answersDiv .answerDiv .ansVoteDiv, .ansCommentDiv {
+	clear: both;
 }
-.masterPostDiv .title {
+
+/*.answersDiv .answerDiv p.answer {
+	display: inline-block;
+}*/
+/*.masterPostDiv .title {
 	display: block;
-	/*text-align: center;*/
+	text-align: center;
 	font-weight: bold;
 	font-size: 18px;
-}
+}*/
 
 .masterPostDiv .answersDiv {
 	margin-left: 20px;
@@ -68,7 +74,7 @@ Dear Yos pls delete these when the time comes */
 
 
 .answersDiv p.answer {
-	background-color: #66FF33;
+	/*background-color: #66FF33;*/
 }
 /* Ask Yos for questions */
 
@@ -196,16 +202,16 @@ h2.question {
     margin: 40px;
 }*/
 
-.messageBoard p, #qn-view p {
+/*.messageBoard p, #qn-view p {
     width: 300px;
-    /*background: #fff;*/
+    background: #fff;
     margin: 10px;
     padding: 10px 15px;
     border-radius:5px;
     color: rgb(51, 51, 50);
     font-size: 15px;
     line-height: 21px;
-}
+}*/
 
 .like-button {
   margin: 0 auto 0 auto;

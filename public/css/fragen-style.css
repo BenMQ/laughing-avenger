@@ -1,20 +1,20 @@
 /*
  * body
  ******************************/
- html,body{
- 	height:100%;
- 	background-image: url(../img/old_mathematics.png); 
- }
+html,body{
+	height:100%;
+	background-image: url(../img/old_mathematics.png); 
+}
 
- body{
- 	padding-top:50px;
- 	font-family: 'Open Sans',sans-serif;
- 	overflow-x: hidden;	
- }
+body{
+	padding-top:50px;
+	font-family: 'Open Sans',sans-serif;
+	overflow-x: hidden;	
+}
 
 h1,h2,h3,h4,h5,h6 {
 	font-weight:300;
- 	font-family: 'Open Sans',sans-serif;
+	font-family: 'Open Sans',sans-serif;
 }
 
 h1 {
@@ -29,75 +29,75 @@ h1 {
 /*
  * Header
  ******************************/
- #navpane{
- 	background-color: rgb(83,54,98);
- 	-webkit-box-shadow: 0px 2px 2px #888;
+#navpane{
+	background-color: rgb(83,54,98);
+	-webkit-box-shadow: 0px 2px 2px #888;
     -moz-box-shadow:    0px 2px 2px #888;
     box-shadow:         0px 2px 2px #888;
     border-bottom-width: 0px;
     margin-bottom: 0;
- }
+}
 
- .nav-container{
- 	max-width: 1000px;
- }
+.nav-container{
+	max-width: 1000px;
+}
 
-  .navbar-default .navbar-nav>li>a{ 	
+.navbar-default .navbar-nav>li>a{ 	
 	color:white;
- 	opacity:0.7;
- }
- .navbar-default .navbar-nav>li>a:hover, 
- .navbar-default .navbar-nav>li>a:focus,
- .navbar-default .navbar-nav>li.active>a:hover, 
- .navbar-default .navbar-nav>li.active>a:focus,
- .navbar-default .navbar-nav>li.active>a{
+	opacity:0.7;
+}
+.navbar-default .navbar-nav>li>a:hover, 
+.navbar-default .navbar-nav>li>a:focus,
+.navbar-default .navbar-nav>li.active>a:hover, 
+.navbar-default .navbar-nav>li.active>a:focus,
+.navbar-default .navbar-nav>li.active>a{
 	background-color:transparent;
 	color:white;
- 	opacity:1.0;
- }
+	opacity:1.0;
+}
 
- .navbar-brand{
- 	padding:2.5px;
- }
+.navbar-brand{
+	padding:2.5px;
+}
 
- .icon{
- 	background-image: url(../img/fragen-icon.png);
- 	display:block;
- 	background-repeat: no-repeat;
- 	height:30px;
- 	width:104px;
- 	margin-top: 10px;
- }
+.icon{
+	background-image: url(../img/fragen-icon.png);
+	display:block;
+	background-repeat: no-repeat;
+	height:30px;
+	width:104px;
+	margin-top: 10px;
+}
 
 /*
  * Course Title
  ******************************/
- #content{
- 	min-height:100%;
- 	padding-top: 20px
- }
+#content{
+	min-height:100%;
+	padding-top: 20px
+}
 
- #mod-name{
- 	margin-bottom: 10px;
- 	margin-top: 0;
- }
+#mod-name{
+	margin-bottom: 10px;
+	margin-top: 0;
+}
 
- #mod-title{
- 	margin-top: 0;
- 	text-align: center;
- }
+#mod-title{
+	margin-top: 0;
+	text-align: center;
+}
 
 /*
  * Question/Answer View
  ******************************/
- 
- /*Main*/
- 
- #qna-wrapper{
- 	height:80%;
- }
 
- #qn-view{
+/*Main*/
+
+#qna-wrapper{
+	height:80%;
+}
+
+#qn-view{
 	height: 80%;
 	border: 1px solid lightslategray;
 	border-bottom: transparent;
@@ -106,244 +106,246 @@ h1 {
 	-moz-box-shadow: 0 0 5px #888;
 	-webkit-box-shadow: 0 0 5px#888;
 	box-shadow: 0px 0px 5px #888;
- }
+}
 
- #ans-view,
- #title-view
- {
- 	background-color: white;
+#ans-view,
+#title-view
+{
+	background-color: white;
 	border: 1px solid lightslategray;
 	width: 100%;
 	height: 10%;
 	padding: 12px 0 0 12px;
 	resize: none;
 	outline-color: rgb(43,97,117);
- }
+}
 
- #ans-view{
- 	width:90%;
- 	float:left;
- }
+#ans-view{
+	width:90%;
+	float:left;
+}
 
- #submit{
- 	border: 1px solid lightslategray;
- 	border-radius: 0;
- 	width:10%;
- 	height:10%;
- }
+#qnSubmit{
+	border: 1px solid lightslategray;
+	border-radius: 0;
+	width:10%;
+	height:10%;
+}
 
- #title-view{
- 	border-bottom: transparent;
- }
+#title-view{
+	border-bottom: transparent;
+}
 
- .panel-heading{
+.panel-heading{
 	border-radius: 0;
 }
- 
- .panel-group .panel{
- 	border-radius: 0;
- }
 
- #qn-view{
- 	overflow: auto;
- }
+.panel-group .panel{
+	border-radius: 0;
+}
 
- .qn-title{
- 	float:left;
- 	font-size: 24px;
- }
+#qn-view{
+	overflow: auto;
+}
 
- .stats>div{
- 	height: 65px;
+.qn-title{
+	float:left;
+	font-size: 24px;
+}
+
+.stats>div{
+	height: 65px;
 	width: 65px;
 	border: 1px solid #888;
 	float: right;
 	text-align: center;
 	margin-left: 10px;
 	padding-top: 10px;
- }
+}
 
- .stats>div>span{
- 	display:block;
- }
+.stats>div>span{
+	display:block;
+}
 
-  .chat-bubble-question:hover,
- .chat-bubble-answer:hover{
- 	background-color: #f5f5f5;
- }
+.chat-bubble-question:hover,
+.chat-bubble-answer:hover{
+	background-color: #f5f5f5;
+}
 
- .chat-bubble-question,
- .chat-bubble-answer{
- 	position: relative;
+.chat-bubble-question,
+.chat-bubble-answer{
+	position: relative;
 	padding: 15px;
 	margin: 1em 0 3em;
 	border: 1px solid rgb(43,97,117);
 	background: #fff;
 	width:80%;
- }
+}
 
- .chat-bubble-answer{
- 	float:right;
- 	text-align: right;
- }
+.chat-bubble-answer{
+	float:right;
+	text-align: right;
+}
 
- .chat-bubble-answer:before,
- .chat-bubble-question:before{
+.chat-bubble-answer:before,
+.chat-bubble-question:before{
 	content: "";
 	position: absolute;
 	border-style: solid;
 	border-color: rgb(43,97,117) transparent;
 	display: block;
 	width: 0;
- }
+}
 
-  .chat-bubble-answer:before{
+.chat-bubble-answer:before{
 	bottom: -18px;
 	right: 43px;
 	border-width: 18px 0 0 18px;
- }
+}
 
-  .chat-bubble-question:before{
+.chat-bubble-question:before{
 	bottom: -18px;
 	left: 43px;
 	border-width: 18px 18px 0 0;
- }
+}
 
- .chat-bubble-answer:after,
- .chat-bubble-question:after{
+.chat-bubble-answer:after,
+.chat-bubble-question:after{
 	content: "";
 	position: absolute;
 	border-style: solid;
 	border-color: #FFFFFF transparent;
 	display: block;
 	width: 0;
- }
+}
 
-  .chat-bubble-answer:after{
+.chat-bubble-answer:after{
 	bottom: -16px;
 	right: 44px;
 	border-width: 16px 0 0 16px;
- }
+}
 
- .chat-bubble-question:after{
+.chat-bubble-question:after{
 	bottom: -16px;
 	left: 44px;
 	border-width: 16px 16px 0 0;
- }
+}
 
- /*Question-view*/
+/*Question-view*/
 
- .title{
- 	margin: 0;
+.title {
+	font-weight: 300;
+	font-family: 'Open Sans',sans-serif;
+	margin: 0;
 	display: block;
 	border-bottom: 1px solid #eee;
 	margin-bottom: 5px;
 	padding-bottom: 3px;
- }
+}
 
- .question-by,
- .answer-by{
- 	height: 40px;
+.question-by,
+.answer-by{
+	height: 40px;
 	overflow: hidden;
 	position: absolute;
 	border: 1px solid rgba(43, 97, 117, 0.4);
 	border-radius: 4px;
- }
+}
 
- .question-by{
- 	top: -15px;
+.question-by{
+	top: -15px;
 	right: -15px;
- }
+}
 
- .answer-by{
+.answer-by{
 	top: -15px;
 	left: -15px;
- }
+}
 
- .question-by>img,
- .answer-by>img{
- 	max-width: 40px;
- }
+.question-by>img,
+.answer-by>img{
+	max-width: 40px;
+}
 
- .question-body,
- .answer-body{
- 	font-size: 16;
- }
+.question-body,
+.answer-body{
+	font-size: 16;
+}
 
- /*Comments-view*/ 
+/*Comments-view*/ 
 
- .commentsDiv{
- 	margin-top: 10px;
- }
+.commentsDiv{
+	margin-top: 10px;
+}
 
- .commentsDiv>.comment{
- 	display:block;
- 	border-bottom: 1px dotted #ddd;
- }
+.commentsDiv>.comment{
+	display:block;
+	border-bottom: 1px dotted #ddd;
+}
 
-  .comment:nth-child(1){
- 	border-top: 1px dotted #aaa;
- }
+.comment:nth-child(1){
+	border-top: 1px dotted #aaa;
+}
 
- .comment-by:before{
- 	content:' - ';
- }
+.comment-by:before{
+	content:' - ';
+}
 
- /*Misc*/
+/*Misc*/
 
- .misc-btns{
- 	font-family: 'raleway',sans-serif;
- 	position:absolute;
- }
+.misc-btns{
+	font-family: 'raleway',sans-serif;
+	position:absolute;
+}
 
- .chat-bubble-question .misc-btns{
- 	bottom:-25px;
- 	right:-5px;
- }
+.chat-bubble-question .misc-btns{
+	bottom:-25px;
+	right:-5px;
+}
 
- .chat-bubble-answer .misc-btns{
- 	bottom:-25px;
- 	left:-5px;
- }
+.chat-bubble-answer .misc-btns{
+	bottom:-25px;
+	left:-5px;
+}
 
- .misc-btns>a>span{
- 	margin-right: 3px;
- 	margin-left: 3px;
- }
+.misc-btns>a>span{
+	margin-right: 3px;
+	margin-left: 3px;
+}
 
- .misc-btns>a:nth-child(2):after{
- 	content:' | ';
- }
+.misc-btns>a:nth-child(2):after{
+	content:' | ';
+}
 
- .misc-btns>a:hover{
- 	text-decoration:none;
- 	color:#888;
- 	cursor:pointer;
- }
+.misc-btns>a:hover{
+	text-decoration:none;
+	color:#888;
+	cursor:pointer;
+}
 
- .misc-btns>a,
- .misc-btns>.net-vote{
- 	color:#aaa;
- }
+.misc-btns>a,
+.misc-btns>.net-vote{
+	color:#aaa;
+}
 
- .misc-btns>.net-vote{
- 	font-size: 18px;
- }
+.misc-btns>.net-vote{
+	font-size: 18px;
+}
 
- .misc-btns>a.selected-pos{
- 	color:rgb(43,97,117);
- }
+.misc-btns>a.selected-pos{
+	color:rgb(43,97,117);
+}
 
- .misc-btns>a.selected-neg{
- 	color:crimson;
- }
+.misc-btns>a.selected-neg{
+	color:crimson;
+}
 
- /*
- * Notification View
- ******************************/
+/*
+* Notification View
+******************************/
 
- #notification{
- 	height:80%;
- 	border: 1px solid #888;
- }
+#notification{
+	height:80%;
+	border: 1px solid #888;
+}
 
