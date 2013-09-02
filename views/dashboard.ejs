@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fragen | Ask and Learn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset='utf-8' />
+    <link href="../img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,300" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,200,300' rel='stylesheet' type='text/css'>
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/public/css/MetroJs.min.css" />
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/public/css/dash-style.css" />
+</head>
+<body>
+    <header id='nav-pane'>
+        <nav class="navbar navbar-default navbar-fixed-top" id='navpane' role="navigation">
+            <div class="container nav-container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                       <span class="sr-only">Toggle navigation</span>
+                       <span class="icon-bar"></span>
+                       <span class="icon-bar"></span>
+                       <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#"><span class='icon'></a>
+                </div>
+                <nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
+                    <ul class="nav navbar-nav">
+                        <li class='active'><a href="#">DASHBOARD</a></li>
+                        <li><a href="#">SIGN OUT</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </nav>
+    </header>
+    <div id="content">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-2" id='board'>
+                <div id="mod-panel">
+                    <h2><i class='icon-book pull-left'></i>Modules</h2>
+                    <div class='tiles tile-group row'></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <aside id='side-bar'>
+                    <div id="user-photo" class='thumbnail'>
+                        <img src=<%= fbpic %> alt='Muhammad Muneer'>
+                    </div>
+                    <p id='username'><%= user.displayName %></p>
+                    <ul class="nav nav-pills nav-stacked">
+                        <li class='active'><a href="#"><i class='icon-book'></i> Modules</a></li>
+                        <li><a href="#"><i class='icon-eye-open'></i> My Activity</a></li>
+                        <li><a href="#"><i class='icon-comments'></i> Notifications</a></li>
+                        <li><a href="#"><i class='icon-gears'></i> Account Settings</a></li>
+                    </ul>
+                </aside>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+    <script type="text/javascript" src='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'></script>
+    <script type="text/javascript" src='/public/js/dash-script.js'></script>
+    <script type="text/javascript" src='/public/js/MetroJs.min.js'></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".live-tile").liveTile();
+        });
+    </script>
+</body>
+</html>

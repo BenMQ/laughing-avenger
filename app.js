@@ -35,7 +35,6 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new FacebookStrategy({
-
     clientID: config.FACEBOOK_APP_ID,
     clientSecret: config.FACEBOOK_APP_SECRET,
     callbackURL: config.FBAUTH_CALLBACK_URL
@@ -43,7 +42,7 @@ passport.use(new FacebookStrategy({
 
   function(accessToken, refreshToken, profile, done) {
     process.nextTick(function () {
-    	// console.log(profile);
+    	console.log(profile);
     	var usr = {id:profile.id, username:profile.username, displayName:profile.displayName}
 
         graph.setAccessToken(accessToken);
@@ -62,29 +61,8 @@ function ensureAuthenticated(req, res, next){
     }
 }
 
-app.get('/friends', ensureAuthenticated , function(req, res) {
-	//return all friends of me()
-		var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,150)"
-		graph.fql(query, function(err, fdata) {
-
-	        var app_friends = [];
-	        db.getAllUsers(function(db_users){
-	            db.compute_intersection(db_users, fdata.data, function(err, app_friends){
-	                if (err) {
-	                    console.log(err);
-	                } else {
-	                    console.log(app_friends);
-	                }
-
-	                res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data});
-	            })
-	        });
-		});
-});
-
 app.get("/", routes.index);
 app.get("/main", ensureAuthenticated, routes.main);
-
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
@@ -97,17 +75,40 @@ function(req, res) {
 	// Successful authentication, redirect home.
 	console.log("Auth success!");
 	//access sessionID and user after login success
-	// console.log(req);
 	// console.log(req.sessionID);
 	// console.log(req.session.passport); //retrieve passport's user ID
-
 	res.redirect('/main');
 });
 app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
-// app.get('/classes/:moduleCode', ensureAuthenticated,routes.modulePage);
-// app.get('/dashboard', ensureAuthenticated,routes.dashBoard);
 
+app.get('/modules/:moduleCode', ensureAuthenticated,routes.modulePage);
+
+app.get('/dashboard', ensureAuthenticated,
+    function(req,res){
+	    db.getUserInfo(req.user.id,
+		    function(db_user){
+			    res.render('dashboard', { user: req.user, fbpic:db_user[0].fbpic_url });
+		}
+	)}
+);
+
+app.get('/friends', ensureAuthenticated, function(req, res) {
+	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,150)"
+	graph.fql(query, function(err, fdata) {
+        var app_friends = [];
+        db.getAllUsers(function(db_users){
+            db.compute_intersection(db_users, fdata.data, function(err, app_friends){
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(app_friends);
+                }
+                res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data});
+            })
+        });
+	});
+});
 
 // Test Open Graph Story
 app.get('/question/:questionId', function(req, res) {
@@ -188,7 +189,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	console.log('socket connected!')
 	var cookies = cookie.parse(socket.handshake.headers.cookie);
 
-	console.log(cookies['express.sid']);
+	//console.log(cookies['express.sid']);
 	var session_id = connect.utils.parseSignedCookie(
 	                    cookies[config.AUTH_COOKIE_NAME], config.SECRET_KEY)
 
@@ -196,11 +197,11 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 
 	store.get(session_id, function(err, session) {
 		console.log('Retrieving user info from session store using auth cookie');
-		console.log(session);
+		//console.log(session);
 
 		if (session) {
 			var user_cookie = session.passport.user;
-			console.log(user_cookie);
+			//console.log(user_cookie);
 
 			// Example:
 			// user_cookie = { id: '100003334235610',
@@ -216,10 +217,12 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 
 			user_cookie.picurl = '';
+
 			// retrieve user fbpic url
-			graph.get(user_cookie.id + "?fields=picture", function(err, res) {
-				console.log(res);
-				user_cookie.picurl = res.picture.data.url; // { picture: 'http://profile.ak.fbcdn.net/'... }
+			var query="SELECT pic_big FROM user WHERE uid=me()";
+			graph.fql(query, function(err, fdata) {
+				console.log(fdata.data[0].pic_big);
+				user_cookie.picurl = fdata.data[0].pic_big; // { picture: 'http://profile.ak.fbcdn.net/'... }
 
 				//here need to check and create user
 				db.updateUserInfo(user_cookie.id, user_cookie.username, user_cookie.picurl, user_cookie.displayName, function() {
@@ -227,11 +230,8 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			});
 
 			socket.user_cookie = user_cookie; //attach cookie to socket object
-
 		}
 	});
-
-
 
 	socket.on("comment", function(data) {
 		db.addComment(socket.user_cookie.id, data.post_id, data.content, false, function(id) {
