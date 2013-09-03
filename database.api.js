@@ -235,7 +235,7 @@ self.getAllUsers = function(next) {
 /**
  * Get all votes casted by the user
  * @param  {integer}  user fbid of the user
- * @param  {Function} next callback, a list of objects with post_id and type property (+/- 1 for up/down vote) 
+ * @param  {Function} next callback, a list of objects with post_id and type property (+/- 1 for up/down vote)
  */
 self.getVotes = function(user, next) {
 	var query = 'SELECT post_id, type FROM vote WHERE user_id = ' + mysql.escape(user);
@@ -246,7 +246,7 @@ self.getVotes = function(user, next) {
  * Get the vote of user for a particular post
  * @param  {integer}  user  fbid of the user
  * @param  {integer}  post  post id to query
- * @param  {Function} next  callback, contains the type property if a vote is found. 
+ * @param  {Function} next  callback, contains the type property if a vote is found.
  */
 self.getVoteByPost = function(user, post, next) {
 	var query = 'SELECT type FROM vote WHERE user_id = ' + mysql.escape(user) + ' AND post_id = ' + mysql.escape(post);
@@ -263,6 +263,19 @@ self.getAllModules = function(next) {
 	__query(query, next);
 }
 
+self.getModuleById = function(module_id, next) {
+	var query = 'SELECT * FROM module WHERE id = ' + mysql.escape(module_id);
+	console.log(query);
+	__query(query, next);
+}
+
+self.getModuleByTitle = function(module_title, next) {
+	var query = 'SELECT * FROM module WHERE title = ' + mysql.escape(module_title);
+	console.log(query);
+	__query(query, next);
+}
+
+
 self.getModulesByUser = function(user, moduleId, next) {
 	var query = 'SELECT * FROM module m WHERE EXISTS '
 				+ '(SELECT * FROM enrollment WHERE user_id = ' + mysql.escape(user) + 'module_id = m.id)';
@@ -277,7 +290,7 @@ self.enroll = function(user, moduleId, next) {
 // opposite to enroll
 self.withdraw = function(user, moduleId, next) {
 	var query = 'DELETE FROM enrollment WHERE user_id = ' + mysql.escape(user) + ' AND module_id = ' + mysql.escape(moduleId) + ')';
-	__query(query, next); 
+	__query(query, next);
 }
 
 
@@ -291,4 +304,32 @@ self.removeManager = function(user, moduleId, next) {
 	var query = 'UPDATE enrollment SET is_manager = ' + __NO + ' WHERE user_id = ' + mysql.escape(user)
 			 	+ ' AND module_id = ' + mysql.escape(moduleId);
 	__query(query, next);
+}
+
+
+self.compute_intersection = function(db_users, fb_friends, callback) {
+    var sidx = 0;           // starting index of any chunk
+    var size = 10;          // chunk size, can adjust!
+    var app_friends = [];       // intermediate results
+    var to_invite_friends = fb_friends;
+
+    // for each chunk of "size" elements in bigger, search through smaller
+    function sub_compute_intersection() {
+        for (var i = sidx; i < (sidx + size) && i < db_users.length; i++) {
+            for (var j = 0; j < fb_friends.length; j++) {
+                if (db_users[i].user_id == fb_friends[j].uid) {
+                    app_friends.push(fb_friends[j]);
+                }
+            }
+        }
+
+        if (i >= db_users.length) {
+            callback(null, app_friends);   // no error, send back results
+        } else {
+            sidx += size;
+            process.nextTick(sub_compute_intersection);
+        }
+    }
+
+    sub_compute_intersection();
 }

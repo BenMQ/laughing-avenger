@@ -1,6 +1,30 @@
 /* @Boyang added some ad hoc stuff just to make things clearer to see
 Dear Yos pls delete these when the time comes */
 
+.selected-pos {
+	border: 2px solid green;
+}
+.selected-neg {
+	border: 2px solid red;
+}
+
+
+.sortByTime.acting, .sortByVotes.acting {
+	border: 3px solid purple;
+	border-radius: 2px;
+}
+
+.commentsDiv p.comment {
+	background-color: #FFFF99;
+	font-style: italic;
+	color: dimgray;
+	margin-top: 3px;
+	display: block;
+}
+
+.answersDiv .answerDiv .ansVoteDiv, .answersDiv .answerDiv p.answer {
+	display: inline-block;
+}
 .masterPostDiv .title {
 	display: block;
 	/*text-align: center;*/
@@ -71,7 +95,7 @@ body {
 header {
     background: #fff;
     max-width: 100%;
-    min-width: 600px;
+    min-width: 800px;
     height:80px;
     border-bottom: 1px solid #d0d5cb;
 }
