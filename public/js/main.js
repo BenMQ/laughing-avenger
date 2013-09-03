@@ -267,7 +267,8 @@ socket.on("ans", function(data) {
 	// Find the parent qn and prepend to it
 	var parentQn = $('.masterPostDiv[data-msgid="' + data.parent_id + '"]');
 	var container = $('.answersDiv', parentQn);
-
+	var anscount = $('.answer-number', parentQn);
+	anscount.text(parseInt(anscount.text())+1);
 	displayAns(data, container, true);
 });
 socket.on("comment", function(data) {

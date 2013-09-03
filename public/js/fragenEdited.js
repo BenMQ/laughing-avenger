@@ -5,18 +5,18 @@ function addEvtForNavLinks(){
 	});
 }
 
-//function addCustomScrollBar(){
-//   $("#qn-view,#notification,#ans-view").mCustomScrollbar({
-//      theme: 'dark-thin',
-//      advanced:{
-//          autoScrollOnFocus: false,
-//          updateOnContentResize: true
-//      },
-//      scrollButtons:{
-//        enable: true
-//      }
-//    });
-//}
+function addCustomScrollBar(){
+   $("#qn-view").mCustomScrollbar({
+      theme: 'dark-thin',
+            advanced:{
+         autoScrollOnFocus: false,
+          updateOnContentResize: true
+      },
+      scrollButtons:{
+        enable: true
+      }
+    });
+}
 
 function addEvtForAnswer(){
   $('.answer-btn').on('click',function(){

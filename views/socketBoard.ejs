@@ -1,7 +1,7 @@
 <html xmlns:fb="http://ogp.me/ns/fb#">
 <head>
     <!--content determined dynamically-->
-    <title>CS3216 | Ask and Learn</title> 
+    <title><%= module.title %> | Ask and Learn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset='utf-8' />
 
@@ -13,19 +13,9 @@
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,200,300' rel='stylesheet' type='text/css'>
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet" />
-    <!-- <link rel="stylesheet" type="text/css" href="/public/css/mCustomScrollbar.css" /> -->
-    <link href='http://fonts.googleapis.com/css?family=Merriweather:300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="/public/css/mCustomScrollbar.css" />
     <!-- new -->
     <link rel="stylesheet" type="text/css" href="/public/css/fragen-style.css" />
-
-
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
-    <script type="text/javascript" src='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'></script>
-    <!-- <script type="text/javascript" src="/public/js/mCustomScrollbar.js"></script> -->
-    <script type="text/javascript" src='/public/js/fragenEdited.js'></script>
-    <script type="text/javascript" src="/public/js/jquery.tinysort.js"></script>
-    <script type="text/javascript" src="/public/js/main.js"></script>
 
 </head>
 <body>
@@ -47,16 +37,17 @@
                      <span class="sr-only">Toggle navigation</span>
                      <span class="icon-bar"></span>
                      <span class="icon-bar"></span>
-                     <span class="icon-bar"></span>   
+                     <span class="icon-bar"></span>
                  </button>
-                 <a class="navbar-brand" href="#"><span class='icon'></a>    
-             </div>  
+                 <a class="navbar-brand" href="#"><span class='icon'></a>
+             </div>
              <nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
                 <ul class="nav navbar-nav">
-                    <li><a href="#">DASHBOARD</a></li>
                     <!-- <li><a href="#">SIGN OUT</a></li> -->
                     <% if (user) { %>
-                    <li class='username'><a>Hi, <%= user.displayName %>!</a></li>
+                    <li class='username'>
+                        <img src=<%= fbpic %> />
+                        <li class='username'><a><%= user.displayName %></a></li>
                     <% } %>
 
                     <li>
@@ -67,24 +58,28 @@
                         <% } %>
                     </ul>
                 </nav>
-            </div>  
+            </div>
         </nav>
     </header>
     <div id="content">
         <div id="mod-desc">
-            <h1 id='mod-name'>CS3216</h1> <!--content determined dynamically-->
-            <h3 id='mod-title'>SOFTWARE ON EVOLVING PLATFORMS</h3>
+            <h1 id='mod-name'><%= module.title %></h1> <!--content determined dynamically-->
+            <h3 id='mod-title'><%= module.description %></h3>
         </div>
         <div class='row' id='wrapper'>
             <div class="col-md-10 col-md-offset-1">
                 <button class="sortByTime btn btn-small" >Sort By Time</button>
                 <button class="sortByVotes btn btn-small" >Sort By Votes</button>
 
-                <div id="qn-view" class="messageBoard"></div>
-                <div id=""class="newPostDiv">
-                    <textarea id="title-view" class="newPostTitle" type="text" autofocus placeholder="Your Question title" ></textarea>
-                    <textarea id='ans-view' class="newPostText" rows="5" cols="40" placeholder="Your Question Here"></textarea>
-                    <button id="qnSubmit" class="btn btn-default newPostBtn">Send</button>
+                <div id="qna-wrapper">
+                    <div id="qn-view" class="messageBoard"></div>
+                    <div id=""class="newPostDiv">
+                        <textarea id="title-view" class="newPostTitle" type="text" autofocus placeholder="Your Question title" ></textarea>
+                        <div id="ans-view-wrapper">
+                            <textarea id='ans-view' class="newPostText" rows="5" cols="40" placeholder="Your Question Here"></textarea>
+                            <button id="qnSubmit" class="btn btn-default newPostBtn">Send</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -103,5 +98,13 @@
     ga('send', 'pageview');
     </script>
     <!-- End of Google Analytics -->
+    <!--scripts below -->
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+    <script type="text/javascript" src='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'></script>
+    <!-- <script type="text/javascript" src="/public/js/mCustomScrollbar.js"></script> -->
+    <script type="text/javascript" src='/public/js/fragenEdited.js'></script>
+    <script type="text/javascript" src="/public/js/jquery.tinysort.js"></script>
+    <script type="text/javascript" src="/public/js/main.js"></script>
 </body>
 </html>

@@ -122,17 +122,23 @@ app.get('/question/:questionId', function(req, res) {
 
 // need to pass in :moduleCode as magic
 app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
-	// 1. render the page, providing mod basic info
-	db.getModuleByTitle(req.params.moduleTitle,function(result){
-		console.log("MODULE: " +result);
-		if (result.length && result[0]) {
-			res.render('socketBoard', {user: req.user, module:result[0]});
-		} else {
-			res.redirect('/main');
-		}
+	db.getUserInfo(req.user.id, function(db_user){
+		db.getModuleByTitle(req.params.moduleTitle,
+		    function(result){
+			console.log("MODULE: " +result);
+			if (result.length && result[0]) {
+				res.render('socketBoard', {user: req.user, module:result[0], fbpic:db_user[0].fbpic_url});
+			} else {
+				res.redirect('/main');
+			}
+		})
 	});
 });
 
+
+// app.get('/getModQn/:moduleid') {
+// 	// res.json(correctArrToReturn);
+// }
 
 // master of the masters, array of arrays.
 // Introducing masterArrMod, for the sake of modules
@@ -197,8 +203,8 @@ db.getQuestions(magicModuleId,db_limit, db_offset, function(results) {
 		})(i, results[i]);
 	}
 });
-console.log("!!!!!!!!!!!!!!!!master");
-console.log(masterArr);
+
+
 
 // For server side, emit sender and handler almost always together
 // The flow is: 1. Received emit from client 2. Push to masterArr
