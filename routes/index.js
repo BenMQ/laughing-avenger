@@ -12,7 +12,7 @@ exports.main = function(req, res) {
     console.log("SessionID:" + req.sessionID);
     console.log(req.session.passport); //retrieve user passport
 
-    res.render('socketBoard', { user: req.user });
+    res.render('socketBoard', { user: req.user, });
 }
 
 

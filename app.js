@@ -77,12 +77,10 @@ function(req, res) {
 	//access sessionID and user after login success
 	// console.log(req.sessionID);
 	// console.log(req.session.passport); //retrieve passport's user ID
-	res.redirect('/main');
+	res.redirect('/dashboard');
 });
 app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
-
-app.get('/modules/:moduleCode', ensureAuthenticated,routes.modulePage);
 
 app.get('/dashboard', ensureAuthenticated,
     function(req,res){
@@ -121,6 +119,28 @@ app.get('/question/:questionId', function(req, res) {
 	})
 });
 
+
+// need to pass in :moduleCode as magic
+app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
+	// 1. render the page, providing mod basic info
+	db.getModuleByTitle(req.params.moduleTitle,function(result){
+		console.log("MODULE: " +result);
+		if (result.length && result[0]) {
+			res.render('socketBoard', {user: req.user, module:result[0]});
+		} else {
+			res.redirect('/main');
+		}
+	});
+});
+
+
+// master of the masters, array of arrays.
+// Introducing masterArrMod, for the sake of modules
+
+var masterArrMod = [];
+db.init(config.db);
+console.log('db module init!');
+
 // Introducing master arr, where we store all data
 var masterArr = [];
 masterArr.findPost = function(id) {
@@ -138,13 +158,12 @@ masterArr.findPost = function(id) {
 
 // Init db
 // Retrieve posts from mysql db and push to masterArr
-db.init(config.db);
-console.log('db module init!');
+
 
 var db_limit = 10; // How many qns do you want in one page?
 var db_offset = 0; // TODO: multipage thingy
 
-db.getQuestions(1,db_limit, db_offset, function(results) {
+db.getQuestions(magicModuleId,db_limit, db_offset, function(results) {
 	for (var i = 0; i < results.length; i++) {
 		// console.log(results[i]);
 		masterArr.push(results[i]);
@@ -178,8 +197,8 @@ db.getQuestions(1,db_limit, db_offset, function(results) {
 		})(i, results[i]);
 	}
 });
-
-
+console.log("!!!!!!!!!!!!!!!!master");
+console.log(masterArr);
 
 // For server side, emit sender and handler almost always together
 // The flow is: 1. Received emit from client 2. Push to masterArr
