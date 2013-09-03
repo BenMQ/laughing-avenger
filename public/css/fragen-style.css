@@ -269,8 +269,7 @@ h1 {
 	border-radius: 4px;
 }
 .question-by img, .answer-by img{
-	min-height: 56;
-	min-width: 40;
+
 }
 .question-by{
 	top: -15px;

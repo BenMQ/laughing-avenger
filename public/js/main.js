@@ -112,7 +112,7 @@ function initVotes(data) {
 window.socket = io.connect(":4321/");
 
 function displayComment(data, container, blink) {
-	var com = $('<span class="comment">' + data.content + '<span class="comment-by"></span></span>');
+	var com = $('<span class="comment">' + data.content + '<span class="comment-by">'+data.name+'</span></span>');
 	container.append(com);
 	if (blink) {
 		myBlink(com);
@@ -125,7 +125,13 @@ function displayAns(data, container, blink) {
 	var answer = $('<p class="answer answer-body" data-msgid="' + data.id + '">' +
 			data.content + '</p>');
 	var ansby = $('<div class="answer-by"></div>');
-	var ansbyimg = $('<img>');
+	
+	// The hack of the year
+	// replace n with q to get square pic
+	
+	var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.')-1) + 'q'+ data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
+	
+	var ansbyimg = $('<img src="'+hacked_url+'">');
 	ansby.append(ansbyimg);
 
 	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
@@ -190,7 +196,8 @@ function displayPost(data, container, blink) {
 		txt = $("<h4 class='title'>" + data.title + "</h4><p></p>");
 	}
 	var qnby = $('<div class="question-by"></div>');
-	var qnbyimg = $('<img>');
+	var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.')-1) + 'q'+ data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
+	var qnbyimg = $('<img src="'+hacked_url+'">');
 	qnby.append(qnbyimg);
 	txt.append(qnby);
 	textDiv.append(txt);

@@ -52,7 +52,7 @@ __getTime = function() {
 
 // escapes < and > characters
 __saveHTML = function(string) {
-	string = mysq.escape(string);
+	string = mysql.escape(string);
 	return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 /**
