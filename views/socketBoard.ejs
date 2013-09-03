@@ -1,7 +1,7 @@
 <html xmlns:fb="http://ogp.me/ns/fb#">
 <head>
     <!--content determined dynamically-->
-    <title>CS3216 | Ask and Learn</title> 
+    <title><%= module.title %> | Ask and Learn</title> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset='utf-8' />
 
@@ -72,8 +72,9 @@
     </header>
     <div id="content">
         <div id="mod-desc">
-            <h1 id='mod-name'>CS3216</h1> <!--content determined dynamically-->
-            <h3 id='mod-title'>SOFTWARE ON EVOLVING PLATFORMS</h3>
+            <h1 id='mod-name'><%= module.title %></h1> <!--content determined dynamically-->
+            <h3 id='mod-title'><%= module.description %></h3>
+
         </div>
         <div class='row' id='wrapper'>
             <div class="col-md-10 col-md-offset-1">
