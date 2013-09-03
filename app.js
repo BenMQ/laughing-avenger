@@ -134,10 +134,6 @@ app.get('/modules/:moduleid', ensureAuthenticated,function(req,res){
 });
 
 
-// app.get('/getModQn/:moduleid') {
-// 	// res.json(correctArrToReturn);
-// }
-
 // master of the masters, array of arrays.
 // Introducing masterArrMod, for the sake of modules
 
