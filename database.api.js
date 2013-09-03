@@ -263,6 +263,12 @@ self.getModuleById = function(module_id, next) {
 	__query(query, next);
 }
 
+self.getModuleByTitle = function(module_title, next) {
+	var query = 'SELECT * FROM module WHERE title = ' + mysql.escape(module_title);
+	console.log(query);
+	__query(query, next);
+}
+
 
 self.getModulesByUser = function(user, moduleId, next) {
 	var query = 'SELECT * FROM module m WHERE EXISTS '
