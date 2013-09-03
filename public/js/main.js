@@ -113,7 +113,7 @@ window.socket = io.connect(":4321/");
 
 function displayComment(data, container, blink) {
 	if (data.anonymous == 0) {
-		var com = $('<span class="comment">' + data.content + '<span class="comment-by">'+data.name+'</span></span>');
+		var com = $('<span class="comment">' + data.content + '<span class="comment-by">' + data.name + '</span></span>');
 	}
 	else {
 		var com = $('<span class="comment">' + data.content + '<span class="comment-by">Anonymous</span></span>');
@@ -130,18 +130,18 @@ function displayAns(data, container, blink) {
 	var answer = $('<p class="answer answer-body" data-msgid="' + data.id + '">' +
 			data.content + '</p>');
 	var ansby = $('<div class="answer-by"></div>');
-	
+
 	// The hack of the year
 	// replace n with q to get square pic
-	if (data.anonymous == 0) { 
-		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.')-1) + 'q'+ data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
-		var ansbyimg = $('<img src="'+hacked_url+'">');
+	if (data.anonymous == 0) {
+		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
+		var ansbyimg = $('<img src="' + hacked_url + '">');
 	}
 	else {
-		var ansbyimg = $('<img src="/public/img/cat'+lucky()+'.png">');
+		var ansbyimg = $('<img src="/public/img/cat' + lucky() + '.png">');
 	}
 	ansby.append(ansbyimg);
-	
+
 	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
 	if (data.comments && data.comments.length > 0) {
 		for (var j = 0; j < data.comments.length; j++) {
@@ -205,11 +205,11 @@ function displayPost(data, container, blink) {
 	}
 	var qnby = $('<div class="question-by"></div>');
 	if (data.anonymous == 0) {
-	var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.')-1) + 'q'+ data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
-	var qnbyimg = $('<img src="'+hacked_url+'">');
+		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
+		var qnbyimg = $('<img src="' + hacked_url + '">');
 	}
 	else {
-		var qnbyimg = $('<img src="/public/img/cat'+lucky()+'.png">');
+		var qnbyimg = $('<img src="/public/img/cat' + lucky() + '.png">');
 	}
 	qnby.append(qnbyimg);
 	txt.append(qnby);
@@ -225,7 +225,7 @@ function displayPost(data, container, blink) {
 	textDiv.append(qnCommentsDiv);
 
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
-	
+
 	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-chevron-up"></i></a>');
 	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-chevron-down"></i></a>');
 	var votesDisplay = $('<span class="votes">0</span>');
@@ -288,7 +288,7 @@ socket.on("ans", function(data) {
 	var parentQn = $('.masterPostDiv[data-msgid="' + data.parent_id + '"]');
 	var container = $('.answersDiv', parentQn);
 	var anscount = $('.answer-number', parentQn);
-	anscount.text(parseInt(anscount.text())+1);
+	anscount.text(parseInt(anscount.text()) + 1);
 	displayAns(data, container, true);
 });
 socket.on("comment", function(data) {
@@ -405,7 +405,6 @@ function newPost(e) {
 		title: msgTitle.val(),
 		content: msgText.val(),
 	});
-
 	msgTitle.val("");
 	msgText.val("");
 }
@@ -434,6 +433,7 @@ function newAns(e) {
 		content: ansInput.val(),
 		// owner_id: window.user.id,
 	});
+	publish(window.fragen.submitStatus.parent_id, "answer");
 	ansInput.val("");
 }
 
@@ -475,7 +475,21 @@ function myBlink($obj) {
 }
 
 function lucky() {
-	var r = Math.floor(Math.random()*8);
-	
+	var r = Math.floor(Math.random() * 8);
+
 	return r;
+}
+
+function publish(qnid, type) {
+	FB.api(
+			'me/fragen-ask:'+type,
+			'post',
+			{
+				question: "http://fragen.cmq.me/question/"+id,
+				privacy: {'value': 'ALL_FRIENDS'}
+			},
+	function(response) {
+//		console.log(response);
+	}
+	);
 }
