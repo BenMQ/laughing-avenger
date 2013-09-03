@@ -15,7 +15,8 @@ Dear Yos pls delete these when the time comes */
 }
 
 .sortByTime, .sortByVotes {
-
+    /*temp*/
+    display:none;
 }
 
 .commentsDiv p.comment {
