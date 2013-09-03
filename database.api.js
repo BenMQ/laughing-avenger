@@ -257,6 +257,19 @@ self.getAllModules = function(next) {
 	__query(query, next);
 }
 
+self.getModuleById = function(module_id, next) {
+	var query = 'SELECT * FROM module WHERE id = ' + mysql.escape(module_id);
+	console.log(query);
+	__query(query, next);
+}
+
+self.getModuleByTitle = function(module_title, next) {
+	var query = 'SELECT * FROM module WHERE title = ' + mysql.escape(module_title);
+	console.log(query);
+	__query(query, next);
+}
+
+
 self.getModulesByUser = function(user, moduleId, next) {
 	var query = 'SELECT * FROM module m WHERE EXISTS '
 				+ '(SELECT * FROM enrollment WHERE user_id = ' + mysql.escape(user) + 'module_id = m.id)';
