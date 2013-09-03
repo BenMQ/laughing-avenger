@@ -1,11 +1,6 @@
 /* @Boyang added some ad hoc stuff just to make things clearer to see
 Dear Yos pls delete these when the time comes */
 
-.newPostDiv {
-	position: relative;
-
-}
-
 .selected-pos {
 	border: 2px solid green;
 }
@@ -20,6 +15,7 @@ Dear Yos pls delete these when the time comes */
 }
 
 .sortByTime, .sortByVotes {
+
 }
 
 .commentsDiv p.comment {
@@ -51,21 +47,12 @@ Dear Yos pls delete these when the time comes */
 	margin-left: 20px;
 }
 
-.masterPostDiv {
-	/*border: 1px solid black;*/
-	margin: 15px;
-}
 .masterPostDiv .textDiv p {
 	width: 80%;
 	margin: 20px;
 }
 .newPostText, .newPostTitle {
 	width: 70%;
-	margin: 10px;
-}
-
-.newPostDiv {
-	padding: 10px;
 }
 
 .messageBoard .textDiv {
