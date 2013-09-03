@@ -121,9 +121,9 @@ app.get('/question/:questionId', function(req, res) {
 
 
 // need to pass in :moduleCode as magic
-app.get('/modules/:moduleid', ensureAuthenticated,function(req,res){
+app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
 	// 1. render the page, providing mod basic info
-	db.getModuleById(req.params.moduleid,function(result){
+	db.getModuleByTitle(req.params.moduleTitle,function(result){
 		console.log("MODULE: " +result);
 		if (result.length && result[0]) {
 			res.render('socketBoard', {user: req.user, module:result[0]});
