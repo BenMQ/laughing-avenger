@@ -6,11 +6,18 @@
     <meta charset='utf-8' />
     <link href="../img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,300" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,200,300' rel='stylesheet' type='text/css'>
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/public/css/MetroJs.min.css" />
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet" />
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/public/css/dash-style.css" />
+    <script type="text/javascript">
+        if (window.location.hash == '#_=_'){
+            window.location.hash = '';
+        }
+    </script>
     <style>
-        ul li {
+        ul#friends li {
             list-style-type: none;
             display: inline;
             float: left;
@@ -20,20 +27,20 @@
             margin: 10px;
         }
 
-        ul li h4 {
+        ul#friends li h4 {
             font-size: 16px;
             display:inline;
 
         }
 
-        ul li.invited {
+        ul#friends li.invited {
             background: #FF9900;
         }
 
     </style>
 </head>
 <body>
-    <!-- For Feed Dialog invites -->
+        <!-- For Feed Dialog invites -->
     <div id="fb-root"></div>
     <script>
       window.fbAsyncInit = function() {
@@ -60,30 +67,60 @@
     </script>
     <!--  -->
 
-
-    <h1>Invite your friends to fragen!</h1>
-
-    <ul>
-    <% for(var i=0; i<app_friends.length; i++) {%>
-        <li class ='invited'>
-            <div>
-                <img src='<%= app_friends[i].pic_square %>' />
-                <a href='http://facebook.com/<%= app_friends[i].username %>'><h4><%= app_friends[i].name %></h4> (Using Fragen)</a>
+    <header id='nav-pane'>
+        <nav class="navbar navbar-default navbar-fixed-top" id='navpane' role="navigation">
+            <div class="container nav-container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                       <span class="sr-only">Toggle navigation</span>
+                       <span class="icon-bar"></span>
+                       <span class="icon-bar"></span>
+                       <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#"><span class='icon'></a>
+                </div>
+                <nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/dashboard">DASHBOARD</a></li>
+                        <li><a href="/signout">SIGN OUT</a></li>
+                    </ul>
+                </nav>
             </div>
-        </li>
-    <% } %>
+        </nav>
+    </header>
 
-    <% for(var i=0; i<to_invite_friends.length; i++) {%>
-        <li>
-            <div>
-                <img src='<%= to_invite_friends[i].pic_square %>' />
-                <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><h4><%= to_invite_friends[i].name %></h4></a>
-                <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' class='invite'>Send Invite</a>
-            </div>
-        </li>
-    <% } %>
-    </ul>
 
+    <div id="content">
+        <h1>Invite your friends to fragen!</h1>
+
+        <ul id="friends">
+        <% for(var i=0; i<app_friends.length; i++) {%>
+            <li class ='invited'>
+                <div>
+                    <img src='<%= app_friends[i].pic_square %>' />
+                    <a href='http://facebook.com/<%= app_friends[i].username %>'><h4><%= app_friends[i].name %></h4> (Using Fragen)</a>
+                </div>
+            </li>
+        <% } %>
+
+        <% for(var i=0; i<to_invite_friends.length; i++) {%>
+            <li>
+                <div>
+                    <img src='<%= to_invite_friends[i].pic_square %>' />
+                    <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><h4><%= to_invite_friends[i].name %></h4></a>
+                    <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' class='invite'>Send Invite</a>
+                </div>
+            </li>
+        <% } %>
+        </ul>
+
+    </div>
+
+
+    <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+    <script type="text/javascript" src='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'></script>
+    <script type="text/javascript" src='/public/js/dash-script.js'></script>
+    <script type="text/javascript" src='/public/js/MetroJs.min.js'></script>
     <!-- For Feed dialog invites -->
     <script type="text/javascript">
         $(document).ready(function() {
@@ -104,6 +141,10 @@
         });
     </script>
     <!--  -->
-
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".live-tile").liveTile();
+        });
+    </script>
 </body>
 </html>
