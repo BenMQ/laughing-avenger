@@ -12,7 +12,7 @@ var store = new express.session.MemoryStore();
 var passport = require('passport')
 		, FacebookStrategy = require('passport-facebook').Strategy;
 
-var magicModuleId = 2; // cs1231
+var magicModuleId = 1; // cs1231
 
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
