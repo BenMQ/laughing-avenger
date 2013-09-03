@@ -50,8 +50,18 @@ function addEvtForTextArea(){
     ans.animate({height:'20%'},500);
   });
   ans.focusout(function(){
+	if ($("#ans-view").val() != "") {
+		return;
+	}
     ans.animate({height:'10%'},'fast');
     $('#title-view').fadeIn(500);
+	window.fragen.submitStatus = {
+		// use a global object to remember the current submission status
+		// type:		{'qn', 'ans', 'com' }
+		// parent_id:	{ null, qnid,  postid}
+		type: "qn",
+		parent_id: null,
+	};
   });
 }
 
