@@ -485,7 +485,7 @@ function publish(qnid, type) {
 			'me/fragen-ask:'+type,
 			'post',
 			{
-				question: "http://fragen.cmq.me/question/"+id,
+				question: "http://fragen.cmq.me/question/"+qnid,
 				privacy: {'value': 'ALL_FRIENDS'}
 			},
 	function(response) {
