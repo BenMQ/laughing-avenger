@@ -59,7 +59,7 @@ __getTime = function() {
  *                              as an object with column name as field name
  */
 self.getQuestions = function(moduleId, limit, offset, next) {
-	var query = "SELECT * FROM post WHERE type = " + __QUESTION + " AND module_id = " + mysql.escape(moduleId)
+	var query = "SELECT * FROM post LEFT JOIN user ON user_id=owner_id WHERE type = " + __QUESTION + " AND module_id = " + mysql.escape(moduleId)
 				+ " ORDER BY timestamp DESC"
 				+ " LIMIT " + mysql.escape(offset) + ', ' + mysql.escape(limit);
 	__query(query, next);
@@ -73,37 +73,37 @@ self.getQuestions = function(moduleId, limit, offset, next) {
  *                                exist.
  */
 self.getQuestion = function(questionId, next) {
-	var query = "SELECT * FROM post WHERE type = " + __QUESTION
+	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE type = " + __QUESTION
 				+ " AND id = " + mysql.escape(questionId);
 	__query(query, next);
 }
 
 self.getAnswers = function(questionId, limit, offset, next) {
-	var query = "SELECT * FROM post WHERE type = " + __ANSWER
+	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE type = " + __ANSWER
 				+ " AND parent_id = " + mysql.escape(questionId);
 	__query(query, next);
 }
 
 self.getAnswer = function(answerId, next) {
-	var query = "SELECT * FROM post WHERE type = "  + __ANSWER
+	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE type = "  + __ANSWER
 				+ " AND id = " + mysql.escape(answerId);
 	__query(query, next);
 }
 
 self.getPost = function(postId, next) {
-	var query = "SELECT * FROM post WHERE id = " + mysql.escape(postId);
+	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE id = " + mysql.escape(postId);
 	__query(query, next);
 }
 
 
 self.getComments = function(postId, limit, offset, next) {
-	var query = "SELECT * FROM comment WHERE post_id = " + mysql.escape(postId)
+	var query = "SELECT * FROM comment LEFT JOIN user u ON comment.user_id=u.user_id WHERE post_id = " + mysql.escape(postId)
 				+ " LIMIT " + mysql.escape(offset) + ", " + mysql.escape(limit);
 	__query(query, next);
 }
 
 self.getComment = function(id, next) {
-	var query = "SELECT * FROM comment WHERE id = " + mysql.escape(id);
+	var query = "SELECT * FROM comment LEFT JOIN user u ON comment.user_id=u.user_id WHERE id = " + mysql.escape(id);
 	__query(query, next);
 }
 
