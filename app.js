@@ -62,6 +62,9 @@ function ensureAuthenticated(req, res, next){
 }
 
 app.get("/", routes.index);
+app.get("/terms", function(req,res){
+	res.render('terms')
+});
 app.get("/main", ensureAuthenticated, routes.main);
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
