@@ -138,13 +138,15 @@ function displayAns(data, container, blink) {
 
 	var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.id + '">');
 	var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
-	var commentBtn = $('<button class="commentBtn" data-msgid="' + data.id + '">comment</button>');
+//	var commentBtn = $('<button class="" data-msgid="' + data.id + '">comment</button>');
+	var commentBtn = $('<a class="comment-btn commentBtn" data-msgid="' + data.id + '"><span>comment</span></a>');
+
 	commentBtn.click(switchToCom);
 	ansCommentDiv.append(commentBtn); //append(commentInput).
 
 	var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.id + '">');
-	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
-	var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
+	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-chevron-up"></i></a>');
+	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-chevron-down"></i></a>');
 	var votesDisplay = $('<span class="votes">0</span>');
 	if (data.votecount) {
 		votesDisplay.text(data.votecount);
@@ -203,8 +205,9 @@ function displayPost(data, container, blink) {
 	textDiv.append(qnCommentsDiv);
 
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
-	var upVoteBtn = $('<button class="upVoteBtn" >&#8743;</button>');
-	var downVoteBtn = $('<button class="downVoteBtn" >&#8744;</button>');
+	
+	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-chevron-up"></i></a>');
+	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-chevron-down"></i></a>');
 	var votesDisplay = $('<span class="votes">0</span>');
 	if (data.votecount) {
 		votesDisplay.text(data.votecount);
@@ -215,13 +218,15 @@ function displayPost(data, container, blink) {
 
 	var commentDiv = $('<div class="commentDiv" data-msgid="' + data.id + '">');
 	var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
-	var commentBtn = $('<button class="commentBtn" data-msgid="' + data.id + '">comment</button>');
+//	var commentBtn = $('<button class="commentBtn" data-msgid="' + data.id + '">comment</button>');
+	var commentBtn = $('<a class="comment-btn commentBtn" data-msgid="' + data.id + '"><span>comment</span></a>');
 	commentBtn.click(switchToCom);
 	commentDiv.append(commentBtn);//append(commentInput).
 
 	var ansDiv = $('<div class="ansDiv" data-msgid="' + data.id + '">');
 	var ansInput = $('<input class="ansInput" type="text" placeholder="Answer this Question"/>');
-	var ansBtn = $('<button class="ansBtn" data-msgid="' + data.id + '">answer</button>');
+//	var ansBtn = $('<button class="ansBtn" data-msgid="' + data.id + '">answer</button>');
+	var ansBtn = $('<a class="answer-btn ansBtn" data-msgid="' + data.id + '"><span>answer</span></a>');
 	ansBtn.click(switchToAns);
 	ansDiv.append(ansBtn);//append(ansInput).
 
@@ -262,7 +267,8 @@ socket.on("ans", function(data) {
 	// Find the parent qn and prepend to it
 	var parentQn = $('.masterPostDiv[data-msgid="' + data.parent_id + '"]');
 	var container = $('.answersDiv', parentQn);
-
+	var anscount = $('.answer-number', parentQn);
+	anscount.text(parseInt(anscount.text())+1);
 	displayAns(data, container, true);
 });
 socket.on("comment", function(data) {

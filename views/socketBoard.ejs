@@ -1,7 +1,7 @@
 <html xmlns:fb="http://ogp.me/ns/fb#">
 <head>
     <!--content determined dynamically-->
-    <title>CS3216 | Ask and Learn</title> 
+    <title><%= module.title %> | Ask and Learn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset='utf-8' />
 
@@ -37,37 +37,41 @@
                      <span class="sr-only">Toggle navigation</span>
                      <span class="icon-bar"></span>
                      <span class="icon-bar"></span>
-                     <span class="icon-bar"></span>   
+                     <span class="icon-bar"></span>
                  </button>
-                 <a class="navbar-brand" href="#"><span class='icon'></a>    
-             </div>  
+                 <a class="navbar-brand" href="#"><span class='icon'></a>
+             </div>
              <nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
                 <ul class="nav navbar-nav">
                     <!-- <li><a href="#">SIGN OUT</a></li> -->
                     <% if (user) { %>
-                        <li class='username'><a><%= user.displayName %></a></li>
+                    <li class='username'>
+                        <img src=<%= fbpic %> />
+                        <li class='username'><a href='/dashboard'><%= user.displayName %></a></li>
                     <% } %>
 
                     <li>
                         <% if (!user) { %>
-                        <a href="/auth/facebook">LOGIN</a>
+                        <a href="/auth/facebook">LOG IN</a>
                         <% } else { %>
-                        <a href="/logout">LOGOUT</a>
+                        <a href="/signout">SIGN OUT</a>
                         <% } %>
                     </ul>
                 </nav>
-            </div>  
+            </div>
         </nav>
     </header>
     <div id="content">
         <div id="mod-desc">
-            <h1 id='mod-name'>CS3216</h1> <!--content determined dynamically-->
-            <h3 id='mod-title'>SOFTWARE ON EVOLVING PLATFORMS</h3>
+            <h1 id='mod-name'><%= module.title %></h1> <!--content determined dynamically-->
+            <h3 id='mod-title'><%= module.description %></h3>
         </div>
         <div class='row' id='wrapper'>
-            <div class="col-md-9 col-md-offset-1">
-                <button class="sortByTime btn btn-small">Sort By Time</button>
-                <button class="sortByVotes btn btn-small">Sort By Votes</button>
+
+            <div class="col-md-10 col-md-offset-1">
+                <button class="sortByTime btn btn-small" >Sort By Time</button>
+                <button class="sortByVotes btn btn-small" >Sort By Votes</button>
+
                 <div id="qna-wrapper">
                     <div id="qn-view" class="messageBoard"></div>
                     <div id=""class="newPostDiv">
