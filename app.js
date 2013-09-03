@@ -125,7 +125,7 @@ app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
 	db.getUserInfo(req.user.id, function(db_user){
 		db.getModuleByTitle(req.params.moduleTitle,
 		    function(result){
-			console.log("MODULE: " +result);
+			console.log("DB_USER: " + db_user[0]);
 			if (result.length && result[0]) {
 				res.render('socketBoard', {user: req.user, module:result[0], fbpic:db_user[0].fbpic_url});
 			} else {

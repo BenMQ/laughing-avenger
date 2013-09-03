@@ -1,7 +1,7 @@
 <html xmlns:fb="http://ogp.me/ns/fb#">
 <head>
     <!--content determined dynamically-->
-    <title><%= module.title %> | Ask and Learn</title>
+    <title><%=: module.title | upcase %> | Ask and Learn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset='utf-8' />
 
@@ -46,8 +46,7 @@
                     <!-- <li><a href="#">SIGN OUT</a></li> -->
                     <% if (user) { %>
                     <li class='username'>
-                        <img src=<%= fbpic %> />
-                        <li class='username'><a href='/dashboard'><%= user.displayName %></a></li>
+                        <a href='/dashboard'><div id='username-pic'><img src=<%= fbpic %> /></div><span><%= user.displayName %></span></a>
                     <% } %>
 
                     <li>
@@ -63,12 +62,12 @@
     </header>
     <div id="content">
         <div id="mod-desc">
-            <h1 id='mod-name'><%= module.title %></h1> <!--content determined dynamically-->
+            <h1 id='mod-name'><%=: module.title| upcase %></h1> <!--content determined dynamically-->
             <h3 id='mod-title'><%= module.description %></h3>
         </div>
         <div class='row' id='wrapper'>
 
-            <div class="col-md-10 col-md-offset-1">
+            <div class="col-md-9 col-md-offset-1">
                 <button class="sortByTime btn btn-small" >Sort By Time</button>
                 <button class="sortByVotes btn btn-small" >Sort By Votes</button>
 
@@ -90,8 +89,8 @@
                         <span class="caret"></span>
                     </button>
                     <div class="btn-group dropdown-menu" role="menu">
-                      <button type="button" class="btn btn-default btn-sm">Votes</button>
                       <button type="button" class="btn btn-default btn-sm">Time</button>
+                      <button type="button" class="btn btn-default btn-sm">Vote</button>
                     </div>
                 </div>
             </div>
