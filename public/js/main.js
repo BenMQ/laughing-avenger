@@ -112,7 +112,12 @@ function initVotes(data) {
 window.socket = io.connect(":4321/");
 
 function displayComment(data, container, blink) {
-	var com = $('<span class="comment">' + data.content + '<span class="comment-by">'+data.name+'</span></span>');
+	if (data.anonymous == 0) {
+		var com = $('<span class="comment">' + data.content + '<span class="comment-by">'+data.name+'</span></span>');
+	}
+	else {
+		var com = $('<span class="comment">' + data.content + '<span class="comment-by">Anonymous</span></span>');
+	}
 	container.append(com);
 	if (blink) {
 		myBlink(com);
@@ -128,12 +133,15 @@ function displayAns(data, container, blink) {
 	
 	// The hack of the year
 	// replace n with q to get square pic
-	
-	var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.')-1) + 'q'+ data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
-	
-	var ansbyimg = $('<img src="'+hacked_url+'">');
+	if (data.anonymous == 0) { 
+		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.')-1) + 'q'+ data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
+		var ansbyimg = $('<img src="'+hacked_url+'">');
+	}
+	else {
+		var ansbyimg = $('<img src="/public/img/cat'+lucky()+'.png">');
+	}
 	ansby.append(ansbyimg);
-
+	
 	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
 	if (data.comments && data.comments.length > 0) {
 		for (var j = 0; j < data.comments.length; j++) {
@@ -196,8 +204,13 @@ function displayPost(data, container, blink) {
 		txt = $("<h4 class='title'>" + data.title + "</h4><p></p>");
 	}
 	var qnby = $('<div class="question-by"></div>');
+	if (data.anonymous == 0) {
 	var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.')-1) + 'q'+ data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
 	var qnbyimg = $('<img src="'+hacked_url+'">');
+	}
+	else {
+		var qnbyimg = $('<img src="/public/img/cat'+lucky()+'.png">');
+	}
 	qnby.append(qnbyimg);
 	txt.append(qnby);
 	textDiv.append(txt);
@@ -459,4 +472,10 @@ function myBlink($obj) {
 		}, 500);
 	}, 500);
 
+}
+
+function lucky() {
+	var r = Math.floor(Math.random()*8);
+	
+	return r;
 }
