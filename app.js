@@ -80,7 +80,7 @@ function(req, res) {
 	res.redirect('/dashboard');
 });
 app.get('/loginError', routes.loginError);
-app.get('/logout', routes.logout);
+app.get('/signout', routes.logout);
 
 app.get('/dashboard', ensureAuthenticated,
     function(req,res){

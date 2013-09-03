@@ -47,14 +47,14 @@
                     <% if (user) { %>
                     <li class='username'>
                         <img src=<%= fbpic %> />
-                        <li class='username'><a><%= user.displayName %></a></li>
+                        <li class='username'><a href='/dashboard'><%= user.displayName %></a></li>
                     <% } %>
 
                     <li>
                         <% if (!user) { %>
-                        <a href="/auth/facebook">LOGIN</a>
+                        <a href="/auth/facebook">LOG IN</a>
                         <% } else { %>
-                        <a href="/logout">LOGOUT</a>
+                        <a href="/signout">SIGN OUT</a>
                         <% } %>
                     </ul>
                 </nav>
