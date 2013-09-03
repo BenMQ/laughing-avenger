@@ -12,7 +12,7 @@ var store = new express.session.MemoryStore();
 var passport = require('passport')
 		, FacebookStrategy = require('passport-facebook').Strategy;
 
-var magicModuleId = 2; // cs1231
+var magicModuleId = 1; // cs1231
 
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
@@ -197,8 +197,8 @@ db.getQuestions(magicModuleId,db_limit, db_offset, function(results) {
 		})(i, results[i]);
 	}
 });
-
-
+console.log("!!!!!!!!!!!!!!!!master");
+console.log(masterArr);
 
 // For server side, emit sender and handler almost always together
 // The flow is: 1. Received emit from client 2. Push to masterArr
