@@ -49,6 +49,12 @@ __insertQuery = function(query, values, next) {
 __getTime = function() {
 	return new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 }
+
+// escapes < and > characters
+__saveHTML = function(string) {
+	string = mysq.escape(string);
+	return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 /**
  * Get a list of questions in a module, sorted in reverse chronological order
  * @param  {integer}   moduleId Module ID to query
@@ -59,7 +65,7 @@ __getTime = function() {
  *                              as an object with column name as field name
  */
 self.getQuestions = function(moduleId, limit, offset, next) {
-	var query = "SELECT * FROM post WHERE type = " + __QUESTION + " AND module_id = " + mysql.escape(moduleId)
+	var query = "SELECT * FROM post LEFT JOIN user ON user_id=owner_id WHERE type = " + __QUESTION + " AND module_id = " + mysql.escape(moduleId)
 				+ " ORDER BY timestamp DESC"
 				+ " LIMIT " + mysql.escape(offset) + ', ' + mysql.escape(limit);
 	__query(query, next);
@@ -73,37 +79,37 @@ self.getQuestions = function(moduleId, limit, offset, next) {
  *                                exist.
  */
 self.getQuestion = function(questionId, next) {
-	var query = "SELECT * FROM post WHERE type = " + __QUESTION
+	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE type = " + __QUESTION
 				+ " AND id = " + mysql.escape(questionId);
 	__query(query, next);
 }
 
 self.getAnswers = function(questionId, limit, offset, next) {
-	var query = "SELECT * FROM post WHERE type = " + __ANSWER
+	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE type = " + __ANSWER
 				+ " AND parent_id = " + mysql.escape(questionId);
 	__query(query, next);
 }
 
 self.getAnswer = function(answerId, next) {
-	var query = "SELECT * FROM post WHERE type = "  + __ANSWER
+	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE type = "  + __ANSWER
 				+ " AND id = " + mysql.escape(answerId);
 	__query(query, next);
 }
 
 self.getPost = function(postId, next) {
-	var query = "SELECT * FROM post WHERE id = " + mysql.escape(postId);
+	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE id = " + mysql.escape(postId);
 	__query(query, next);
 }
 
 
 self.getComments = function(postId, limit, offset, next) {
-	var query = "SELECT * FROM comment WHERE post_id = " + mysql.escape(postId)
+	var query = "SELECT * FROM comment LEFT JOIN user u ON comment.user_id=u.user_id WHERE post_id = " + mysql.escape(postId)
 				+ " LIMIT " + mysql.escape(offset) + ", " + mysql.escape(limit);
 	__query(query, next);
 }
 
 self.getComment = function(id, next) {
-	var query = "SELECT * FROM comment WHERE id = " + mysql.escape(id);
+	var query = "SELECT * FROM comment LEFT JOIN user u ON comment.user_id=u.user_id WHERE id = " + mysql.escape(id);
 	__query(query, next);
 }
 
@@ -119,21 +125,21 @@ self.getComment = function(id, next) {
 self.addQuestion = function(user, title, content, moduleId, anonymous, next) {
 	var query = 'INSERT INTO post SET ?';
 	anonymous = (anonymous ? __YES : __NO);
-	var question = {owner_id: user, title: title, content: content, module_id: moduleId, anonymous: anonymous, type: __QUESTION};
+	var question = {owner_id: user, title: __saveHTML(title), content: __saveHTML(content), module_id: moduleId, anonymous: anonymous, type: __QUESTION};
 	__insertQuery(query, question, next);
 }
 
 self.addAnswer = function(user, questionId, content, anonymous, next) {
 	var query = 'INSERT INTO post SET ?';
 	anonymous = (anonymous ? __YES : __NO);
-	var answer = {owner_id: user, content: content, anonymous: anonymous, type: __ANSWER, parent_id: questionId};
+	var answer = {owner_id: user, content: __saveHTML(content), anonymous: anonymous, type: __ANSWER, parent_id: questionId};
 	__insertQuery(query, answer, next);
 }
 
 self.addComment = function(user, postId, content, anonymous, next) {
 	var query = 'INSERT INTO comment SET ?';
 	anonymous = (anonymous ? __YES : __NO);
-	var answer = {user_id: user, post_id: postId, content: content, anonymous: anonymous};
+	var answer = {user_id: user, post_id: postId, content: __saveHTML(content), anonymous: anonymous};
 	__insertQuery(query, answer, next);
 }
 
