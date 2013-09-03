@@ -11,8 +11,7 @@
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,200,300' rel='stylesheet' type='text/css'>
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet" />
-    <!-- <link rel="stylesheet" type="text/css" href="/public/css/mCustomScrollbar.css" /> -->
-    <link href='http://fonts.googleapis.com/css?family=Merriweather:300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="/public/css/mCustomScrollbar.css" />
     <!-- new -->
     <link rel="stylesheet" type="text/css" href="public/css/styles.css">
     <link rel="stylesheet" type="text/css" href="/public/css/fragen-style.css" />
@@ -42,10 +41,9 @@
              </div>  
              <nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
                 <ul class="nav navbar-nav">
-                    <li><a href="#">DASHBOARD</a></li>
                     <!-- <li><a href="#">SIGN OUT</a></li> -->
                     <% if (user) { %>
-                    <li class='username'><a>Hi, <%= user.displayName %>!</a></li>
+                        <li class='username'><a><%= user.displayName %></a></li>
                     <% } %>
 
                     <li>
@@ -100,7 +98,7 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
     <script type="text/javascript" src='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'></script>
-    <!-- <script type="text/javascript" src="/public/js/mCustomScrollbar.js"></script> -->
+    <script type="text/javascript" src="/public/js/mCustomScrollbar.js"></script>
     <script type="text/javascript" src='/public/js/fragenEdited.js'></script>
     <script type="text/javascript" src="/public/js/jquery.tinysort.js"></script>
     <script type="text/javascript" src="/public/js/main.js"></script>
