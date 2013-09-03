@@ -12,7 +12,7 @@ var store = new express.session.MemoryStore();
 var passport = require('passport')
 		, FacebookStrategy = require('passport-facebook').Strategy;
 
-var magicModuleId = 1; // cs1231
+var magicModuleId = 2; // cs1231
 
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + '/public'));
@@ -77,12 +77,10 @@ function(req, res) {
 	//access sessionID and user after login success
 	// console.log(req.sessionID);
 	// console.log(req.session.passport); //retrieve passport's user ID
-	res.redirect('/main');
+	res.redirect('/dashboard');
 });
 app.get('/loginError', routes.loginError);
 app.get('/logout', routes.logout);
-
-app.get('/modules/:moduleCode', ensureAuthenticated,routes.modulePage);
 
 app.get('/dashboard', ensureAuthenticated,
     function(req,res){
@@ -121,6 +119,32 @@ app.get('/question/:questionId', function(req, res) {
 	})
 });
 
+
+// need to pass in :moduleCode as magic
+app.get('/modules/:moduleid', ensureAuthenticated,function(req,res){
+	// 1. render the page, providing mod basic info
+	db.getModuleById(req.params.moduleid,function(result){
+		console.log("MODULE: " +result);
+		if (result.length && result[0]) {
+			res.render('socketBoard', {user: req.user, module:result[0]});
+		} else {
+			res.redirect('/main');
+		}
+	});
+});
+
+
+// app.get('/getModQn/:moduleid') {
+// 	// res.json(correctArrToReturn);
+// }
+
+// master of the masters, array of arrays.
+// Introducing masterArrMod, for the sake of modules
+
+var masterArrMod = [];
+db.init(config.db);
+console.log('db module init!');
+
 // Introducing master arr, where we store all data
 var masterArr = [];
 masterArr.findPost = function(id) {
@@ -138,13 +162,12 @@ masterArr.findPost = function(id) {
 
 // Init db
 // Retrieve posts from mysql db and push to masterArr
-db.init(config.db);
-console.log('db module init!');
+
 
 var db_limit = 10; // How many qns do you want in one page?
 var db_offset = 0; // TODO: multipage thingy
 
-db.getQuestions(1,db_limit, db_offset, function(results) {
+db.getQuestions(magicModuleId,db_limit, db_offset, function(results) {
 	for (var i = 0; i < results.length; i++) {
 		// console.log(results[i]);
 		masterArr.push(results[i]);
