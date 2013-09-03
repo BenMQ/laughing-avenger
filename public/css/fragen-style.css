@@ -152,22 +152,38 @@ h1 {
 .qn-title{
 	float:left;
 	font-size: 24px;
+	max-width:80%;
 }
 
+ .total-votes{
+ 	border-color: firebrick;
+	color: firebrick;
+ }
+
+ .total-answers{
+ 	border-color: darkolivegreen;
+	color: darkolivegreen;
+ }
+
+
 .stats>div{
-	height: 65px;
+ 	height: 65px;
 	width: 65px;
-	border: 1px solid #888;
+	border: 1px solid;
 	float: right;
 	text-align: center;
 	margin-left: 10px;
 	padding-top: 10px;
-}
+	font-family: 'raleway','Open Sans'; 
+ }
 
-.stats>div>span{
-	display:block;
-}
+ .stats>div>span{
+ 	display:block;
+ }
 
+ .stats>div>span:nth-child(1){
+ 	font-size: 18px;
+ }
 .chat-bubble-question:hover,
 .chat-bubble-answer:hover{
 	background-color: #f5f5f5;
