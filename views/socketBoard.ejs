@@ -1,7 +1,7 @@
 <html xmlns:fb="http://ogp.me/ns/fb#">
 <head>
     <!--content determined dynamically-->
-    <title>CS3216 | Ask and Learn</title> 
+    <title>CS3216 | Ask and Learn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset='utf-8' />
 
@@ -47,16 +47,18 @@
                      <span class="sr-only">Toggle navigation</span>
                      <span class="icon-bar"></span>
                      <span class="icon-bar"></span>
-                     <span class="icon-bar"></span>   
+                     <span class="icon-bar"></span>
                  </button>
-                 <a class="navbar-brand" href="#"><span class='icon'></a>    
-             </div>  
+                 <a class="navbar-brand" href="#"><span class='icon'></a>
+             </div>
              <nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
                 <ul class="nav navbar-nav">
                     <li><a href="#">DASHBOARD</a></li>
                     <!-- <li><a href="#">SIGN OUT</a></li> -->
                     <% if (user) { %>
-                    <li class='username'><a>Hi, <%= user.displayName %>!</a></li>
+                    <li class='username'>
+                        <img src=<%= fbpic %> />
+                        <a>Hi, <%= user.displayName %>!</a></li>
                     <% } %>
 
                     <li>
@@ -67,7 +69,7 @@
                         <% } %>
                     </ul>
                 </nav>
-            </div>  
+            </div>
         </nav>
     </header>
     <div id="content">
