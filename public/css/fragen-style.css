@@ -70,18 +70,13 @@ h1 {
 	margin-top: 10px;
 }
 
-.username a{
-	position:relative;
-}
-
 #username-pic{
 	height:30px;
 	overflow: hidden;
-	position: absolute;
-	left: -12%;
 	float: left;
-	top: 20%;
 	border: 1px solid rgb(54, 34, 65);
+	margin-top: -2%;
+	margin-right: 5px;
 }
 
 #username-pic img{
