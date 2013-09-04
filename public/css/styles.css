@@ -1,6 +1,6 @@
 /* @Boyang added some ad hoc stuff just to make things clearer to see
 Dear Yos pls delete these when the time comes */
-
+/*
 .selected-pos {
 	border: 2px solid green;
 }
@@ -8,17 +8,16 @@ Dear Yos pls delete these when the time comes */
 	border: 2px solid red;
 }
 
-
+*/
 .sortByTime.acting, .sortByVotes.acting {
 	border: 3px solid purple;
 	border-radius: 2px;
 }
-
+/*
 .sortByTime, .sortByVotes {
-    /*temp*/
     display:none;
 }
-
+*/
 .commentsDiv p.comment {
 	background-color: #FFFF99;
 	font-style: italic;
@@ -26,10 +25,11 @@ Dear Yos pls delete these when the time comes */
 	margin-top: 3px;
 	display: block;
 }
+/*
 .answersDiv .answerDiv .ansVoteDiv, .ansCommentDiv {
 	clear: both;
 }
-
+*/
 /*.answersDiv .answerDiv p.answer {
 	display: inline-block;
 }*/
@@ -43,11 +43,11 @@ Dear Yos pls delete these when the time comes */
 .masterPostDiv .answersDiv {
 	margin-left: 20px;
 }
-
+/*
 .masterPostDiv .commentsDiv {
 	margin-left: 20px;
 }
-
+*/
 .masterPostDiv .textDiv p {
 	width: 80%;
 	margin: 20px;

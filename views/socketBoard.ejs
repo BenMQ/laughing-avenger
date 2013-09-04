@@ -51,9 +51,9 @@
 
                     <li>
                         <% if (!user) { %>
-                        <a href="/auth/facebook">LOG IN</a>
+                        <a href="/auth/facebook">Login</a>
                         <% } else { %>
-                        <a href="/signout">SIGN OUT</a>
+                        <a href="/signout">Logout</a>
                         <% } %>
                     </ul>
                 </nav>
@@ -63,16 +63,15 @@
     <div id="content">
         <div id="mod-desc">
             <h1 id='mod-name'><%=: module.title| upcase %></h1> <!--content determined dynamically-->
-            <h3 id='mod-title'><%= module.description %></h3>
+            <h3 id='mod-title'><%=: module.description | upcase %></h3>
         </div>
         <div class='row' id='wrapper'>
 
-            <div class="col-md-9 col-md-offset-1">
-                <button class="sortByTime btn btn-small" >Sort By Time</button>
-                <button class="sortByVotes btn btn-small" >Sort By Votes</button>
-
+            <div class="col-md-10 col-md-offset-1">
                 <div id="qna-wrapper">
-                    <div id="qn-view" class="messageBoard"></div>
+                    <div id="qn-view">
+                        <div class="panel-group messageBoard" id="accordion"></div>
+                    </div>
                     <div id=""class="newPostDiv">
                         <textarea id="title-view" class="newPostTitle" type="text" autofocus placeholder="Your Question title" ></textarea>
                         <div id="ans-view-wrapper">
@@ -88,9 +87,9 @@
                         <i class='icon-cogs'></i> Sort
                         <span class="caret"></span>
                     </button>
-                    <div class="btn-group dropdown-menu" role="menu">
-                      <button type="button" class="btn btn-default btn-sm">Time</button>
-                      <button type="button" class="btn btn-default btn-sm">Vote</button>
+                    <div class="btn-group btn-group-vertical dropdown-menu" data-toggle="buttons"role="menu">
+                      <button type="radio" class="btn btn-default sortByTime"><i class="icon-time"></i> Time</button>
+                      <button type="radio" class="btn btn-default sortByVotes"><i class="icon-thumbs-up-alt"></i> Vote</button>
                     </div>
                 </div>
             </div>
@@ -114,7 +113,7 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
     <script type="text/javascript" src='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'></script>
-    <!-- <script type="text/javascript" src="/public/js/mCustomScrollbar.js"></script> -->
+    <script type="text/javascript" src="/public/js/mCustomScrollbar.js"></script>
     <script type="text/javascript" src='/public/js/fragenEdited.js'></script>
     <script type="text/javascript" src="/public/js/jquery.tinysort.js"></script>
     <script type="text/javascript" src="/public/js/main.js"></script>
