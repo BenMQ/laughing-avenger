@@ -62,12 +62,15 @@ function ensureAuthenticated(req, res, next){
 }
 
 app.get("/", routes.index);
+app.get("/terms", function(req,res){
+	res.render('terms')
+});
 app.get("/main", ensureAuthenticated, routes.main);
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
 app.get('/auth/facebook',
-		passport.authenticate('facebook'),
+		passport.authenticate('facebook', {scope: config.FB_EXTENDED_PERMISSION}),
 		routes.postAuthenticate);
 app.get('/auth/facebook/callback',
 		passport.authenticate('facebook', {failureRedirect: '/loginError'}),
@@ -76,8 +79,23 @@ function(req, res) {
 	console.log("Auth success!");
 	//access sessionID and user after login success
 	// console.log(req.sessionID);
-	// console.log(req.session.passport); //retrieve passport's user ID
-	res.redirect('/dashboard');
+	console.log(req.session.passport); //retrieve passport's user ID
+	picurl = '';
+
+	// retrieve user fbpic url
+	var query="SELECT pic_big FROM user WHERE uid=me()";
+	graph.fql(query, function(err, fdata) {
+		console.log(fdata.data[0].pic_big);
+		picurl = fdata.data[0].pic_big; // { picture: 'http://profile.ak.fbcdn.net/'... }
+
+		console.log(req.session.passport.user.id)
+
+		//here need to check and create user
+		db.updateUserInfo(req.session.passport.user.id, req.session.passport.user.username, picurl, req.session.passport.user.displayName, function() {
+			res.redirect('/dashboard');
+		});
+	});
+
 });
 app.get('/loginError', routes.loginError);
 app.get('/signout', routes.logout);
@@ -239,19 +257,6 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 			// specific user. It needs to be here because we need id
 			db.getVotes(user_cookie.id, function(data) {
 				socket.emit('userVotes', data);
-			});
-
-			user_cookie.picurl = '';
-
-			// retrieve user fbpic url
-			var query="SELECT pic_big FROM user WHERE uid=me()";
-			graph.fql(query, function(err, fdata) {
-				console.log(fdata.data[0].pic_big);
-				user_cookie.picurl = fdata.data[0].pic_big; // { picture: 'http://profile.ak.fbcdn.net/'... }
-
-				//here need to check and create user
-				db.updateUserInfo(user_cookie.id, user_cookie.username, user_cookie.picurl, user_cookie.displayName, function() {
-				});
 			});
 
 			socket.user_cookie = user_cookie; //attach cookie to socket object

@@ -113,7 +113,12 @@ function initVotes(data) {
 window.socket = io.connect(":4321/");
 
 function displayComment(data, container, blink) {
-	var com = $('<span class="comment">' + data.content + '<span class="comment-by"></span></span>');
+	if (data.anonymous == 0) {
+		var com = $('<span class="comment">' + data.content + '<span class="comment-by">' + data.name + '</span></span>');
+	}
+	else {
+		var com = $('<span class="comment">' + data.content + '<span class="comment-by">Anonymous</span></span>');
+	}
 	container.append(com);
 	if (blink) {
 		myBlink(com);
@@ -126,7 +131,16 @@ function displayAns(data, container, blink) {
 	var answer = $('<span class="answer answer-body" data-msgid="' + data.id + '">' +
 			data.content + '</span>');
 	var ansby = $('<div class="answer-by"></div>');
-	var ansbyimg = $('<img>');
+
+	// The hack of the year
+	// replace n with q to get square pic
+	if (data.anonymous == 0) {
+		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
+		var ansbyimg = $('<img src="' + hacked_url + '">');
+	}
+	else {
+		var ansbyimg = $('<img src="/public/img/cat' + lucky() + '.png">');
+	}
 	ansby.append(ansbyimg);
 
 	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
@@ -199,7 +213,13 @@ function displayPost(data, container, blink) {
 		txt = $("<h4 class='title'>" + data.title + "</h4><p></p>");
 	}
 	var qnby = $('<div class="question-by"></div>');
-	var qnbyimg = $('<img>');
+	if (data.anonymous == 0) {
+		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
+		var qnbyimg = $('<img src="' + hacked_url + '">');
+	}
+	else {
+		var qnbyimg = $('<img src="/public/img/cat' + lucky() + '.png">');
+	}
 	qnby.append(qnbyimg);
 	txt.append(qnby);
 	textDiv.append(txt);
@@ -218,6 +238,7 @@ function displayPost(data, container, blink) {
 	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-thumbs-up-alt"></i></a>');
 	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-thumbs-down-alt"></i></a>');
 	var votesDisplay = $('<span class="votes net-vote">0</span>');
+
 	if (data.votecount) {
 		votesDisplay.text(data.votecount);
 	}
@@ -284,7 +305,7 @@ socket.on("ans", function(data) {
 	var parentQn = $('.masterPostDiv[data-msgid="' + data.parent_id + '"]');
 	var container = $('.answersDiv', parentQn);
 	var anscount = $('.answer-number', parentQn);
-	anscount.text(parseInt(anscount.text())+1);
+	anscount.text(parseInt(anscount.text()) + 1);
 	displayAns(data, container, true);
 });
 socket.on("comment", function(data) {
@@ -384,13 +405,15 @@ function masterSubmit() {
 	else if (status.type == "com") {
 		newComment(this);
 	}
+	var msgText = $("#ans-view").eq(0);
+	msgText.focusout();
 }
 
 function newPost(e) {
 	// The problem with class is, there are some stuff that should be singleton
 	// Here .eq(0) is just a failsafe. We should be careful
 	var msgTitle = $("#title-view").eq(0);
-	var msgText = $("#ans-view").eq(0);
+	
 	// var owner_id = window.user.id;
 	if (msgTitle.val() === "") {
 		alert("Please input question title!");
@@ -401,7 +424,6 @@ function newPost(e) {
 		title: msgTitle.val(),
 		content: msgText.val(),
 	});
-
 	msgTitle.val("");
 	msgText.val("");
 }
@@ -430,6 +452,7 @@ function newAns(e) {
 		content: ansInput.val(),
 		// owner_id: window.user.id,
 	});
+	publish(window.fragen.submitStatus.parent_id, "answer");
 	ansInput.val("");
 }
 
@@ -468,4 +491,24 @@ function myBlink($obj) {
 		}, 500);
 	}, 500);
 
+}
+
+function lucky() {
+	var r = Math.floor(Math.random() * 8);
+
+	return r;
+}
+
+function publish(qnid, type) {
+	FB.api(
+			'me/fragen-ask:'+type,
+			'post',
+			{
+				question: "http://fragen.cmq.me/question/"+qnid,
+				privacy: {'value': 'ALL_FRIENDS'}
+			},
+	function(response) {
+//		console.log(response);
+	}
+	);
 }
