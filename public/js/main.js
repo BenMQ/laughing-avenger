@@ -413,7 +413,8 @@ function newPost(e) {
 	// The problem with class is, there are some stuff that should be singleton
 	// Here .eq(0) is just a failsafe. We should be careful
 	var msgTitle = $("#title-view").eq(0);
-	
+	var msgText = $("#ans-view").eq(0);
+
 	// var owner_id = window.user.id;
 	if (msgTitle.val() === "") {
 		alert("Please input question title!");
