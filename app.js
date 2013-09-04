@@ -92,10 +92,10 @@ function(req, res) {
 
 		//here need to check and create user
 		db.updateUserInfo(req.session.passport.user.id, req.session.passport.user.username, picurl, req.session.passport.user.displayName, function() {
+			res.redirect('/dashboard');
 		});
 	});
 
-	res.redirect('/dashboard');
 });
 app.get('/loginError', routes.loginError);
 app.get('/signout', routes.logout);
