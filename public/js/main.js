@@ -136,10 +136,10 @@ function displayAns(data, container, blink) {
 	// replace n with q to get square pic
 	if (data.anonymous == 0) {
 		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
-		var ansbyimg = $('<img src="' + hacked_url + '">');
+		var ansbyimg = $('<img src="' + hacked_url + '" alt="'+data.name+'" title="'+data.name+'">');
 	}
 	else {
-		var ansbyimg = $('<img src="/public/img/cat' + lucky() + '.png">');
+		var ansbyimg = $('<img src="/public/img/cat' + lucky() + '.png"  alt="Anonymous" title="Anonymous">');
 	}
 	ansby.append(ansbyimg);
 
@@ -215,10 +215,10 @@ function displayPost(data, container, blink) {
 	var qnby = $('<div class="question-by"></div>');
 	if (data.anonymous == 0) {
 		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
-		var qnbyimg = $('<img src="' + hacked_url + '">');
+		var qnbyimg = $('<img src="' + hacked_url + '"  alt="'+data.name+'" title="'+data.name+'">');
 	}
 	else {
-		var qnbyimg = $('<img src="/public/img/cat' + lucky() + '.png">');
+		var qnbyimg = $('<img src="/public/img/cat' + lucky() + '.png" alt="Anonymous" title="Anonymous">');
 	}
 	qnby.append(qnbyimg);
 	txt.append(qnby);
@@ -413,7 +413,8 @@ function newPost(e) {
 	// The problem with class is, there are some stuff that should be singleton
 	// Here .eq(0) is just a failsafe. We should be careful
 	var msgTitle = $("#title-view").eq(0);
-	
+	var msgText = $("#ans-view").eq(0);
+
 	// var owner_id = window.user.id;
 	if (msgTitle.val() === "") {
 		alert("Please input question title!");
