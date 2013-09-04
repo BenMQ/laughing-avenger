@@ -202,7 +202,7 @@ function displayPost(data, container, blink) {
 	var totalvote = $('<div class="total-votes"><span class="net-vote">' + data.votecount + '</span><span>votes</span></div>');
 
 	var totalans = $('<div class="total-answers"><span class="answer-number">' + data.answers.length + '</span><span>answers</span></div>');
-	clearfix.append(totalvote).append(totalans);
+	clearfix.append(totalvote).append(totalans).append();
 	qnPanelHeading.append(qntitle).append(clearfix);
 	var textDiv = $('<div class="chat-bubble-question textDiv" data-msgid="' + data.id + '">');
 	var txt;
