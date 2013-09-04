@@ -51,8 +51,7 @@ __getTime = function() {
 }
 
 // escapes < and > characters
-__saveHTML = function(string) {
-	string = mysql.escape(string);
+__escapeHTML = function(string) {
 	return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 /**
@@ -86,7 +85,7 @@ self.getQuestion = function(questionId, next) {
 
 self.getAnswers = function(questionId, limit, offset, next) {
 	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE type = " + __ANSWER
-				+ " AND parent_id = " + mysql.escape(questionId);
+				+ " AND parent_id = " + mysql.escape(questionId) + " ORDER BY votecount DESC";
 	__query(query, next);
 }
 
@@ -125,21 +124,21 @@ self.getComment = function(id, next) {
 self.addQuestion = function(user, title, content, moduleId, anonymous, next) {
 	var query = 'INSERT INTO post SET ?';
 	anonymous = (anonymous ? __YES : __NO);
-	var question = {owner_id: user, title: __saveHTML(title), content: __saveHTML(content), module_id: moduleId, anonymous: anonymous, type: __QUESTION};
+	var question = {owner_id: user, title: __escapeHTML(title), content: __escapeHTML(content), module_id: moduleId, anonymous: anonymous, type: __QUESTION};
 	__insertQuery(query, question, next);
 }
 
 self.addAnswer = function(user, questionId, content, anonymous, next) {
 	var query = 'INSERT INTO post SET ?';
 	anonymous = (anonymous ? __YES : __NO);
-	var answer = {owner_id: user, content: __saveHTML(content), anonymous: anonymous, type: __ANSWER, parent_id: questionId};
+	var answer = {owner_id: user, content: __escapeHTML(content), anonymous: anonymous, type: __ANSWER, parent_id: questionId};
 	__insertQuery(query, answer, next);
 }
 
 self.addComment = function(user, postId, content, anonymous, next) {
 	var query = 'INSERT INTO comment SET ?';
 	anonymous = (anonymous ? __YES : __NO);
-	var answer = {user_id: user, post_id: postId, content: __saveHTML(content), anonymous: anonymous};
+	var answer = {user_id: user, post_id: postId, content: __escapeHTML(content), anonymous: anonymous};
 	__insertQuery(query, answer, next);
 }
 
