@@ -171,15 +171,15 @@ app.get("/question/data/:questionId", function(req, res) {
 app.get('/modules/:moduleTitle', ensureAuthenticated, function(req, res) {
 	db.getUserInfo(req.user.id, function(db_user) {
 		db.getModuleByTitle(req.params.moduleTitle,
-			function(result) {
-				console.log("DB_USER: " + db_user[0]);
-				if (result.length && result[0]) {
-					res.render('socketBoard', {user: req.user, moduleid: result[0].id, module: result[0], fbpic: db_user[0].fbpic_url});
+				function(result) {
+					console.log("DB_USER: " + db_user[0]);
+					if (result.length && result[0]) {
+						res.render('socketBoard', {user: req.user, moduleid: result[0].id, module: result[0], fbpic: db_user[0].fbpic_url});
 
-				} else {
-					res.redirect('/dashboard');
-				}
-			})
+					} else {
+						res.redirect('/dashboard');
+					}
+				})
 	});
 });
 
@@ -337,17 +337,19 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	socket.on("post", function(data) {
 		db.addQuestion(socket.user_cookie.id, data.title, data.content, data.module_id, data.anon, function(id) {
 			// Post OG story from server as the ID is only known at this point, not on the client side.
-			graph.setAccessToken(socket.user_cookie.accessToken);
-			graph.post('me/fragen-ask:ask',
-					{
-						question: "http://fragen.cmq.me/question/" + id,
-						privacy: {'value': 'ALL_FRIENDS'}
-					},
-			function(err, res) {
-				graph.setAccessToken(null);
-				console.log(res);
+			if (!data.anon) {
+				graph.setAccessToken(socket.user_cookie.accessToken);
+				graph.post('me/fragen-ask:ask',
+						{
+							question: "http://fragen.cmq.me/question/" + id,
+							privacy: {'value': 'ALL_FRIENDS'}
+						},
+				function(err, res) {
+					graph.setAccessToken(null);
+					console.log(res);
+				}
+				);
 			}
-			);
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
 					masterArr.push(results[0]);
