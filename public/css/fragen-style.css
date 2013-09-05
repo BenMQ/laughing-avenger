@@ -150,6 +150,7 @@ h1 {
 	border-radius: 0;
 	width:10%;
 	height:10%;
+	float:left;
 }
 
 #title-view{

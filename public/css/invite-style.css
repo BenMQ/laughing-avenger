@@ -1,23 +1,3 @@
-ul#friends li {
-    list-style-type: none;
-    display: inline;
-    float: left;
-    width: 300px;
-    padding: 10px;
-    background: #eee;
-    margin: 10px;
-}
-
-ul#friends li h4 {
-    font-size: 16px;
-    display:inline;
-
-}
-
-ul#friends li.invited {
-    background: #FF9900;
-}
-
 /*
  * body
  ******************************/
@@ -106,4 +86,82 @@ h1 {
 
 #username-pic img{
     width:30px;
+}
+
+/*
+ * Content
+ ******************************/
+
+#content h1{
+    margin-bottom: 15px;
+}
+
+/*
+ * Friends Wrapper
+ ******************************/
+
+#friends-wrapper{
+    background-color: white;
+    -webkit-box-shadow: 0 0 50px rgba(0,0,0,0.3);
+    box-shadow: 0 0 50px rgba(0,0,0,0.3);
+    padding: 4px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    margin-bottom: 30px;
+}
+
+ul#friends{
+    margin-bottom: 0;
+    border: 1px solid rgba(0,0,0,0.03);
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background: rgba(0,0,0,0.03);
+    padding: 20px;
+}
+
+ul#friends li {
+    list-style-type: none;
+    padding:10px;
+}
+
+ul#friends li h4 {
+    font-size: 16px;
+    display:inline;
+}
+
+.friend-thumbnail{
+    padding: 10px;
+}
+
+.friend-thumbnail a:first-child{
+    float:left;
+    margin-right: 20px;
+    margin-right: 20px;
+}
+
+.friend-thumbnail img{
+    border-radius: 10px;
+}
+
+.friend-thumbnail span{
+    display:block;
+    margin-bottom: 10px;
+}
+
+.friend-thumbnail a:last-child{
+    color: white;
+    background-color: #3b5998;
+    border:1px solid #133783;
+    text-decoration: none;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.friend-thumbnail a:last-child:hover{
+    color: #3b5998;
+    background-color: white;
+    border-color:1px solid #133783;
+    text-decoration: none;
+    padding: 5px;
+    border-radius: 4px;
 }

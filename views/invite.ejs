@@ -72,27 +72,33 @@
 
     <div id="content">
         <h1>Invite your friends to fragen!</h1>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div id="friends-wrapper" class="row">
+                    <ul id="friends" class="clearfix">
+                    <% for(var i=0; i<app_friends.length; i++) {%>
+                        <li class ='invited col-md-4'>
+                            <div class='friend-thumbnail'>
+                                <span><%= app_friends[i].name %></span> (Using Fragen)
+                                <a href='http://facebook.com/<%= app_friends[i].username %>'><img src='<%= app_friends[i].pic_square %>' /></a>
+                                
+                            </div>
+                        </li>
+                    <% } %>
 
-        <ul id="friends">
-        <% for(var i=0; i<app_friends.length; i++) {%>
-            <li class ='invited'>
-                <div>
-                    <a href='http://facebook.com/<%= app_friends[i].username %>'><img src='<%= app_friends[i].pic_square %>' /></a>
-                    <h4><%= app_friends[i].name %></h4> (Using Fragen)
+                    <% for(var i=0; i<to_invite_friends.length; i++) {%>
+                        <li class='col-md-4'>
+                            <div class="friend-thumbnail">
+                                <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><img src='<%= to_invite_friends[i].pic_square %>' /></a>
+                                <span><%= to_invite_friends[i].name %></span    >
+                                <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>'>Send Invite</a>
+                            </div>
+                        </li>
+                    <% } %>
+                    </ul>
                 </div>
-            </li>
-        <% } %>
-
-        <% for(var i=0; i<to_invite_friends.length; i++) {%>
-            <li>
-                <div>
-                    <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><img src='<%= to_invite_friends[i].pic_square %>' /></a>
-                    <h4><%= to_invite_friends[i].name %></h4>
-                    <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' class='invite'>Send Invite</a>
-                </div>
-            </li>
-        <% } %>
-        </ul>
+            </div>
+        </div>
     </div>
 
 
