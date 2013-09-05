@@ -37,6 +37,8 @@ $(document).ready(function() {
 
 	$("button.sortByTime").click(evtSortByTime);
 	$("button.sortByVotes").click(evtSortByVotes);
+
+	window.setTimeout(updateTimeFromNow, 60*1000);
 }); // End of document.ready
 
 function switchAnon() {
@@ -208,6 +210,36 @@ function displayAns(data, container, blink) {
 	}
 }
 
+
+// returns relative timestamp
+// < 1 minute: just now
+// > 1 day: on 1st July
+// otherwise xxx ago
+function timeFromNow(timestamp) {
+	var dayInMilliseconds = 1000*60*60*24;
+	var minuteInMilliseconds = 1000*60;
+	var momentNow = moment();
+	var momentThen = moment(timestamp);
+	var msFromNow = momentNow.diff(momentThen);
+	if (msFromNow < minuteInMilliseconds) {
+		return 'just now';
+	} else if (msFromNow > dayInMilliseconds) {
+		return momentThen.format("on Do MMM");
+	} else {
+		return momentThen.fromNow();
+	}
+}
+
+function updateTimeFromNow() {
+	$('.time-post-moment').each(function(){
+		var time = $(this).data('timestamp');
+		$(this).text(timeFromNow(time));
+	});
+
+	window.setTimeout(updateTimeFromNow, 60*1000);
+}
+
+
 // Displaying a post item on page using a post obj
 // Container is a jquery obj
 // Not sorted yet (but the db query result is sorted)!
@@ -222,14 +254,21 @@ function displayPost(data, container, blink) {
 		href: '#' + idOfCollapse
 	});
 	qntitle.append(anchorTagForHeader);
-	var tObj = data.timestamp.split(/[- : T .]/);
-	var date = new Date(tObj[0], tObj[1] - 1, tObj[2], tObj[3], tObj[4], tObj[5]);
-	date = date.toString().split(' ');
+	// var tObj = data.timestamp.split(/[- : T .]/);
+	// var date = new Date(tObj[0], tObj[1] - 1, tObj[2], tObj[3], tObj[4], tObj[5]);
+	// date = date.toString().split(' ');
+
 	var clearfix = $('<div class="stats clearfix">');
 	var totalvote = $('<div class="total-votes"><span class="net-vote">' + data.votecount + '</span><span>votes</span></div>');
 	var totalans = $('<div class="total-answers"><span class="answer-number">' + data.answers.length + '</span><span>answers</span></div>');
 
-	var timeOfPost = $('<span class="time-post" title = "' + date[0] + ' ' + date[1] + ' ' + date[2] + ' ' + date[3] + ' ' + date[4] + '">' + "Asked on " + date[1] + '\' ' + date[3].substring(2) + '</span>');
+	//var timeOfPost = $('<span class="time-post" title = "' + date[0] + ' ' + date[1] + ' ' + date[2] + ' ' + date[3] + ' ' + date[4] + '">' + "Asked on " + date[1] + '\' ' + date[3].substring(2) + '</span>');
+	var momentTimeText = $('<span class="time-post-moment">' 
+						+ timeFromNow(data.timestamp) + '</span>').data('timestamp', data.timestamp)
+
+
+	var timeOfPost = $('<span class="time-post">Asked </span>');
+	momentTimeText.appendTo(timeOfPost);
 	clearfix.append(totalans).append(totalvote).append();
 	qnPanelHeading.append(qntitle).append(clearfix).append(timeOfPost);
 
