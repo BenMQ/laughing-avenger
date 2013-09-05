@@ -186,6 +186,11 @@ ul#friends li h4 {
 @media only screen and (max-width: 768px), only screen and (max-device-width: 768px) {
     nav.pull-right{
         float:none !important; 
+        text-align: center;
+    }
+
+    #username-pic{
+        display:none;
     }
 
 }

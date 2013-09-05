@@ -417,3 +417,53 @@ h1 {
 	cursor: pointer;
 }
 
+ /*
+ * Mobile media queries
+ ******************************/
+
+@media only screen and (max-width: 987px), only screen and (max-device-width: 987px) {
+    #mod-name{
+    	margin-bottom: 62px;
+    }
+
+    #mod-title{
+    	display:none;
+    }
+
+    #settings{
+    	position: static;
+    	height:0;
+    }
+
+    #settings>.btn-group{
+    	position: absolute;
+		top: 23%;
+		left: 30%;
+    }
+
+    #anonymousSwitch{
+    	top: 23%;
+		left: 60%;
+		bottom: initial;
+    }
+}
+
+@media only screen and (max-width: 768px), only screen and (max-device-width: 768px) {
+    nav.pull-right{
+        float:none !important; 
+        text-align: center;
+    }
+
+    #username-pic{
+    	display:none;
+    }
+
+}
+
+@media only screen and (max-width: 440px), only screen and (max-device-width: 440px) {
+	.qn-title {
+		font-size: 20px;
+		max-width: 40%;
+	}
+}
+

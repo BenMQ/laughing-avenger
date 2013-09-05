@@ -220,7 +220,7 @@ footer p.copyright {
  * Mobile media queries
  ******************************/
 
-@media only screen and (max-width: 768px), only screen and (max-device-width: 768px) {
+@media only screen and (max-width: 576px), only screen and (max-device-width: 576px) {
 	nav.pull-right{
 		float:none !important; 
 	}
@@ -257,4 +257,10 @@ footer p.copyright {
 		padding: 3px 5px;
 	}
 
+}
+
+@media only screen and (max-width: 768px), only screen and (max-device-width: 768px) {
+	nav.pull-right{
+		float:none !important; 
+	}
 }

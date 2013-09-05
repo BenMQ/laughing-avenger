@@ -150,13 +150,33 @@ h1 {
  	color:white;
  }
 
-/* Footer */
+/*
+ * Footer
+ ******************************/
 footer p.copyright {
     text-align:center;
     padding: 20px 0px 20px 0px;
 }
 
-/* Like button */
+/*
+ * facebook button
+ ******************************/
 .like-button {
     margin: 10px 15px;
+}
+
+/*
+ * Mobile media queries
+ ******************************/
+
+@media only screen and (max-width: 768px), only screen and (max-device-width: 768px) {
+    nav.pull-right{
+        float:none !important; 
+        text-align: center;
+    }
+
+    #username-pic{
+    	display:none;
+    }
+
 }
