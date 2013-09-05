@@ -101,7 +101,60 @@ function displayPostVer(data, container) {
 	container.prepend(masterPostDiv);
 }
 
+function displayComment(data, container, blink) {
+	if (data.anonymous == 0) {
+		var com = $('<span class="comment">' + data.content + '<span class="comment-by">' + data.name + '</span></span>');
+	}
+	else {
+		var com = $('<span class="comment">' + data.content + '<span class="comment-by">Anonymous</span></span>');
+	}
+	container.append(com);
+}
 
+function displayAns(data, container, blink) {
+	var answerDiv = $('<div class="answerDiv" data-msgid="' + data.id + '" data-timestamp="' + data.timestamp + '">');
+	var textDiv = $('<div class="testDiv chat-bubble-answer" data-msgid="' + data.id + '">');
+	var answer = $('<span class="answer answer-body" data-msgid="' + data.id + '">' +
+			data.content + '</span>');
+	var ansby = $('<div class="answer-by"></div>');
+
+	// The hack of the year
+	// replace n with q to get square pic
+	if (data.anonymous == 0) {
+		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
+		var ansbyimg = $('<img src="' + hacked_url + '" alt="' + data.name + '" title="' + data.name + '">');
+	}
+	else {
+		var ansbyimg = $('<img src="/public/img/cat' + lucky() + '.png"  alt="Anonymous" title="Anonymous">');
+	}
+	ansby.append(ansbyimg);
+
+	var commentsDiv = $('<div class="commentsDiv" data-msgid="' + data.id + '">');
+	if (data.comments && data.comments.length > 0) {
+		for (var j = 0; j < data.comments.length; j++) {
+			displayComment(data.comments[j], commentsDiv, false);
+		}
+	}
+
+
+	var ansCommentDiv = $('<div class="ansCommentDiv" data-msgid="' + data.id + '">');
+	var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.id + '">');
+	var votesDisplay = $('<span class="votes net-vote">0</span>');
+	if (data.votecount) {
+		votesDisplay.text(data.votecount);
+	}
+	ansVoteDiv.append(votesDisplay);
+
+	var miscBtnsWrapper = $('<div></div>').addClass('misc-btns');
+	miscBtnsWrapper.append(ansVoteDiv).append(ansCommentDiv);
+	textDiv.append(answer).append(commentsDiv).append(ansby).append(miscBtnsWrapper);
+	answerDiv
+			.append(textDiv);
+//			.append(ansVoteDiv)
+//			.append(ansCommentDiv);
+	container.prepend(answerDiv);
+
+}
 function lucky() {
 	var r = Math.floor(Math.random() * 8);
 
