@@ -19,16 +19,6 @@
 
 </head>
 <body>
-    <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id))
-            return;
-        js = d.createElement(s);
-        js.id = id;
-        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=492242497533605";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));</script>
     <header id='nav-pane'>
         <nav class="navbar navbar-default navbar-fixed-top" id='navpane' role="navigation">
             <div class="container nav-container">
@@ -89,15 +79,12 @@
                     <div class="btn-group btn-group-vertical dropdown-menu" data-toggle="buttons"role="menu">
                       <button type="radio" class="btn btn-default sortByTime"><i class="icon-time"></i> Time</button>
                       <button type="radio" class="btn btn-default sortByVotes"><i class="icon-thumbs-up-alt"></i> Vote</button>
-                  </div>  
+                  </div>
               </div>
               <!-- this is the anonymous switch -->
               <button id="anonymousSwitch" type="button" class="btn btn-mini" data-toggle="button">Anonymous</button>
           </div>
         </div>
-    </div>
-    <div class="like-button">
-        <fb:like href="http://la.cmq.me" width="90px" layout="button_count" show_faces="true" send="false"></fb:like>
     </div>
     <!-- Google Analytics -->
     <script>
