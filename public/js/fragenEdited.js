@@ -8,8 +8,8 @@ function addEvtForNavLinks(){
 function addCustomScrollBar(){
    $("#qn-view").mCustomScrollbar({
       theme: 'dark-thin',
-            advanced:{
-         autoScrollOnFocus: false,
+        advanced:{
+          autoScrollOnFocus: false,
           updateOnContentResize: true
       },
       scrollButtons:{
@@ -88,7 +88,7 @@ function addEvtForVoteBtn(){
 
 $(function(){
 //	addEvtForNavLinks();
-//  addCustomScrollBar();
+    addCustomScrollBar();
 //  addEvtForAnswer();
 //  addEvtForComment();
 //  addEvtForVoteBtn();

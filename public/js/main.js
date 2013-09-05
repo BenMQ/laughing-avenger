@@ -1,6 +1,6 @@
 //--- This js includes all functionalities needed by socketBoard.html ---------
 //--- @boyang
-
+var idOfCollapse=0;
 
 //---- First off, $(document).ready() must be singleton. More than one of it ---
 //----- brings unexpected behaviour. ----------------
@@ -30,16 +30,16 @@ $(document).ready(function() {
 
 	$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
 
-	$(".sortByTime").click(function() {
+	$("button.sortByTime").click(function() {
 		if (window.fragen && window.fragen.sortByTime) {
 			clearInterval(window.fragen.sortByTime);
 		}
 		if (window.fragen && window.fragen.sortByVotes) {
 			clearInterval(window.fragen.sortByVotes);
 		}
-		$(this).toggleClass("acting");
-		if ($(this).hasClass("acting")) {
-			$(".sortByVotes").removeClass("acting");
+		$(this).toggleClass("active");
+		if ($(this).hasClass("active")) {
+			$(".sortByVotes").removeClass("active");
 			$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
 			sortAns();
 			window.fragen.sortByTime = setInterval(function() {
@@ -48,6 +48,7 @@ $(document).ready(function() {
 				sortAns();
 			}, 5000);
 		}
+		return false;
 	});
 	$("button.sortByVotes").click(function() {
 		if (window.fragen && window.fragen.sortByTime) {
@@ -56,9 +57,9 @@ $(document).ready(function() {
 		if (window.fragen && window.fragen.sortByVotes) {
 			clearInterval(window.fragen.sortByVotes);
 		}
-		$(this).toggleClass('acting');
-		if ($(this).hasClass("acting")) {
-			$(".sortByTime").removeClass("acting");
+		$(this).toggleClass('active');
+		if ($(this).hasClass("active")) {
+			$(".sortByTime").removeClass("active");
 			$(".messageBoard .masterPostDiv").tsort('.voteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-timestamp'});
 			sortAns();
 			window.fragen.sortByVotes = setInterval(function() {
@@ -127,18 +128,18 @@ function displayComment(data, container, blink) {
 function displayAns(data, container, blink) {
 	var answerDiv = $('<div class="answerDiv" data-msgid="' + data.id + '">');
 	var textDiv = $('<div class="testDiv chat-bubble-answer" data-msgid="' + data.id + '">');
-	var answer = $('<p class="answer answer-body" data-msgid="' + data.id + '">' +
-			data.content + '</p>');
+	var answer = $('<span class="answer answer-body" data-msgid="' + data.id + '">' +
+			data.content + '</span>');
 	var ansby = $('<div class="answer-by"></div>');
 
 	// The hack of the year
 	// replace n with q to get square pic
 	if (data.anonymous == 0) {
 		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
-		var ansbyimg = $('<img src="' + hacked_url + '">');
+		var ansbyimg = $('<img src="' + hacked_url + '" alt="'+data.name+'" title="'+data.name+'">');
 	}
 	else {
-		var ansbyimg = $('<img src="/public/img/cat' + lucky() + '.png">');
+		var ansbyimg = $('<img src="/public/img/cat' + lucky() + '.png"  alt="Anonymous" title="Anonymous">');
 	}
 	ansby.append(ansbyimg);
 
@@ -159,22 +160,23 @@ function displayAns(data, container, blink) {
 	ansCommentDiv.append(commentBtn); //append(commentInput).
 
 	var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.id + '">');
-	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-chevron-up"></i></a>');
-	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-chevron-down"></i></a>');
-	var votesDisplay = $('<span class="votes">0</span>');
+	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-thumbs-up-alt"></i></a>');
+	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-thumbs-down-alt"></i></a>');
+	var votesDisplay = $('<span class="votes net-vote">0</span>');
 	if (data.votecount) {
 		votesDisplay.text(data.votecount);
 	}
 	upVoteBtn.click(upVote);
 	downVoteBtn.click(downVote);
-	ansVoteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+	ansVoteDiv.append(votesDisplay).append(upVoteBtn).append(downVoteBtn);
 
-	textDiv.append(answer).append(commentsDiv).append(ansby);
-
+	var miscBtnsWrapper = $('<div></div>').addClass('misc-btns');
+	miscBtnsWrapper.append(ansVoteDiv).append(ansCommentDiv);
+	textDiv.append(answer).append(commentsDiv).append(ansby).append(miscBtnsWrapper);
 	answerDiv
-			.append(textDiv)
-			.append(ansVoteDiv)
-			.append(ansCommentDiv);
+			.append(textDiv);
+//			.append(ansVoteDiv)
+//			.append(ansCommentDiv);
 	container.prepend(answerDiv);
 
 	if (blink) {
@@ -188,17 +190,27 @@ function displayAns(data, container, blink) {
 function displayPost(data, container, blink) {
 	var masterPostDiv = $('<div class="masterPostDiv panel panel-default" data-timestamp="' + data.timestamp + '" data-msgid="' + data.id + '">'); //data-votes="'+data.votecount+'" '+'
 	var qnPanelHeading = $('<div class="qn-Panel panel-heading">');
-	var qntitle = $('<h3 class="qn-title panel-title"><a>' + data.title + '</a></h3>');
+	var qntitle = $('<h3 class="qn-title panel-title"></h3>');
+	var anchorTagForHeader = $('<a>' + data.title + '</a>').attr({
+		class:'accordion-toggle collapsed',
+		'data-toggle': 'collapse',
+		'data-parent': '#accordion',
+		href: '#'+idOfCollapse
+	});
+	qntitle.append(anchorTagForHeader);
+	var tObj = data.timestamp.split(/[- : T .]/);
+	var date = new Date(tObj[0],tObj[1]-1,tObj[2],tObj[3],tObj[4],tObj[5]);
+	date = date.toString().split(' ');
 	var clearfix = $('<div class="stats clearfix">');
 	var totalvote = $('<div class="total-votes"><span class="net-vote">' + data.votecount + '</span><span>votes</span></div>');
-
 	var totalans = $('<div class="total-answers"><span class="answer-number">' + data.answers.length + '</span><span>answers</span></div>');
+	var timeOfPost = $('<span id="time-post" title = "' + date[0] + ' ' + date[1] + ' ' + date[2] + ' ' + date[3] + ' ' + date[4] +'">' + date[1] + '\' ' + date[3].substring(2) + '</span>');
 	clearfix.append(totalvote).append(totalans);
-	qnPanelHeading.append(qntitle).append(clearfix);
+	qnPanelHeading.append(qntitle).append(clearfix).append(timeOfPost);
 	var textDiv = $('<div class="chat-bubble-question textDiv" data-msgid="' + data.id + '">');
 	var txt;
 	if (data.content) {
-		txt = $("<h4 class='title'>" + data.title + "</h4>" + "<p>" + data.content + "</p>");
+		txt = $("<h4 class='title'>" + data.title + "</h4>" + "<span class='question-body'>" + data.content + "</span>");
 	}
 	else {
 		txt = $("<h4 class='title'>" + data.title + "</h4><p></p>");
@@ -206,10 +218,10 @@ function displayPost(data, container, blink) {
 	var qnby = $('<div class="question-by"></div>');
 	if (data.anonymous == 0) {
 		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
-		var qnbyimg = $('<img src="' + hacked_url + '">');
+		var qnbyimg = $('<img src="' + hacked_url + '"  alt="'+data.name+'" title="'+data.name+'">');
 	}
 	else {
-		var qnbyimg = $('<img src="/public/img/cat' + lucky() + '.png">');
+		var qnbyimg = $('<img src="/public/img/cat' + lucky() + '.png" alt="Anonymous" title="Anonymous">');
 	}
 	qnby.append(qnbyimg);
 	txt.append(qnby);
@@ -225,47 +237,55 @@ function displayPost(data, container, blink) {
 	textDiv.append(qnCommentsDiv);
 
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
+	
+	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-thumbs-up-alt"></i></a>');
+	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-thumbs-down-alt"></i></a>');
+	var votesDisplay = $('<span class="votes net-vote">0</span>');
 
-	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-chevron-up"></i></a>');
-	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-chevron-down"></i></a>');
-	var votesDisplay = $('<span class="votes">0</span>');
 	if (data.votecount) {
 		votesDisplay.text(data.votecount);
 	}
 	upVoteBtn.click(upVote);
 	downVoteBtn.click(downVote);
-	voteDiv.append(upVoteBtn).append(downVoteBtn).append(votesDisplay);
+	voteDiv.append(votesDisplay).append(upVoteBtn).append(downVoteBtn);
 
 	var commentDiv = $('<div class="commentDiv" data-msgid="' + data.id + '">');
-	var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
+//	var commentInput = $('<input class="commentInput" type="text" placeholder="Comment this post"/>');
 //	var commentBtn = $('<button class="commentBtn" data-msgid="' + data.id + '">comment</button>');
 	var commentBtn = $('<a class="comment-btn commentBtn" data-msgid="' + data.id + '"><span>comment</span></a>');
 	commentBtn.click(switchToCom);
 	commentDiv.append(commentBtn);//append(commentInput).
 
 	var ansDiv = $('<div class="ansDiv" data-msgid="' + data.id + '">');
-	var ansInput = $('<input class="ansInput" type="text" placeholder="Answer this Question"/>');
+//	var ansInput = $('<input class="ansInput" type="text" placeholder="Answer this Question"/>');
 //	var ansBtn = $('<button class="ansBtn" data-msgid="' + data.id + '">answer</button>');
 	var ansBtn = $('<a class="answer-btn ansBtn" data-msgid="' + data.id + '"><span>answer</span></a>');
 	ansBtn.click(switchToAns);
 	ansDiv.append(ansBtn);//append(ansInput).
 
-	var answersDiv = $('<div class="answersDiv" data-msgid="' + data.id + '">');
+	var answersDiv = $('<div class="answersDiv clearfix" data-msgid="' + data.id + '">');
 
 	if (data.answers && data.answers.length > 0) {
 		for (var i = 0; i < data.answers.length; i++) {
 			displayAns(data.answers[i], answersDiv, false);
 		}
 	}
+	var miscBtnsWrapper = $('<div></div>').addClass('misc-btns');
+	miscBtnsWrapper.append(voteDiv).append(commentDiv).append(ansDiv);
+	textDiv.append(miscBtnsWrapper);
+	var wrapperQA = $('<div></div>').attr({
+		id: idOfCollapse++,
+		class: 'panel-collapse collapse'
+	}).append($('<div class="panel-body"></div>'));
 
+	wrapperQA.find('.panel-body').append(textDiv).append(answersDiv);
 	masterPostDiv
 			.append(qnPanelHeading)
-			.append(textDiv)
+//			.append(textDiv)
 //			.append(qnCommentsDiv)
-			.append(voteDiv)
-			.append(commentDiv)
-			.append(ansDiv)
-			.append(answersDiv);
+//			.append(miscBtnsWrapper)
+//			.append(answersDiv);
+			.append(wrapperQA);
 	container.prepend(masterPostDiv);
 	if (blink) {
 		myBlink(masterPostDiv);
@@ -388,6 +408,8 @@ function masterSubmit() {
 	else if (status.type == "com") {
 		newComment(this);
 	}
+	var msgText = $("#ans-view").eq(0);
+	msgText.focusout();
 }
 
 function newPost(e) {
@@ -395,6 +417,7 @@ function newPost(e) {
 	// Here .eq(0) is just a failsafe. We should be careful
 	var msgTitle = $("#title-view").eq(0);
 	var msgText = $("#ans-view").eq(0);
+
 	// var owner_id = window.user.id;
 	if (msgTitle.val() === "") {
 		alert("Please input question title!");

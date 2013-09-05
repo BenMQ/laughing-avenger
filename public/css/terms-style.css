@@ -1,0 +1,88 @@
+/*
+ * body
+ ******************************/
+ html,body{
+ 	height:100%;
+ 	background-image: url(../img/old_mathematics.png); 
+ }
+
+ body{
+ 	padding-top:50px;
+ 	font-family: 'raleway',sans-serif;
+ 	overflow-x: hidden;	
+ }
+
+h1,h2,h3,h4,h5,h6 {
+	font-weight:300;
+ 	font-family: 'Open Sans',sans-serif;
+}
+
+h1 {
+	font-weight:300;
+	font-size:50px;
+	text-align:center;
+	line-height:55px;
+	text-shadow:0 1px 1px rgba(0,0,0,0.8);
+	margin-bottom:30px;
+}
+
+/*
+ * Header
+ ******************************/
+ #navpane{
+ 	background-color: rgb(83,54,98);
+ 	-webkit-box-shadow: 0px 2px 2px #888;
+    -moz-box-shadow:    0px 2px 2px #888;
+    box-shadow:         0px 2px 2px #888;
+    border-bottom-width: 0px;
+ }
+
+ .nav-container{
+ 	max-width: 1000px;
+ }
+
+  .navbar-default .navbar-nav>li>a{ 	
+	color:white;
+ 	opacity:0.7;
+ }
+ .navbar-default .navbar-nav>li>a:hover, 
+ .navbar-default .navbar-nav>li>a:focus,
+ .navbar-default .navbar-nav>li.active>a:hover, 
+ .navbar-default .navbar-nav>li.active>a:focus,
+ .navbar-default .navbar-nav>li.active>a{
+	background-color:transparent;
+	color:white;
+ 	opacity:1.0;
+ }
+
+ .navbar-brand{
+ 	padding:2.5px;
+ }
+
+ .icon{
+ 	background-image: url(../img/fragen-icon.png);
+ 	display:block;
+ 	background-repeat: no-repeat;
+ 	height:30px;
+ 	width:104px;
+ 	margin-top: 10px;
+ }
+
+ /*
+ * Section
+ ******************************/
+ section{
+ 	margin: 50px 0;
+ 	padding:10px;
+ 	background: white;
+ 	-moz-box-shadow: 0 0 6px #888;
+	-webkit-box-shadow: 0 0 6px#888;
+	box-shadow: 0 0 10px #888;
+ }
+
+ section header h2{
+ 	text-align: center;
+ }
+ article h3{
+ 	text-shadow:0 1px 1px rgba(0,0,0,0.2);
+ }

@@ -22,7 +22,8 @@ function tile(){
 	tile.attr({
 		class : 'col-md-5 live-tile ' +	 tileColorClass[index],
 		'data-mode':'none',
-		'data-bounce':true
+		'data-bounce':true,
+		'data-mod': mod.toLowerCase()
 	});
 	tileColorClass.splice(index,1);
 	return tile;
@@ -39,11 +40,19 @@ function tileElem(mod){
 function addTiles(){
 	var tileGrp = $('.tiles.tile-group');
 	for(mod in moduleAlloc){
-		tileGrp.append(tile().append(tileElem(mod)));
+		tileGrp.append(tile(mod).append(tileElem(mod)));
 	}
+}
+
+function addEvtForTiles(){
+	$('.live-tile').on('click',function(){
+		location.href='/modules/'+ $(this).attr('data-mod');
+	});
 }
 
 $(function(){
 	addEvtForNavLinks();
 	addTiles();
+	$(".live-tile").liveTile();
+   	addEvtForTiles();
 });
