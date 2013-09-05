@@ -70,6 +70,13 @@ self.getQuestions = function(moduleId, limit, offset, next) {
 	__query(query, next);
 }
 
+self.getAllQuestions = function(next) {
+	var query = "SELECT * FROM post LEFT JOIN user ON user_id=owner_id WHERE type = " + __QUESTION
+				+ " ORDER BY timestamp DESC"
+	__query(query, next);
+}
+
+
 /**
  * Get a specific question given its ID
  * @param  {integer}   questionId ID of the question to be retrieved
