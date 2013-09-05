@@ -5,7 +5,12 @@
 
 // Route for Fragen index page
 exports.index = function(req,res){
-    res.render('welcome');
+
+    if(req.isAuthenticated()){
+        res.redirect("/dashboard");
+    } else {
+        res.render('welcome');
+    }
 }
 
 exports.main = function(req, res) {

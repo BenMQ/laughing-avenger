@@ -51,7 +51,6 @@ __getTime = function() {
 }
 
 // escapes < and > characters
-
 __escapeHTML = function(string) {
 	return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -86,7 +85,7 @@ self.getQuestion = function(questionId, next) {
 
 self.getAnswers = function(questionId, limit, offset, next) {
 	var query = "SELECT * FROM post LEFT JOIN user u ON u.user_id=owner_id WHERE type = " + __ANSWER
-				+ " AND parent_id = " + mysql.escape(questionId);
+				+ " AND parent_id = " + mysql.escape(questionId) + " ORDER BY votecount DESC";
 	__query(query, next);
 }
 

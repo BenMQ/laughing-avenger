@@ -108,8 +108,8 @@ h1 {
  	color: white;
 	background-color: #3b5998;
 	border-color: #133783;
-	font-weight: bold;
-	font-family: tahoma;
+/*	font-weight: bold;
+	font-family: tahoma;*/
  }
 
  #btn-facebook:hover{
@@ -186,3 +186,10 @@ h1 {
     /* filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1.5); */
     -ms-transform:rotate(120deg);
  }
+
+ /* Footer */
+
+footer p.copyright {
+    text-align:center;
+    margin: 20px 0;
+}

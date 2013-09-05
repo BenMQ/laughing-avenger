@@ -4,13 +4,13 @@
  ******************************/
 html,body{
 	height:100%;
-	background-image: url(../img/old_mathematics.png); 
+	background-image: url(../img/old_mathematics.png);
 }
 
 body{
 	padding-top:50px;
 	font-family: 'Open Sans',sans-serif;
-	overflow-x: hidden;	
+	overflow-x: hidden;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -43,13 +43,13 @@ h1 {
 	max-width: 1000px;
 }
 
-.navbar-default .navbar-nav>li>a{ 	
+.navbar-default .navbar-nav>li>a{
 	color:white;
 	opacity:0.7;
 }
-.navbar-default .navbar-nav>li>a:hover, 
+.navbar-default .navbar-nav>li>a:hover,
 .navbar-default .navbar-nav>li>a:focus,
-.navbar-default .navbar-nav>li.active>a:hover, 
+.navbar-default .navbar-nav>li.active>a:hover,
 .navbar-default .navbar-nav>li.active>a:focus,
 .navbar-default .navbar-nav>li.active>a{
 	background-color:transparent;
@@ -75,8 +75,8 @@ h1 {
 	overflow: hidden;
 	float: left;
 	border: 1px solid rgb(54, 34, 65);
-	margin-top: -2%;
-	margin-right: 5px;
+	margin-top: -4%;
+	margin-right: 8px;
 }
 
 #username-pic img{
@@ -193,7 +193,7 @@ h1 {
 	text-align: center;
 	margin-left: 10px;
 	padding-top: 10px;
-	font-family: 'raleway','Open Sans'; 
+	font-family: 'raleway','Open Sans';
  }
 
  .stats>div>span{
@@ -310,7 +310,7 @@ h1 {
 	font-size: 16;
 }
 
-/*Comments-view*/ 
+/*Comments-view*/
 
 .commentsDiv{
 	margin-top: 10px;
