@@ -87,9 +87,22 @@ h1 {
  	text-shadow:0 1px 1px rgba(0,0,0,0.2);
  }
 
-  /* Footer */
-
+/*
+ * Footer
+ ******************************/
 footer p.copyright {
     text-align:center;
     margin: 20px 0;
+}
+
+/*
+ * Mobile media queries
+ ******************************/
+
+@media only screen and (max-width: 768px), only screen and (max-device-width: 768px) {
+    nav.pull-right{
+        float:none !important; 
+        text-align: center;
+    }
+
 }

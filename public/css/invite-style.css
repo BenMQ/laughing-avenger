@@ -178,3 +178,14 @@ ul#friends li h4 {
     color: white;
     border: #FBB631;
 }
+
+/*
+ * Mobile media queries
+ ******************************/
+
+@media only screen and (max-width: 768px), only screen and (max-device-width: 768px) {
+    nav.pull-right{
+        float:none !important; 
+    }
+
+}

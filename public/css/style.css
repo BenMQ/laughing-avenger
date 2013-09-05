@@ -46,15 +46,6 @@ h1 {
  	max-width: 1000px;
  }
 
- .selected{
- 	position: absolute;
- 	background-image: url(/public/img/arrow.png);
- 	height:8px;
- 	width:12px;
- 	left:45%;
- 	bottom:-2.5%;
- }
-
  .navbar-default .navbar-nav>li>a{
 	color:white;
  	opacity:0.7;
@@ -223,4 +214,47 @@ footer p.copyright {
 .copyright a{
 	color: white;
 	text-decoration: none
+}
+
+/*
+ * Mobile media queries
+ ******************************/
+
+@media only screen and (max-width: 768px), only screen and (max-device-width: 768px) {
+	nav.pull-right{
+		float:none !important; 
+	}
+
+	#main{
+	 	position:relative;
+	 	margin:auto;
+	 	background-image: url(/public/img/fragen-main.png);
+	 	display:block;
+	 	background-repeat: no-repeat;
+	 	height:264px;
+	 	width:380px;
+ 	}
+
+ 	#type-anim{
+ 		display:none;
+ 	}
+
+ 	#main>#btn-facebook {
+		position: absolute;
+		left: 40%;
+		bottom: 44%;
+	}
+
+	#main>#btn-facebook span{
+		display:none;
+	}
+
+	#main>#btn-facebook:after{
+		content:'Sign In';
+	}
+
+	.btn-lg {
+		padding: 3px 5px;
+	}
+
 }
