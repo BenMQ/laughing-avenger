@@ -8,7 +8,7 @@
     <!-- old -->
     <link rel="stylesheet" type="text/css" href="/public/css/styles.css">
 
-    <link href="../public/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="/public/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,300" rel="stylesheet" type="text/css" />
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,200,300' rel='stylesheet' type='text/css'>
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
@@ -43,7 +43,6 @@
              </div>
              <nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
                 <ul class="nav navbar-nav">
-                    <!-- <li><a href="#">SIGN OUT</a></li> -->
                     <% if (user) { %>
                     <li class='username'>
                         <a href='/dashboard'><div id='username-pic'><img src=<%= fbpic %> /></div><span><%= user.displayName %></span></a>
@@ -51,9 +50,9 @@
 
                     <li>
                         <% if (!user) { %>
-                        <a href="/auth/facebook">Login</a>
+                        <a href="/auth/facebook">Sign In</a>
                         <% } else { %>
-                        <a href="/signout">Logout</a>
+                        <a href="/signout">Sign Out</a>
                         <% } %>
                     </ul>
                 </nav>

@@ -1,43 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fragen | Ask and Learn</title>
+    <title>Fragen | Invite your friends</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset='utf-8' />
     <link href="../img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,300" rel="stylesheet" type="text/css" />
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,200,300' rel='stylesheet' type='text/css'>
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="/public/css/MetroJs.min.css" />
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="/public/css/dash-style.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/invite-style.css" />
     <script type="text/javascript">
         if (window.location.hash == '#_=_'){
             window.location.hash = '';
         }
     </script>
-    <style>
-        ul#friends li {
-            list-style-type: none;
-            display: inline;
-            float: left;
-            width: 300px;
-            padding: 10px;
-            background: #eee;
-            margin: 10px;
-        }
-
-        ul#friends li h4 {
-            font-size: 16px;
-            display:inline;
-
-        }
-
-        ul#friends li.invited {
-            background: #FF9900;
-        }
-
-    </style>
 </head>
 <body>
         <!-- For Feed Dialog invites -->
@@ -81,8 +58,11 @@
                 </div>
                 <nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
                     <ul class="nav navbar-nav">
-                        <li><a href="/dashboard">DASHBOARD</a></li>
-                        <li><a href="/signout">SIGN OUT</a></li>
+                    <% if (user) { %>
+                        <li class='username'>
+                            <a href='/dashboard'><div id='username-pic'><img src=<%= fbpic %> /></div><span><%= user.name %></span></a>
+                    <% } %>
+                        <li><a href="/signout">Sign Out</a></li>
                     </ul>
                 </nav>
             </div>
@@ -97,8 +77,8 @@
         <% for(var i=0; i<app_friends.length; i++) {%>
             <li class ='invited'>
                 <div>
-                    <img src='<%= app_friends[i].pic_square %>' />
-                    <a href='http://facebook.com/<%= app_friends[i].username %>'><h4><%= app_friends[i].name %></h4> (Using Fragen)</a>
+                    <a href='http://facebook.com/<%= app_friends[i].username %>'><img src='<%= app_friends[i].pic_square %>' /></a>
+                    <h4><%= app_friends[i].name %></h4> (Using Fragen)
                 </div>
             </li>
         <% } %>
@@ -106,21 +86,18 @@
         <% for(var i=0; i<to_invite_friends.length; i++) {%>
             <li>
                 <div>
-                    <img src='<%= to_invite_friends[i].pic_square %>' />
-                    <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><h4><%= to_invite_friends[i].name %></h4></a>
+                    <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><img src='<%= to_invite_friends[i].pic_square %>' /></a>
+                    <h4><%= to_invite_friends[i].name %></h4>
                     <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' class='invite'>Send Invite</a>
                 </div>
             </li>
         <% } %>
         </ul>
-
     </div>
 
 
     <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
     <script type="text/javascript" src='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'></script>
-    <script type="text/javascript" src='/public/js/dash-script.js'></script>
-    <script type="text/javascript" src='/public/js/MetroJs.min.js'></script>
     <!-- For Feed dialog invites -->
     <script type="text/javascript">
         $(document).ready(function() {
@@ -138,12 +115,6 @@
                 }, function(response){});
 
                 });
-        });
-    </script>
-    <!--  -->
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $(".live-tile").liveTile();
         });
     </script>
 </body>
