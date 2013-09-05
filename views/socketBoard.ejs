@@ -19,6 +19,16 @@
 
 </head>
 <body>
+<!-- Load Facebook JS SDK -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+var js, fjs = d.getElementsByTagName(s)[0];
+if (d.getElementById(id)) return;
+js = d.createElement(s); js.id = id;
+js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=492242497533605";
+fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
     <header id='nav-pane'>
         <nav class="navbar navbar-default navbar-fixed-top" id='navpane' role="navigation">
             <div class="container nav-container">
