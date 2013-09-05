@@ -1,6 +1,6 @@
 //--- This js includes all functionalities needed by socketBoard.html ---------
 //--- @boyang
-var idOfCollapse=0;
+var idOfCollapse = 0;
 
 //---- First off, $(document).ready() must be singleton. More than one of it ---
 //----- brings unexpected behaviour. ----------------
@@ -15,6 +15,7 @@ $(document).ready(function() {
 		// parent_id:	{ null, qnid,  postid}
 		type: "qn",
 		parent_id: null,
+		anon: false,
 	};
 	// get master arr from server, and display
 	$.get("/masterArr", function(data) {
@@ -23,61 +24,73 @@ $(document).ready(function() {
 		init(data);
 //		relocateMessageBoard();
 //		addCustomScrollBar();
+		$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
+
+		$(".messageBoard .masterPostDiv .answersDiv").each(function(i, e) {
+			$(".answerDiv", e).tsort('.ansVoteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-timestamp'});
+		});
 	});
 
 
 	$("#qnSubmit.newPostBtn").click(masterSubmit);
+	$("#anonymousSwitch").click(switchAnon);
 
-	$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
-
-	$("button.sortByTime").click(function() {
-		if (window.fragen && window.fragen.sortByTime) {
-			clearInterval(window.fragen.sortByTime);
-		}
-		if (window.fragen && window.fragen.sortByVotes) {
-			clearInterval(window.fragen.sortByVotes);
-		}
-		$(this).toggleClass("active");
-		if ($(this).hasClass("active")) {
-			$(".sortByVotes").removeClass("active");
-			$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
-			sortAns();
-			window.fragen.sortByTime = setInterval(function() {
-				console.log("auto by time hahaha");
-				$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
-				sortAns();
-			}, 5000);
-		}
-		return false;
-	});
-	$("button.sortByVotes").click(function() {
-		if (window.fragen && window.fragen.sortByTime) {
-			clearInterval(window.fragen.sortByTime);
-		}
-		if (window.fragen && window.fragen.sortByVotes) {
-			clearInterval(window.fragen.sortByVotes);
-		}
-		$(this).toggleClass('active');
-		if ($(this).hasClass("active")) {
-			$(".sortByTime").removeClass("active");
-			$(".messageBoard .masterPostDiv").tsort('.voteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-timestamp'});
-			sortAns();
-			window.fragen.sortByVotes = setInterval(function() {
-				console.log("auto by votes hahaha");
-				$(".messageBoard .masterPostDiv").tsort('.voteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-timestamp'});
-				sortAns();
-			}, 5000);
-		}
-		return false;
-	});
+	$("button.sortByTime").click(evtSortByTime);
+	$("button.sortByVotes").click(evtSortByVotes);
 }); // End of document.ready
 
-//function relocateMessageBoard() {
-//	var newboard = $("#qn-view > .mCustomScrollBox"); //> .mCSB_container
-//	console.log(newboard);
-//	$(".messageBoard").removeClass("messageBoard");
-//	newboard.addClass("messageBoard");
-//}
+function switchAnon() {
+	if ($(this).hasClass('active')) {
+		window.fragen.submitStatus.anon = false;
+	}
+	else {
+		window.fragen.submitStatus.anon = true;
+	}
+	$(this).toggleClass("active");
+	return false;
+}
+
+function evtSortByVotes(e) {
+	if (window.fragen && window.fragen.sortByTime) {
+		clearInterval(window.fragen.sortByTime);
+	}
+	if (window.fragen && window.fragen.sortByVotes) {
+		clearInterval(window.fragen.sortByVotes);
+	}
+	$(this).toggleClass('active');
+	if ($(this).hasClass("active")) {
+		$(".sortByTime").removeClass("active");
+		$(".messageBoard .masterPostDiv").tsort('.voteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-timestamp'});
+		sortAns();
+		window.fragen.sortByVotes = setInterval(function() {
+			console.log("auto by votes hahaha");
+			$(".messageBoard .masterPostDiv").tsort('.voteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-timestamp'});
+			sortAns();
+		}, 5000);
+	}
+	return false;
+}
+
+function evtSortByTime(e) {
+	if (window.fragen && window.fragen.sortByTime) {
+		clearInterval(window.fragen.sortByTime);
+	}
+	if (window.fragen && window.fragen.sortByVotes) {
+		clearInterval(window.fragen.sortByVotes);
+	}
+	$(this).toggleClass("active");
+	if ($(this).hasClass("active")) {
+		$(".sortByVotes").removeClass("active");
+		$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
+		sortAns();
+		window.fragen.sortByTime = setInterval(function() {
+			console.log("auto by time hahaha");
+			$(".messageBoard .masterPostDiv").tsort({order: 'desc', attr: 'data-timestamp'});
+			sortAns();
+		}, 5000);
+	}
+	return false;
+}
 
 function sortAns() {
 	$(".messageBoard .masterPostDiv .answersDiv .answerDiv").tsort('.ansVoteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-msgid'});
@@ -89,7 +102,7 @@ function init(masterArr) {
 		// TODO: differentiate post, answer, comment. Display accordingly
 		displayPost(masterArr[masterArr.length - 1 - i], container, false);
 	}
-	console.log(JSON.stringify(masterArr));
+	console.log((masterArr));
 }
 
 function initVotes(data) {
@@ -113,6 +126,8 @@ function initVotes(data) {
 window.socket = io.connect(":4321/");
 
 function displayComment(data, container, blink) {
+	console.log("anon comment");
+	console.log(data.anonymous);
 	if (data.anonymous == 0) {
 		var com = $('<span class="comment">' + data.content + '<span class="comment-by">' + data.name + '</span></span>');
 	}
@@ -126,7 +141,7 @@ function displayComment(data, container, blink) {
 }
 
 function displayAns(data, container, blink) {
-	var answerDiv = $('<div class="answerDiv" data-msgid="' + data.id + '">');
+	var answerDiv = $('<div class="answerDiv" data-msgid="' + data.id + '" data-timestamp="' + data.timestamp + '">');
 	var textDiv = $('<div class="testDiv chat-bubble-answer" data-msgid="' + data.id + '">');
 	var answer = $('<span class="answer answer-body" data-msgid="' + data.id + '">' +
 			data.content + '</span>');
@@ -136,7 +151,7 @@ function displayAns(data, container, blink) {
 	// replace n with q to get square pic
 	if (data.anonymous == 0) {
 		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
-		var ansbyimg = $('<img src="' + hacked_url + '" alt="'+data.name+'" title="'+data.name+'">');
+		var ansbyimg = $('<img src="' + hacked_url + '" alt="' + data.name + '" title="' + data.name + '">');
 	}
 	else {
 		var ansbyimg = $('<img src="/public/img/cat' + lucky() + '.png"  alt="Anonymous" title="Anonymous">');
@@ -192,10 +207,10 @@ function displayPost(data, container, blink) {
 	var qnPanelHeading = $('<div class="qn-Panel panel-heading">');
 	var qntitle = $('<h3 class="qn-title panel-title"></h3>');
 	var anchorTagForHeader = $('<a>' + data.title + '</a>').attr({
-		class:'accordion-toggle collapsed',
+		class: 'accordion-toggle collapsed',
 		'data-toggle': 'collapse',
 		'data-parent': '#accordion',
-		href: '#'+idOfCollapse
+		href: '#' + idOfCollapse
 	});
 	qntitle.append(anchorTagForHeader);
 	var clearfix = $('<div class="stats clearfix">');
@@ -215,7 +230,7 @@ function displayPost(data, container, blink) {
 	var qnby = $('<div class="question-by"></div>');
 	if (data.anonymous == 0) {
 		var hacked_url = data.fbpic_url.substr(0, data.fbpic_url.lastIndexOf('.') - 1) + 'q' + data.fbpic_url.substr(data.fbpic_url.lastIndexOf('.'));
-		var qnbyimg = $('<img src="' + hacked_url + '"  alt="'+data.name+'" title="'+data.name+'">');
+		var qnbyimg = $('<img src="' + hacked_url + '"  alt="' + data.name + '" title="' + data.name + '">');
 	}
 	else {
 		var qnbyimg = $('<img src="/public/img/cat' + lucky() + '.png" alt="Anonymous" title="Anonymous">');
@@ -234,7 +249,7 @@ function displayPost(data, container, blink) {
 	textDiv.append(qnCommentsDiv);
 
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
-	
+
 	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-thumbs-up-alt"></i></a>');
 	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-thumbs-down-alt"></i></a>');
 	var votesDisplay = $('<span class="votes net-vote">0</span>');
@@ -313,12 +328,14 @@ socket.on("comment", function(data) {
 	displayComment(data, parent, true);
 });
 socket.on('vote', function(postData) {
+	console.log("!!!!!!!!!!!!!received vote");
+	console.log(postData);
 	// Individual vote is useless. Just send a standard post obj from server
 	if (postData.type == 0) {
 		var master = $('.masterPostDiv[data-msgid="' + postData.id + '"]');
 		console.log(master);
-		$('.masterPostDiv .voteDiv' + '[data-msgid="' + postData.id + '"]' + ' span.votes').text(postData.votecount);
-		$('.net-vote', master).text(postData.votecount);
+		$('.masterPostDiv .voteDiv' + '[data-msgid="' + postData.id + '"]' + '> span.votes').text(postData.votecount);
+		$('.total-votes > .net-vote', master).text(postData.votecount);
 	}
 	else if (postData.type == 1) {
 		$('.masterPostDiv[data-msgid="' + postData.parent_id + '"] .answersDiv .answerDiv[data-msgid="' + postData.id + '"] .ansVoteDiv span.votes').text(postData.votecount);
@@ -348,6 +365,7 @@ function upVote() {
 		$(this).siblings('.downVoteBtn').removeClass('selected-neg');
 	}
 	$(this).toggleClass("selected-pos");
+	return false;
 }
 function downVote() {
 	if ($(this).hasClass("selected-neg")) {
@@ -364,6 +382,7 @@ function downVote() {
 		$(this).siblings('.upVoteBtn').removeClass('selected-pos');
 	}
 	$(this).toggleClass("selected-neg");
+	return false;
 }
 
 function switchToCom() {
@@ -420,11 +439,19 @@ function newPost(e) {
 		alert("Please input question title!");
 		return;
 	}
-	socket.emit("post", {
+	var obj = {
 		// owner_id: owner_id,
 		title: msgTitle.val(),
 		content: msgText.val(),
-	});
+	}
+	if (window.fragen.submitStatus.anon) {
+		obj.anon = true;
+	}
+	else {
+		obj.anon = false;
+	}
+	
+	socket.emit("post", obj);
 	msgTitle.val("");
 	msgText.val("");
 }
@@ -439,6 +466,12 @@ function newComment(e) {
 		post_id: window.fragen.submitStatus.parent_id,
 		content: input.val(),
 	};
+	if (window.fragen.submitStatus.anon) {
+		obj.anon = true;
+	}
+	else {
+		obj.anon = false;
+	}
 	socket.emit('comment', obj);
 	input.val("");
 }
@@ -448,11 +481,18 @@ function newAns(e) {
 		alert("Please input answer content!");
 		return;
 	}
-	socket.emit('ans', {
+	var obj = {
 		parent_id: window.fragen.submitStatus.parent_id,
 		content: ansInput.val(),
 		// owner_id: window.user.id,
-	});
+	};
+	if (window.fragen.submitStatus.anon) {
+		obj.anon = true;
+	}
+	else {
+		obj.anon = false;
+	}
+	socket.emit('ans', obj);
 	publish(window.fragen.submitStatus.parent_id, "answer");
 	ansInput.val("");
 }
@@ -502,10 +542,10 @@ function lucky() {
 
 function publish(qnid, type) {
 	FB.api(
-			'me/fragen-ask:'+type,
+			'me/fragen-ask:' + type,
 			'post',
 			{
-				question: "http://fragen.cmq.me/question/"+qnid,
+				question: "http://fragen.cmq.me/question/" + qnid,
 				privacy: {'value': 'ALL_FRIENDS'}
 			},
 	function(response) {

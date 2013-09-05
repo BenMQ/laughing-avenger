@@ -264,7 +264,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("comment", function(data) {
-		db.addComment(socket.user_cookie.id, data.post_id, data.content, false, function(id) {
+		db.addComment(socket.user_cookie.id, data.post_id, data.content, data.anon, function(id) {
 			db.getComment(id, function(results) {
 				if (results[0]) {
 					var cur_post = masterArr.findPost(results[0].post_id);
@@ -284,7 +284,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("ans", function(data) {
-		db.addAnswer(socket.user_cookie.id, data.parent_id, data.content, false, function(id) {
+		db.addAnswer(socket.user_cookie.id, data.parent_id, data.content, data.anon, function(id) {
 			db.getAnswer(id, function(results) {
 				if (results[0]) {
 					for (var i = 0; i < masterArr.length; i++) {
@@ -302,7 +302,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("post", function(data) {
-		db.addQuestion(socket.user_cookie.id, data.title, data.content, magicModuleId, false, function(id) {
+		db.addQuestion(socket.user_cookie.id, data.title, data.content, magicModuleId, data.anon, function(id) {
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
 					masterArr.push(results[0]);
