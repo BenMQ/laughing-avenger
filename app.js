@@ -52,6 +52,17 @@ passport.use(new FacebookStrategy({
   }
 ));
 
+
+var collectionURL = 'https://www.facebook.com/me/app_492242497533605';
+(function() {
+	var params = {fields: 'profile_section_url'};
+	graph.get(config.FACEBOOK_APP_ID, params, function(err, res) {
+		// to be enabled when collection has been approved
+		//collectionURL = res.profile_section_url;
+	})
+})();
+
+
 // Wrapper auth function
 function ensureAuthenticated(req, res, next){
     if(req.isAuthenticated()){
@@ -69,7 +80,7 @@ app.get("/about", function(req,res){
 	res.render('about')
 });
 
-app.get("/main", ensureAuthenticated, routes.main);
+//app.get("/main", ensureAuthenticated, routes.main);
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
@@ -108,7 +119,7 @@ app.get('/dashboard', ensureAuthenticated,
     function(req,res){
 	    db.getUserInfo(req.user.id,
 		    function(db_user){
-			    res.render('dashboard', { user: req.user, fbpic:db_user[0].fbpic_url });
+			    res.render('dashboard', { user: req.user, fbpic:db_user[0].fbpic_url, collectionURL: collectionURL});
 		}
 	)}
 );
@@ -140,7 +151,7 @@ app.get('/question/:questionId', function(req, res) {
 		if (result.length) {
 			res.render('post', {content: result[0]});
 		} else {
-			res.redirect('/main');
+			res.redirect('/dashboard');
 		}
 	})
 });
@@ -156,7 +167,7 @@ app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
 				res.render('socketBoard', {user: req.user, moduleid: result[0].id, module:result[0], fbpic:db_user[0].fbpic_url});
 				
 			} else {
-				res.redirect('/main');
+				res.redirect('/dashboard');
 			}
 		})
 	});
