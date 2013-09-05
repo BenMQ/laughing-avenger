@@ -557,40 +557,42 @@ function newAns(e) {
 }
 
 function myBlink($obj) {
-	var i = 0;
-	$obj.css("opacity", i);
-	var exe = setInterval(function() {
-		i += 0.01;
-		if (i > 1) {
-			i = 1;
-		}
-		$obj.css("opacity", i);
-	}, 5);
-	setTimeout(function() {
-		clearInterval(exe);
-		exe = setInterval(function() {
-			i -= 0.01;
-			if (i < 0) {
-				i = 0;
-			}
-			$obj.css("opacity", i);
-		}, 5);
-		setTimeout(function() {
-			clearInterval(exe);
-			exe = setInterval(function() {
-				i += 0.01;
-				if (i > 1) {
-					i = 1;
-				}
-				$obj.css("opacity", i);
-			}, 5);
-			setTimeout(function() {
-				clearInterval(exe);
-
-			}, 1200);
-		}, 500);
-	}, 500);
-
+	$obj.fadeOut(500);
+	$obj.fadeIn(1000);
+//	var i = 0;
+//	$obj.css("opacity", i);
+//	var exe = setInterval(function() {
+//		i += 0.01;
+//		if (i > 1) {
+//			i = 1;
+//		}
+//		$obj.css("opacity", i);
+//	}, 5);
+//	setTimeout(function() {
+//		clearInterval(exe);
+//		exe = setInterval(function() {
+//			i -= 0.01;
+//			if (i < 0) {
+//				i = 0;
+//			}
+//			$obj.css("opacity", i);
+//		}, 5);
+//		setTimeout(function() {
+//			clearInterval(exe);
+//			exe = setInterval(function() {
+//				i += 0.01;
+//				if (i > 1) {
+//					i = 1;
+//				}
+//				$obj.css("opacity", i);
+//			}, 5);
+//			setTimeout(function() {
+//				clearInterval(exe);
+//
+//			}, 1200);
+//		}, 500);
+//	}, 500);
+//	setTimeout(function() {$obj.css("opacity, 1");}, 2300);
 }
 
 function lucky() {
