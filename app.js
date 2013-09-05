@@ -166,27 +166,15 @@ app.get("/question/data/:questionId", function(req, res) {
 app.get('/modules/:moduleTitle', ensureAuthenticated, function(req, res) {
 	db.getUserInfo(req.user.id, function(db_user) {
 		db.getModuleByTitle(req.params.moduleTitle,
-<<<<<<< HEAD
-		    function(result){
-			console.log("DB_USER: " + db_user[0]);
-			if (result.length && result[0]) {
-				res.render('socketBoard', {user: req.user, moduleid: result[0].id, module:result[0], fbpic:db_user[0].fbpic_url});
+			function(result) {
+				console.log("DB_USER: " + db_user[0]);
+				if (result.length && result[0]) {
+					res.render('socketBoard', {user: req.user, moduleid: result[0].id, module: result[0], fbpic: db_user[0].fbpic_url});
 
-			} else {
-				res.redirect('/dashboard');
-			}
-		})
-=======
-				function(result) {
-					console.log("DB_USER: " + db_user[0]);
-					if (result.length && result[0]) {
-						res.render('socketBoard', {user: req.user, moduleid: result[0].id, module: result[0], fbpic: db_user[0].fbpic_url});
-
-					} else {
-						res.redirect('/dashboard');
-					}
-				})
->>>>>>> 2cf72b64b070ac674704062553b730b437994d2f
+				} else {
+					res.redirect('/dashboard');
+				}
+			})
 	});
 });
 
