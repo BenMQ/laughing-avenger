@@ -318,6 +318,9 @@ function displayPost(data, container, blink) {
 socket.on("post", function(data) { //event listener, when server sends message, do the below operation
 	// The problem with class is, there are some stuff that should be singleton
 	// Here .eq(0) is just a failsafe. We should be careful
+	if (data.module_id != window.moduleid) {
+		return;
+	}
 	var container = $('.messageBoard').eq(0);
 //	console.log(container);
 //	console.log(data);
@@ -451,6 +454,7 @@ function newPost(e) {
 		// owner_id: owner_id,
 		title: msgTitle.val(),
 		content: msgText.val(),
+		module_id: window.moduleid,
 	}
 	if (window.fragen.submitStatus.anon) {
 		obj.anon = true;

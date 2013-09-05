@@ -322,7 +322,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("post", function(data) {
-		db.addQuestion(socket.user_cookie.id, data.title, data.content, magicModuleId, data.anon, function(id) {
+		db.addQuestion(socket.user_cookie.id, data.title, data.content, data.module_id, data.anon, function(id) {
 			// Post OG story from server as the ID is only known at this point, not on the client side.
 			graph.post('me/fragen-ask:ask',
 						{
