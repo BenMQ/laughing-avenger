@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# fragen-ask: http://ogp.me/ns/fb/fragen-ask#">
-		<meta property="fb:app_id"       content="492242497533605" /> 
-		<meta property="og:type"         content="fragen-ask:question" /> 
-		<meta property="og:url"          content="http://fragen.cmq.me/question/<%= content.id %>" /> 
+		<meta property="fb:app_id"       content="492242497533605" />
+		<meta property="og:type"         content="fragen-ask:question" />
+		<meta property="og:url"          content="http://fragen.cmq.me/question/<%= content.id %>" />
 		<meta property="og:title"        content="<%= content.title %>" />
 		<% if (content.content) { %>
 		<meta property="og:description"  content="<%= content.content %>"/>
@@ -15,32 +15,34 @@
 	</head>
 	<body>
 		<!-- Load Facebook JS SDK -->
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-var js, fjs = d.getElementsByTagName(s)[0];
-if (d.getElementById(id)) return;
-js = d.createElement(s); js.id = id;
-js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=492242497533605";
-fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-		<a href='##' onclick='publish()'>Publish a story</a>
-		<%= content.title %>
-		<br/>
-		<%= content.content %>
-		<script type="text/javascript">
-			function publish() {
-				FB.api(
-					'me/fragen-ask:answer',
-					'post',
-					{
-						question: "http://fragen.cmq.me/question/<%= content.id %>",
-						privacy:  {'value': 'ALL_FRIENDS'}
-					},
-					function(response) {
-						console.log(response);
-					}
-				);	
-			}
-		</script>
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id)) return;
+	js = d.createElement(s); js.id = id;
+	js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=492242497533605";
+	fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
+	<a href='##' onclick='publish()'>Publish a story</a>
+	<%= content.title %>
+	<br/>
+	<%= content.content %>
+	<script type="text/javascript">
+		function publish() {
+			FB.api(
+				'me/fragen-ask:answer',
+				'post',
+				{
+					question: "http://fragen.cmq.me/question/<%= content.id %>",
+					privacy:  {'value': 'ALL_FRIENDS'}
+				},
+				function(response) {
+					console.log(response);
+				}
+			);
+		}
+	</script>
+
+
 	</body>
 </html>
