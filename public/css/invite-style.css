@@ -165,3 +165,16 @@ ul#friends li h4 {
     padding: 5px;
     border-radius: 4px;
 }
+
+.friend-thumbnail a.invited {
+    background: #F1A30B;
+    border: #FBB631;
+
+}
+
+.friend-thumbnail a.invited:hover, .friend-thumbnail a.invited:focus {
+    cursor: default;
+    background: #F1A30B;
+    color: white;
+    border: #FBB631;
+}

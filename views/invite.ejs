@@ -79,19 +79,19 @@
                     <% for(var i=0; i<app_friends.length; i++) {%>
                         <li class ='invited col-md-4'>
                             <div class='friend-thumbnail'>
-                                <span><%= app_friends[i].name %></span> (Using Fragen)
                                 <a href='http://facebook.com/<%= app_friends[i].username %>'><img src='<%= app_friends[i].pic_square %>' /></a>
+                                <span><%= app_friends[i].name %></span>
+                                <a data-fbid='<%= to_invite_friends[i].uid %>' data-fbname='<%= to_invite_friends[i].name %>' class='invited'>On Fragen</a>
 
                             </div>
                         </li>
                     <% } %>
-
                     <% for(var i=0; i<to_invite_friends.length; i++) {%>
                         <li class='col-md-4'>
                             <div class="friend-thumbnail">
                                 <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><img src='<%= to_invite_friends[i].pic_square %>' /></a>
-                                <span><%= to_invite_friends[i].name %></span    >
-                                <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' data-fbname='<%= to_invite_friends[i].name %>'>Send Invite</a>
+                                <span><%= to_invite_friends[i].name %></span>
+                                <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' data-fbname='<%= to_invite_friends[i].name %>' class='invite'>Send Invite</a>
                             </div>
                         </li>
                     <% } %>
