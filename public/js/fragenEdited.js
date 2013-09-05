@@ -82,12 +82,13 @@ function addEvtForTextArea(){
 	}
     ans.animate({height:'10%'},'fast');
     $('#title-view').fadeIn(500);
-	window.fragen.submitStatus.type = "qn";
-	window.fragen.submitStatus.type = null;
+	window.fragen.submitStatus = {
 		// use a global object to remember the current submission status
 		// type:		{'qn', 'ans', 'com' }
 		// parent_id:	{ null, qnid,  postid}
-		
+		type: "qn",
+		parent_id: null,
+	};
   });
 }
 
