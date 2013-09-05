@@ -148,7 +148,7 @@ app.get('/friends', ensureAuthenticated, function(req, res) {
 // Test Open Graph Story
 app.get('/question/:questionId', function(req, res) {
 	var qn = masterArr.findPost(req.params.questionId);
-	if (qn) {
+	if (qn && qn.type == 0) {
 		db.getModuleById(qn.module_id, function(result) {
 			res.render('post', {content: qn, module: result[0]});
 		});
