@@ -149,3 +149,9 @@ h1 {
  	background-color: rgb(43, 97, 117);
  	color:white;
  }
+
+/* Footer */
+footer p.copyright {
+    text-align:center;
+    padding: 20px 0px 20px 0px;
+}

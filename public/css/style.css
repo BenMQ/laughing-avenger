@@ -186,3 +186,10 @@ h1 {
     /* filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1.5); */
     -ms-transform:rotate(120deg);
  }
+
+ /* Footer */
+
+footer p.copyright {
+    text-align:center;
+    margin: 20px 0;
+}
