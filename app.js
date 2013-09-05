@@ -110,20 +110,24 @@ app.get('/dashboard', ensureAuthenticated,
 );
 
 app.get('/friends', ensureAuthenticated, function(req, res) {
-	var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,150)"
-	graph.fql(query, function(err, fdata) {
-        var app_friends = [];
-        db.getAllUsers(function(db_users){
-            db.compute_intersection(db_users, fdata.data, function(err, app_friends){
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log(app_friends);
-                }
-                res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data});
-            })
-        });
+	db.getUserInfo(req.user.id, function(me){
+		var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,150)"
+		graph.fql(query, function(err, fdata) {
+	        var app_friends = [];
+	        db.getAllUsers(function(db_users){
+	            db.compute_intersection(db_users, fdata.data, function(err, app_friends){
+	                if (err) {
+	                    console.log(err);
+	                } else {
+	                    console.log(app_friends);
+	                }
+	                console.log(me[0]);
+	                res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data, user: me[0], fbpic:me[0].fbpic_url});
+	            })
+	        });
+		});
 	});
+
 });
 
 // Test Open Graph Story

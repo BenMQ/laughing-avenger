@@ -37,6 +37,19 @@
             background: #FF9900;
         }
 
+        #username-pic{
+            height:30px;
+            overflow: hidden;
+            float: left;
+            border: 1px solid rgb(54, 34, 65);
+            margin-top: -2%;
+            margin-right: 5px;
+        }
+
+        #username-pic img{
+            width:30px;
+        }
+
     </style>
 </head>
 <body>
@@ -81,7 +94,10 @@
                 </div>
                 <nav class="collapse navbar-collapse navbar-ex1-collapse pull-right" role="navigation">
                     <ul class="nav navbar-nav">
-                        <li><a href="/dashboard">DASHBOARD</a></li>
+                    <% if (user) { %>
+                        <li class='username'>
+                            <a href='/dashboard'><div id='username-pic'><img src=<%= fbpic %> /></div><span><%= user.name %></span></a>
+                    <% } %>
                         <li><a href="/signout">SIGN OUT</a></li>
                     </ul>
                 </nav>
