@@ -99,8 +99,11 @@ function sortAns() {
 function init(masterArr) {
 	var container = $('.messageBoard').eq(0);
 	for (var i = masterArr.length - 1; i >= 0; i--) {
+
 		// TODO: differentiate post, answer, comment. Display accordingly
-		displayPost(masterArr[masterArr.length - 1 - i], container, false);
+		if (masterArr[masterArr.length - 1 - i].module_id == window.moduleid) {
+			displayPost(masterArr[masterArr.length - 1 - i], container, false);
+		}
 	}
 	console.log((masterArr));
 }
@@ -214,13 +217,13 @@ function displayPost(data, container, blink) {
 	});
 	qntitle.append(anchorTagForHeader);
 	var tObj = data.timestamp.split(/[- : T .]/);
-	var date = new Date(tObj[0],tObj[1]-1,tObj[2],tObj[3],tObj[4],tObj[5]);
+	var date = new Date(tObj[0], tObj[1] - 1, tObj[2], tObj[3], tObj[4], tObj[5]);
 	date = date.toString().split(' ');
 	var clearfix = $('<div class="stats clearfix">');
 	var totalvote = $('<div class="total-votes"><span class="net-vote">' + data.votecount + '</span><span>votes</span></div>');
 	var totalans = $('<div class="total-answers"><span class="answer-number">' + data.answers.length + '</span><span>answers</span></div>');
 
-	var timeOfPost = $('<span id="time-post" title = "' + date[0] + ' ' + date[1] + ' ' + date[2] + ' ' + date[3] + ' ' + date[4] +'">' + date[1] + '\' ' + date[3].substring(2) + '</span>');
+	var timeOfPost = $('<span id="time-post" title = "' + date[0] + ' ' + date[1] + ' ' + date[2] + ' ' + date[3] + ' ' + date[4] + '">' + date[1] + '\' ' + date[3].substring(2) + '</span>');
 	clearfix.append(totalvote).append(totalans).append();
 	qnPanelHeading.append(qntitle).append(clearfix).append(timeOfPost);
 
@@ -455,7 +458,7 @@ function newPost(e) {
 	else {
 		obj.anon = false;
 	}
-	
+
 	socket.emit("post", obj);
 	msgTitle.val("");
 	msgText.val("");

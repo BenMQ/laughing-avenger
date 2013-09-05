@@ -153,7 +153,8 @@ app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
 		    function(result){
 			console.log("DB_USER: " + db_user[0]);
 			if (result.length && result[0]) {
-				res.render('socketBoard', {user: req.user, module:result[0], fbpic:db_user[0].fbpic_url});
+				res.render('socketBoard', {user: req.user, moduleid: result[0].id, module:result[0], fbpic:db_user[0].fbpic_url});
+				
 			} else {
 				res.redirect('/main');
 			}
