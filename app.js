@@ -80,7 +80,7 @@ app.get("/about", function(req,res){
 	res.render('about')
 });
 
-app.get("/main", ensureAuthenticated, routes.main);
+//app.get("/main", ensureAuthenticated, routes.main);
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
@@ -151,7 +151,7 @@ app.get('/question/:questionId', function(req, res) {
 		if (result.length) {
 			res.render('post', {content: result[0]});
 		} else {
-			res.redirect('/main');
+			res.redirect('/dashboard');
 		}
 	})
 });
@@ -164,9 +164,10 @@ app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
 		    function(result){
 			console.log("DB_USER: " + db_user[0]);
 			if (result.length && result[0]) {
-				res.render('socketBoard', {user: req.user, module:result[0], fbpic:db_user[0].fbpic_url});
+				res.render('socketBoard', {user: req.user, moduleid: result[0].id, module:result[0], fbpic:db_user[0].fbpic_url});
+				
 			} else {
-				res.redirect('/main');
+				res.redirect('/dashboard');
 			}
 		})
 	});
@@ -321,7 +322,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	});
 
 	socket.on("post", function(data) {
-		db.addQuestion(socket.user_cookie.id, data.title, data.content, magicModuleId, data.anon, function(id) {
+		db.addQuestion(socket.user_cookie.id, data.title, data.content, data.module_id, data.anon, function(id) {
 			// Post OG story from server as the ID is only known at this point, not on the client side.
 			graph.post('me/fragen-ask:ask',
 						{

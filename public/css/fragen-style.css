@@ -1,4 +1,4 @@
-.like-button{display:none;}
+
 /*
  * body
  ******************************/
@@ -173,23 +173,24 @@ h1 {
 	float:left;
 	font-size: 24px;
 	max-width:80%;
+	line-height:40px;
 }
 
  .total-votes{
- 	border-color: firebrick;
-	color: firebrick;
+ 	background: firebrick;
+	color: #fff;
  }
 
  .total-answers{
- 	border-color: darkolivegreen;
-	color: darkolivegreen;
+ 	background: darkolivegreen;
+	color: #fff;
  }
 
 
 .stats>div{
  	height: 65px;
 	width: 65px;
-	border: 1px solid;
+	/*border: 1px solid;*/
 	float: right;
 	text-align: center;
 	margin-left: 10px;
