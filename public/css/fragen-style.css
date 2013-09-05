@@ -83,7 +83,7 @@ h1 {
 	width:30px;
 }
 
-#time-post{
+.time-post{
 	display: block;
 	text-align: right;
 	padding-top: 5px;

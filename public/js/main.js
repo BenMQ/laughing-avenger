@@ -229,7 +229,7 @@ function displayPost(data, container, blink) {
 	var totalvote = $('<div class="total-votes"><span class="net-vote">' + data.votecount + '</span><span>votes</span></div>');
 	var totalans = $('<div class="total-answers"><span class="answer-number">' + data.answers.length + '</span><span>answers</span></div>');
 
-	var timeOfPost = $('<span id="time-post" title = "' + date[0] + ' ' + date[1] + ' ' + date[2] + ' ' + date[3] + ' ' + date[4] + '">' + "Asked on " + date[1] + '\' ' + date[3].substring(2) + '</span>');
+	var timeOfPost = $('<span class="time-post" title = "' + date[0] + ' ' + date[1] + ' ' + date[2] + ' ' + date[3] + ' ' + date[4] + '">' + "Asked on " + date[1] + '\' ' + date[3].substring(2) + '</span>');
 	clearfix.append(totalans).append(totalvote).append();
 	qnPanelHeading.append(qntitle).append(clearfix).append(timeOfPost);
 
