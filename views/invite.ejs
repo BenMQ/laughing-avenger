@@ -88,7 +88,7 @@
                 <div>
                     <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><img src='<%= to_invite_friends[i].pic_square %>' /></a>
                     <h4><%= to_invite_friends[i].name %></h4>
-                    <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' class='invite'>Send Invite</a>
+                    <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' data-fbname='<%= to_invite_friends[i].name %>' class='invite'>Send Invite</a>
                 </div>
             </li>
         <% } %>
@@ -103,14 +103,15 @@
         $(document).ready(function() {
             $("a.invite").click(function(){
                 var fb_id = $(this).data('fbid');
+                var fb_name = $(this).data('fbname');
 
                 FB.ui({
                   method: 'feed',
                   link: 'http://fragen.cmq.me',
                   picture: 'http://fragen.cmq.me/public/img/fragen-iconb.png',
                   name: 'Fragen',
-                  caption: 'Fragen Q & A',
-                  description: 'Come join me on Fragen, the realtime Q & A site!',
+                  caption: "fʁaːgən, means 'to ask' in German",
+                  description: 'Hi ' + fb_name + '! Come join me on Fragen, the realtime knowledge sharing platform that connects students and lecturers!',
                   to: fb_id,
                 }, function(response){});
 

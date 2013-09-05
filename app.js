@@ -126,7 +126,7 @@ app.get('/dashboard', ensureAuthenticated,
 
 app.get('/friends', ensureAuthenticated, function(req, res) {
 	db.getUserInfo(req.user.id, function(me){
-		var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,150)"
+		var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me())"
 		graph.fql(query, function(err, fdata) {
 	        var app_friends = [];
 	        db.getAllUsers(function(db_users){
@@ -165,7 +165,7 @@ app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
 			console.log("DB_USER: " + db_user[0]);
 			if (result.length && result[0]) {
 				res.render('socketBoard', {user: req.user, moduleid: result[0].id, module:result[0], fbpic:db_user[0].fbpic_url});
-				
+
 			} else {
 				res.redirect('/dashboard');
 			}
