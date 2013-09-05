@@ -31,6 +31,13 @@ CREATE  TABLE IF NOT EXISTS `laughing_avenger`.`module` (
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
+INSERT INTO module (`title`, `description`) VALUES
+('CS3216', 'Software Development on Evolving Platforms'),
+('CS2103', 'Software Engineering'),
+('EE2020', 'Digital Fundamentals'),
+('EE2021', 'Devices And Circuits'),
+('CG2271', 'Real-Time Operating System');
+
 
 -- -----------------------------------------------------
 -- Table `laughing_avenger`.`post`
