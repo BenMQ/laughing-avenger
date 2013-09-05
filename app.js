@@ -80,7 +80,7 @@ app.get("/about", function(req,res){
 	res.render('about')
 });
 
-app.get("/main", ensureAuthenticated, routes.main);
+//app.get("/main", ensureAuthenticated, routes.main);
 app.get('/masterArr', function(req, res) {
 	res.json(masterArr);
 });
@@ -151,7 +151,7 @@ app.get('/question/:questionId', function(req, res) {
 		if (result.length) {
 			res.render('post', {content: result[0]});
 		} else {
-			res.redirect('/main');
+			res.redirect('/dashboard');
 		}
 	})
 });
@@ -166,7 +166,7 @@ app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
 			if (result.length && result[0]) {
 				res.render('socketBoard', {user: req.user, module:result[0], fbpic:db_user[0].fbpic_url});
 			} else {
-				res.redirect('/main');
+				res.redirect('/dashboard');
 			}
 		})
 	});
