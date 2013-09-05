@@ -307,6 +307,16 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 
 	socket.on("post", function(data) {
 		db.addQuestion(socket.user_cookie.id, data.title, data.content, magicModuleId, false, function(id) {
+			// Post OG story from server as the ID is only known at this point, not on the client side.
+			graph.post('me/fragen-ask:ask',
+						{
+							question: "http://fragen.cmq.me/question/" + id,
+							privacy: {'value': 'ALL_FRIENDS'}
+						},
+						function(err, res) {
+							console.log(res);
+						}
+			);
 			db.getQuestion(id, function(results) {
 				if (results[0]) {
 					masterArr.push(results[0]);
