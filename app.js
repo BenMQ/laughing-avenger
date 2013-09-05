@@ -337,7 +337,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	socket.on("post", function(data) {
 		db.addQuestion(socket.user_cookie.id, data.title, data.content, data.module_id, data.anon, function(id) {
 			// Post OG story from server as the ID is only known at this point, not on the client side.
-			graph.setAccessToken(user_cookie.accessToken);
+			graph.setAccessToken(socket.user_cookie.accessToken);
 			graph.post('me/fragen-ask:ask',
 					{
 						question: "http://fragen.cmq.me/question/" + id,
