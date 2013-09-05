@@ -171,13 +171,38 @@ h1 {
  	background-color: transparent;
  }
 
- .social i.icon-circle{
+ .social i.icon-circle.fb-cir{
 	color: #3b5998;
  }
 
   .social i.icon-facebook{
 	color: white;
  }
+
+  .social i.icon-circle.git-cir{
+	color: #fff;
+ }
+
+  .social i.icon-github-alt{
+	color: #171715;
+ }
+
+  .social i.icon-circle.twitter-cir{
+	color: #00acee;
+ }
+
+  .social i.icon-twitter{
+	color: #fff;
+ }
+
+  .social i.icon-circle.linkedin-cir{
+	color: #0e76a8;
+ }
+
+  .social i.icon-linkedin{
+	color: #fff;
+ }
+
 
  .social i:hover{
     -webkit-transform:rotate(120deg);
@@ -192,4 +217,9 @@ h1 {
 footer p.copyright {
     text-align:center;
     margin: 20px 0;
+}
+
+.copyright a{
+	color: white;
+	text-decoration: none
 }

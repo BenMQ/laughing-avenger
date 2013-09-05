@@ -218,7 +218,7 @@ masterArr.findPost = function(id) {
 var db_limit = 65535; // How many qns do you want in one page?
 var db_offset = 0; // TODO: multipage thingy
 
-db.getQuestions(magicModuleId, db_limit, db_offset, function(results) {
+db.getAllQuestions(function(results) {
 	for (var i = 0; i < results.length; i++) {
 		// console.log(results[i]);
 		masterArr.push(results[i]);
