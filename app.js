@@ -52,6 +52,17 @@ passport.use(new FacebookStrategy({
   }
 ));
 
+
+var collectionURL = 'https://www.facebook.com/me/app_492242497533605';
+(function() {
+	var params = {fields: 'profile_section_url'};
+	graph.get(config.FACEBOOK_APP_ID, params, function(err, res) {
+		// to be enabled when collection has been approved
+		//collectionURL = res.profile_section_url;
+	})
+})();
+
+
 // Wrapper auth function
 function ensureAuthenticated(req, res, next){
     if(req.isAuthenticated()){
@@ -108,7 +119,7 @@ app.get('/dashboard', ensureAuthenticated,
     function(req,res){
 	    db.getUserInfo(req.user.id,
 		    function(db_user){
-			    res.render('dashboard', { user: req.user, fbpic:db_user[0].fbpic_url });
+			    res.render('dashboard', { user: req.user, fbpic:db_user[0].fbpic_url, collectionURL: collectionURL});
 		}
 	)}
 );
