@@ -79,19 +79,19 @@
                     <% for(var i=0; i<app_friends.length; i++) {%>
                         <li class ='invited col-md-4'>
                             <div class='friend-thumbnail'>
-                                <span><%= app_friends[i].name %></span> (Using Fragen)
                                 <a href='http://facebook.com/<%= app_friends[i].username %>'><img src='<%= app_friends[i].pic_square %>' /></a>
-                                
+                                <span><%= app_friends[i].name %></span>
+                                <a data-fbid='<%= to_invite_friends[i].uid %>' data-fbname='<%= to_invite_friends[i].name %>' class='invited'>On Fragen</a>
+
                             </div>
                         </li>
                     <% } %>
-
                     <% for(var i=0; i<to_invite_friends.length; i++) {%>
                         <li class='col-md-4'>
                             <div class="friend-thumbnail">
-                                <a target="blank" href='http://facebook.com/<%= to_invite_friends[i].username %>'><img src='<%= to_invite_friends[i].pic_square %>' /></a>
-                                <span><%= to_invite_friends[i].name %></span    >
-                                <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>'>Send Invite</a>
+                                <a href='http://facebook.com/<%= to_invite_friends[i].username %>' target="blank"><img src='<%= to_invite_friends[i].pic_square %>' /></a>
+                                <span><%= to_invite_friends[i].name %></span>
+                                <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>' data-fbname='<%= to_invite_friends[i].name %>' class='invite'>Send Invite</a>
                             </div>
                         </li>
                     <% } %>
@@ -109,14 +109,15 @@
         $(document).ready(function() {
             $("a.invite").click(function(){
                 var fb_id = $(this).data('fbid');
+                var fb_name = $(this).data('fbname');
 
                 FB.ui({
                   method: 'feed',
                   link: 'http://fragen.cmq.me',
                   picture: 'http://fragen.cmq.me/public/img/fragen-iconb.png',
                   name: 'Fragen',
-                  caption: 'Fragen Q & A',
-                  description: 'Come join me on Fragen, the realtime Q & A site!',
+                  caption: "fʁaːgən, means 'to ask' in German",
+                  description: 'Hi ' + fb_name + '! Come join me on Fragen, the realtime knowledge sharing platform that connects students and lecturers!',
                   to: fb_id,
                 }, function(response){});
 

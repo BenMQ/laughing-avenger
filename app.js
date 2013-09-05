@@ -35,21 +35,20 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new FacebookStrategy({
-    clientID: config.FACEBOOK_APP_ID,
-    clientSecret: config.FACEBOOK_APP_SECRET,
-    callbackURL: config.FBAUTH_CALLBACK_URL
-  },
+	clientID: config.FACEBOOK_APP_ID,
+	clientSecret: config.FACEBOOK_APP_SECRET,
+	callbackURL: config.FBAUTH_CALLBACK_URL
+},
+function(accessToken, refreshToken, profile, done) {
+	process.nextTick(function() {
+		console.log(profile);
+		var usr = {id: profile.id, username: profile.username, displayName: profile.displayName}
 
-  function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function () {
-    	console.log(profile);
-    	var usr = {id:profile.id, username:profile.username, displayName:profile.displayName}
-
-        graph.setAccessToken(accessToken);
-    	// console.log(user);
-    	return done(null, usr);
-    });
-  }
+		graph.setAccessToken(accessToken);
+		// console.log(user);
+		return done(null, usr);
+	});
+}
 ));
 
 
@@ -64,19 +63,19 @@ var collectionURL = 'https://www.facebook.com/me/app_492242497533605';
 
 
 // Wrapper auth function
-function ensureAuthenticated(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    } else {
-        res.redirect("/");
-    }
+function ensureAuthenticated(req, res, next) {
+	if (req.isAuthenticated()) {
+		return next();
+	} else {
+		res.redirect("/");
+	}
 }
 
 app.get("/", routes.index);
-app.get("/terms", function(req,res){
+app.get("/terms", function(req, res) {
 	res.render('terms')
 });
-app.get("/about", function(req,res){
+app.get("/about", function(req, res) {
 	res.render('about')
 });
 
@@ -86,7 +85,7 @@ app.get('/masterArr', function(req, res) {
 });
 app.get('/auth/facebook',
 		passport.authenticate('facebook', {scope: config.FB_EXTENDED_PERMISSION}),
-		routes.postAuthenticate);
+routes.postAuthenticate);
 app.get('/auth/facebook/callback',
 		passport.authenticate('facebook', {failureRedirect: '/loginError'}),
 function(req, res) {
@@ -98,7 +97,7 @@ function(req, res) {
 	picurl = '';
 
 	// retrieve user fbpic url
-	var query="SELECT pic_big FROM user WHERE uid=me()";
+	var query = "SELECT pic_big FROM user WHERE uid=me()";
 	graph.fql(query, function(err, fdata) {
 		console.log(fdata.data[0].pic_big);
 		picurl = fdata.data[0].pic_big; // { picture: 'http://profile.ak.fbcdn.net/'... }
@@ -116,30 +115,31 @@ app.get('/loginError', routes.loginError);
 app.get('/signout', routes.logout);
 
 app.get('/dashboard', ensureAuthenticated,
-    function(req,res){
-	    db.getUserInfo(req.user.id,
-		    function(db_user){
-			    res.render('dashboard', { user: req.user, fbpic:db_user[0].fbpic_url, collectionURL: collectionURL});
+		function(req, res) {
+			db.getUserInfo(req.user.id,
+					function(db_user) {
+						res.render('dashboard', {user: req.user, fbpic: db_user[0].fbpic_url, collectionURL: collectionURL});
+					}
+			)
 		}
-	)}
 );
 
 app.get('/friends', ensureAuthenticated, function(req, res) {
 	db.getUserInfo(req.user.id, function(me){
-		var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me() LIMIT 0,150)"
+		var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me())"
 		graph.fql(query, function(err, fdata) {
-	        var app_friends = [];
-	        db.getAllUsers(function(db_users){
-	            db.compute_intersection(db_users, fdata.data, function(err, app_friends){
-	                if (err) {
-	                    console.log(err);
-	                } else {
-	                    console.log(app_friends);
-	                }
-	                console.log(me[0]);
-	                res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data, user: me[0], fbpic:me[0].fbpic_url});
-	            })
-	        });
+			var app_friends = [];
+			db.getAllUsers(function(db_users) {
+				db.compute_intersection(db_users, fdata.data, function(err, app_friends) {
+					if (err) {
+						console.log(err);
+					} else {
+						console.log(app_friends);
+					}
+					console.log(me[0]);
+					res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data, user: me[0], fbpic: me[0].fbpic_url});
+				})
+			});
 		});
 	});
 
@@ -147,29 +147,34 @@ app.get('/friends', ensureAuthenticated, function(req, res) {
 
 // Test Open Graph Story
 app.get('/question/:questionId', function(req, res) {
-	db.getQuestion(req.params.questionId, function(result) {
-		if (result.length) {
-			res.render('post', {content: result[0]});
-		} else {
-			res.redirect('/dashboard');
-		}
-	})
+	var qn = masterArr.findPost(req.params.questionId);
+	if (qn) {
+		db.getModuleById(qn.module_id, function(result) {
+			res.render('post', {content: qn, module: result[0]});
+		});
+	} else {
+		res.redirect('/dashboard');
+	}
 });
 
+app.get("/question/data/:questionId", function(req, res) {
+	var qn = masterArr.findPost(req.params.questionId);
+	res.json(qn);
+});
 
 // need to pass in :moduleCode as magic
-app.get('/modules/:moduleTitle', ensureAuthenticated,function(req,res){
-	db.getUserInfo(req.user.id, function(db_user){
+app.get('/modules/:moduleTitle', ensureAuthenticated, function(req, res) {
+	db.getUserInfo(req.user.id, function(db_user) {
 		db.getModuleByTitle(req.params.moduleTitle,
-		    function(result){
-			console.log("DB_USER: " + db_user[0]);
-			if (result.length && result[0]) {
-				res.render('socketBoard', {user: req.user, moduleid: result[0].id, module:result[0], fbpic:db_user[0].fbpic_url});
-				
-			} else {
-				res.redirect('/dashboard');
-			}
-		})
+			function(result) {
+				console.log("DB_USER: " + db_user[0]);
+				if (result.length && result[0]) {
+					res.render('socketBoard', {user: req.user, moduleid: result[0].id, module: result[0], fbpic: db_user[0].fbpic_url});
+
+				} else {
+					res.redirect('/dashboard');
+				}
+			})
 	});
 });
 
@@ -207,7 +212,7 @@ masterArr.findPost = function(id) {
 var db_limit = 10; // How many qns do you want in one page?
 var db_offset = 0; // TODO: multipage thingy
 
-db.getQuestions(magicModuleId,db_limit, db_offset, function(results) {
+db.getQuestions(magicModuleId, db_limit, db_offset, function(results) {
 	for (var i = 0; i < results.length; i++) {
 		// console.log(results[i]);
 		masterArr.push(results[i]);
@@ -254,7 +259,7 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 
 	//console.log(cookies['express.sid']);
 	var session_id = connect.utils.parseSignedCookie(
-	                    cookies[config.AUTH_COOKIE_NAME], config.SECRET_KEY)
+			cookies[config.AUTH_COOKIE_NAME], config.SECRET_KEY)
 
 	console.log("parsed session_id:" + session_id);
 
@@ -325,13 +330,13 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 		db.addQuestion(socket.user_cookie.id, data.title, data.content, data.module_id, data.anon, function(id) {
 			// Post OG story from server as the ID is only known at this point, not on the client side.
 			graph.post('me/fragen-ask:ask',
-						{
-							question: "http://fragen.cmq.me/question/" + id,
-							privacy: {'value': 'ALL_FRIENDS'}
-						},
-						function(err, res) {
-							console.log(res);
-						}
+					{
+						question: "http://fragen.cmq.me/question/" + id,
+						privacy: {'value': 'ALL_FRIENDS'}
+					},
+			function(err, res) {
+				console.log(res);
+			}
 			);
 			db.getQuestion(id, function(results) {
 				if (results[0]) {

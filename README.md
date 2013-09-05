@@ -6,9 +6,9 @@ Fragen is a real-time Q&A platform for students and lecturer to communicate effe
 
 ## Members
 - A0099317U Yos Riady @Leventhan 
-	- Project Leader, Coder (backend, focusing on authentication, node, Facebook API)
+	- Project Leader, Coder (backend, focusing on authentication, Node, Facebook API, frontend)
 - A0101168R Muhammad Muneer @Muhammad-Muneer 
-	- Designer
+	- Designer (design, frontend, EJS)
 - A0099314Y Chen Minqi @BenMQ 
 	- Coder (production server and backend, focusing on database, Facebook API)
 - A0078695H Wang Boyang @boyangwang
