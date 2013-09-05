@@ -112,7 +112,7 @@ h1 {
  ******************************/
 
 /*Main*/
-
+#settings,
 #qna-wrapper{
 	height:80%;
 }
@@ -151,10 +151,6 @@ h1 {
 	width:10%;
 	height:10%;
 	float:left;
-}
-
-#title-view{
-	border-bottom: transparent;
 }
 
 .panel-heading{
@@ -406,5 +402,18 @@ h1 {
 	padding: 0;
 	min-width: 70px;
 	left: 6%;
+}
+
+#anonymousSwitch{
+	position:absolute;
+	bottom:2%;
+	left:0;
+	color: rgb(2,80,121);
+	opacity: 0.8
+}	
+
+#anonymousSwitch:hover{
+	opacity: 1.0;
+	cursor: pointer;
 }
 

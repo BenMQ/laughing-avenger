@@ -42,9 +42,15 @@ $(document).ready(function() {
 function switchAnon() {
 	if ($(this).hasClass('active')) {
 		window.fragen.submitStatus.anon = false;
+		$(this).addClass('icon-eye-open');
+		$(this).removeClass('icon-eye-close');
+		$(this).attr('title','Not Anonymous');
 	}
 	else {
 		window.fragen.submitStatus.anon = true;
+		$(this).removeClass('icon-eye-open');
+		$(this).addClass('icon-eye-close');
+		$(this).attr('title','I am Anonymous');
 	}
 	$(this).toggleClass("active");
 	return false;

@@ -89,7 +89,7 @@
                     <% for(var i=0; i<to_invite_friends.length; i++) {%>
                         <li class='col-md-4'>
                             <div class="friend-thumbnail">
-                                <a href='http://facebook.com/<%= to_invite_friends[i].username %>'><img src='<%= to_invite_friends[i].pic_square %>' /></a>
+                                <a target="blank" href='http://facebook.com/<%= to_invite_friends[i].username %>'><img src='<%= to_invite_friends[i].pic_square %>' /></a>
                                 <span><%= to_invite_friends[i].name %></span    >
                                 <a href='javascript:void(0)' data-fbid='<%= to_invite_friends[i].uid %>'>Send Invite</a>
                             </div>
