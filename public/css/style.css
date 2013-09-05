@@ -193,3 +193,8 @@ footer p.copyright {
     text-align:center;
     margin: 20px 0;
 }
+
+.copyright a{
+	color: white;
+	text-decoration: none
+}
