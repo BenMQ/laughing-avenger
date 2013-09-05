@@ -42,9 +42,9 @@ passport.use(new FacebookStrategy({
 function(accessToken, refreshToken, profile, done) {
 	process.nextTick(function() {
 		console.log(profile);
-		var usr = {id: profile.id, username: profile.username, displayName: profile.displayName}
+		var usr = {accessToken:accessToken, refreshToken:refreshToken, id: profile.id, username: profile.username, displayName: profile.displayName}
 
-		graph.setAccessToken(accessToken);
+		//graph.setAccessToken(accessToken);
 		// console.log(user);
 		return done(null, usr);
 	});
@@ -97,6 +97,7 @@ function(req, res) {
 	picurl = '';
 
 	// retrieve user fbpic url
+	graph.setAccessToken(req.session.passport.user.accessToken);
 	var query = "SELECT pic_big FROM user WHERE uid=me()";
 	graph.fql(query, function(err, fdata) {
 		console.log(fdata.data[0].pic_big);
@@ -106,6 +107,7 @@ function(req, res) {
 
 		//here need to check and create user
 		db.updateUserInfo(req.session.passport.user.id, req.session.passport.user.username, picurl, req.session.passport.user.displayName, function() {
+			graph.setAccessToken(null);
 			res.redirect('/dashboard');
 		});
 	});
@@ -126,6 +128,8 @@ app.get('/dashboard', ensureAuthenticated,
 
 app.get('/friends', ensureAuthenticated, function(req, res) {
 	db.getUserInfo(req.user.id, function(me){
+		//console.log(req.session.passport.user);
+		graph.setAccessToken(req.session.passport.user.accessToken);
 		var query = "SELECT uid, username, name, pic_square FROM user WHERE uid in(SELECT uid2 FROM friend WHERE uid1 = me())"
 		graph.fql(query, function(err, fdata) {
 			var app_friends = [];
@@ -137,6 +141,7 @@ app.get('/friends', ensureAuthenticated, function(req, res) {
 						console.log(app_friends);
 					}
 					console.log(me[0]);
+					graph.setAccessToken(null);
 					res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data, user: me[0], fbpic: me[0].fbpic_url});
 				})
 			});
@@ -203,7 +208,7 @@ masterArr.findPost = function(id) {
 			}
 		}
 	}
-	
+
 }
 
 // Init db
@@ -285,6 +290,8 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 				socket.emit('userVotes', data);
 			});
 
+			console.log("USER COOKIE");
+			console.log(user_cookie);
 			socket.user_cookie = user_cookie; //attach cookie to socket object
 		}
 	});
@@ -330,12 +337,14 @@ io.sockets.on("connection", function(socket) { //general handler for all socket 
 	socket.on("post", function(data) {
 		db.addQuestion(socket.user_cookie.id, data.title, data.content, data.module_id, data.anon, function(id) {
 			// Post OG story from server as the ID is only known at this point, not on the client side.
+			graph.setAccessToken(user_cookie.accessToken);
 			graph.post('me/fragen-ask:ask',
 					{
 						question: "http://fragen.cmq.me/question/" + id,
 						privacy: {'value': 'ALL_FRIENDS'}
 					},
 			function(err, res) {
+				graph.setAccessToken(null);
 				console.log(res);
 			}
 			);
