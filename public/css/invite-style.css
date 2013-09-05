@@ -80,7 +80,7 @@ h1 {
  }
 
  .icon{
-    background-image: url(../img/fragen-icon.png);
+    background-image: url(/public/img/fragen-icon.png);
     display:block;
     background-repeat: no-repeat;
     height:30px;
