@@ -38,7 +38,7 @@ $(document).ready(function() {
 	$("button.sortByTime").click(evtSortByTime);
 	$("button.sortByVotes").click(evtSortByVotes);
 
-	window.setTimeout(updateTimeFromNow, 60*1000);
+	window.setTimeout(updateTimeFromNow, 60 * 1000);
 }); // End of document.ready
 
 function switchAnon() {
@@ -46,13 +46,13 @@ function switchAnon() {
 		window.fragen.submitStatus.anon = false;
 		$(this).addClass('icon-eye-open');
 		$(this).removeClass('icon-eye-close');
-		$(this).attr('title','Not Anonymous');
+		$(this).attr('title', 'Not Anonymous');
 	}
 	else {
 		window.fragen.submitStatus.anon = true;
 		$(this).removeClass('icon-eye-open');
 		$(this).addClass('icon-eye-close');
-		$(this).attr('title','I am Anonymous');
+		$(this).attr('title', 'I am Anonymous');
 	}
 	$(this).toggleClass("active");
 	return false;
@@ -216,8 +216,8 @@ function displayAns(data, container, blink) {
 // > 1 day: on 1st July
 // otherwise xxx ago
 function timeFromNow(timestamp) {
-	var dayInMilliseconds = 1000*60*60*24;
-	var minuteInMilliseconds = 1000*60;
+	var dayInMilliseconds = 1000 * 60 * 60 * 24;
+	var minuteInMilliseconds = 1000 * 60;
 	var momentNow = moment();
 	var momentThen = moment(timestamp);
 	var msFromNow = momentNow.diff(momentThen);
@@ -231,12 +231,12 @@ function timeFromNow(timestamp) {
 }
 
 function updateTimeFromNow() {
-	$('.time-post-moment').each(function(){
+	$('.time-post-moment').each(function() {
 		var time = $(this).data('timestamp');
 		$(this).text(timeFromNow(time));
 	});
 
-	window.setTimeout(updateTimeFromNow, 60*1000);
+	window.setTimeout(updateTimeFromNow, 60 * 1000);
 }
 
 
@@ -263,8 +263,8 @@ function displayPost(data, container, blink) {
 	var totalans = $('<div class="total-answers"><span class="answer-number">' + data.answers.length + '</span><span>answers</span></div>');
 
 	//var timeOfPost = $('<span class="time-post" title = "' + date[0] + ' ' + date[1] + ' ' + date[2] + ' ' + date[3] + ' ' + date[4] + '">' + "Asked on " + date[1] + '\' ' + date[3].substring(2) + '</span>');
-	var momentTimeText = $('<span class="time-post-moment">' 
-						+ timeFromNow(data.timestamp) + '</span>').data('timestamp', data.timestamp)
+	var momentTimeText = $('<span class="time-post-moment">'
+			+ timeFromNow(data.timestamp) + '</span>').data('timestamp', data.timestamp)
 
 
 	var timeOfPost = $('<span class="time-post">Asked </span>');
@@ -550,7 +550,9 @@ function newAns(e) {
 		obj.anon = false;
 	}
 	socket.emit('ans', obj);
-	publish(window.fragen.submitStatus.parent_id, "answer");
+	if (!window.fragen.submitStatus.anon) {
+		publish(window.fragen.submitStatus.parent_id, "answer");
+	}
 	ansInput.val("");
 }
 
