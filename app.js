@@ -134,7 +134,7 @@ app.get('/friends', ensureAuthenticated, function(req, res) {
 		graph.fql(query, function(err, fdata) {
 			var app_friends = [];
 			db.getAllUsers(function(db_users) {
-				db.compute_intersection(db_users, fdata.data, function(err, app_friends) {
+				db.compute_intersection(db_users, fdata.data, function(err, app_friends, to_invite_friends) {
 					if (err) {
 						console.log(err);
 					} else {
@@ -142,7 +142,7 @@ app.get('/friends', ensureAuthenticated, function(req, res) {
 					}
 					console.log(me[0]);
 					graph.setAccessToken(null);
-					res.render("invite", {app_friends: app_friends, to_invite_friends: fdata.data, user: me[0], fbpic: me[0].fbpic_url});
+					res.render("invite", {app_friends: app_friends, to_invite_friends: to_invite_friends, user: me[0], fbpic: me[0].fbpic_url});
 				})
 			});
 		});
