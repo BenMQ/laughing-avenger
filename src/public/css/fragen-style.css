@@ -351,6 +351,8 @@ h1 {
 .ansVoteDiv>span,
 .voteDiv>span,
 .ansCommentDiv,
+.upVoteBtn,
+.downVoteBtn,
 .commentDiv,
 .ansDiv{
 	margin-right: 3px;
@@ -376,6 +378,11 @@ h1 {
 .misc-btns a,
 .misc-btns .net-vote{
 	color:#aaa;
+}
+
+.upVoteBtn,
+.downVoteBtn{
+	display:inline-block;
 }
 
 .misc-btns .net-vote{
