@@ -202,8 +202,8 @@ function displayAns(data, container, blink) {
 	ansCommentDiv.append(commentBtn); //append(commentInput).
 
 	var ansVoteDiv = $('<div class="ansVoteDiv" data-msgid="' + data.id + '">');
-	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-thumbs-up-alt"></i></a>');
-	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-thumbs-down-alt"></i></a>');
+	var upVoteBtn = $('<a href="#" class="upvote upVoteBtn"><i class="icon-thumbs-up-alt"></i></a>');
+	var downVoteBtn = $('<a href="#" class="downvote downVoteBtn"><i class="icon-thumbs-down-alt"></i></a>');
 	var votesDisplay = $('<span class="votes net-vote">0</span>');
 	if (data.votecount) {
 		votesDisplay.text(data.votecount);
@@ -319,8 +319,8 @@ function displayPost(data, container, blink) {
 
 	var voteDiv = $('<div class="voteDiv" data-msgid="' + data.id + '">');
 
-	var upVoteBtn = $('<a class="upvote upVoteBtn"><i class="icon-thumbs-up-alt"></i></a>');
-	var downVoteBtn = $('<a class="downvote downVoteBtn"><i class="icon-thumbs-down-alt"></i></a>');
+	var upVoteBtn = $('<a href="#" class="upvote upVoteBtn"><i class="icon-thumbs-up-alt"></i></a>');
+	var downVoteBtn = $('<a href="#" class="downvote downVoteBtn"><i class="icon-thumbs-down-alt"></i></a>');
 	var votesDisplay = $('<span class="votes net-vote">0</span>');
 
 	if (data.votecount) {
@@ -422,7 +422,8 @@ socket.on("userVotes", function(data) {
 
 // Here are the emit senders. Through some trigger, the page will send signals
 // To the server
-function upVote() {
+function upVote(e) {
+	e.preventDefault();
 	if ($(this).hasClass("selected-pos")) {
 		socket.emit('rmVote', {
 			post_id: $(this).parent().attr("data-msgid"),
@@ -439,7 +440,8 @@ function upVote() {
 	$(this).toggleClass("selected-pos");
 	return false;
 }
-function downVote() {
+function downVote(e) {
+	e.preventDefault();
 	if ($(this).hasClass("selected-neg")) {
 		socket.emit('rmVote', {
 			post_id: $(this).parent().attr("data-msgid"),
