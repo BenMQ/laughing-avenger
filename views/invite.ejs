@@ -79,7 +79,7 @@
                     <% for(var i=0; i<app_friends.length; i++) {%>
                         <li class ='invited col-md-4'>
                             <div class='friend-thumbnail'>
-                                <a href='http://facebook.com/<%= app_friends[i].username %>'><img src='<%= app_friends[i].pic_square %>' /></a>
+                                <a href='http://facebook.com/<%= app_friends[i].username %>' target='blank'><img src='<%= app_friends[i].pic_square %>' /></a>
                                 <span><%= app_friends[i].name %></span>
                                 <a data-fbid='<%= to_invite_friends[i].uid %>' data-fbname='<%= to_invite_friends[i].name %>' class='invited'>On Fragen</a>
 
