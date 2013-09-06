@@ -23,7 +23,7 @@ nbproject
 *.sublime-workspace
 
 # Development configuration file
-config/config.development.js
+src/config/config.development.js
 
 # Back up from MySQLWorkbench
 *.bak
