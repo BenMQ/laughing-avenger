@@ -325,12 +325,14 @@ self.compute_intersection = function(db_users, fb_friends, callback) {
             for (var j = 0; j < fb_friends.length; j++) {
                 if (db_users[i].user_id == fb_friends[j].uid) {
                     app_friends.push(fb_friends[j]);
+                    to_invite_friends = to_invite_friends.filter(function(friend){return db_users[i].user_id != friend.uid;})
                 }
+
             }
         }
 
         if (i >= db_users.length) {
-            callback(null, app_friends);   // no error, send back results
+            callback(null, app_friends, to_invite_friends);   // no error, send back results
         } else {
             sidx += size;
             process.nextTick(sub_compute_intersection);
