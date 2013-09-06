@@ -30,16 +30,32 @@ $(document).ready(function() {
 			$(".answerDiv", e).tsort('.ansVoteDiv span.votes', {order: 'desc'}, {order: 'desc', attr: 'data-timestamp'});
 		});
 	});
+	
+	
 
-
-	$("#qnSubmit.newPostBtn").click(masterSubmit);
+	$("#qnSubmit.newPostBtn").click(masterSubmit)
+							 .qtip({
+								content: {text: "Ctrl+Enter to quick submit"},
+								style	: {classes: 'qtip-light'},
+								position: {my: "bottom left", at: "top right"},
+							 });
+	
 	$("#anonymousSwitch").click(switchAnon);
-
+	
+	$("#title-view, #ans-view").keydown(ctrl_enter_send);
+	
 	$("button.sortByTime").click(evtSortByTime);
 	$("button.sortByVotes").click(evtSortByVotes);
 
 	window.setTimeout(updateTimeFromNow, 60 * 1000);
 }); // End of document.ready
+
+function ctrl_enter_send(e) {
+	if (e.ctrlKey && e.keyCode == 13) {
+       $("#qnSubmit.newPostBtn").click();
+       return false;
+    }
+}
 
 function switchAnon() {
 	if ($(this).hasClass('active')) {
